@@ -1,2 +1,2 @@
-# vocabulogics
-Handle vocabularies and ontologies
+# ontologics
+Code-logics to handle ontologies

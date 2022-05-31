@@ -1,0 +1,129 @@
+#' Add a new concept to an ontology
+#'
+#' @param new [`character(.)`][character]\cr the english label(s) of new
+#'   concepts that shall be included in the ontology.
+#' @param broader [`character(.)`][character]\cr the english label(s) of already
+#'   harmonised concepts to which the new concept shall be semantically linked
+#'   via a
+#'   \href{https://www.w3.org/TR/skos-reference/#semantic-relations}{skos:broader}
+#'    relation.
+#' @param class [`character(.)`][character]\cr the class(es) to of the new
+#'   labels.
+#' @param source [`character(1)`][character]\cr any character uniquely
+#'   identifying the source dataset of the new concept.
+#' @param only_new [`logical(1)`][logical] ?
+#' @param attributes [`tibble()`][tibble]\cr not yet implemented.
+#' @param ontoDir [`character(1)`][character]\cr the path where the ontology to
+#'   update is stored. In case you are building a point or areal database and
+#'   have used the function \code{\link[luckiTools]{start_occurrenceDB}} or
+#'   \code{\link[luckiTools]{start_arealDB}}, this path is already stored in the
+#'   options (see \code{getOption("onto_path")}).
+#' @family ontology functions
+#' @importFrom checkmate testCharacter testIntegerish assert assertFileExists
+#'   assertSubset
+#' @importFrom tibble tibble
+#' @importFrom dplyr filter pull bind_rows arrange
+#' @importFrom stringr str_detect str_split
+#' @importFrom readr read_rds write_rds
+#' @importFrom utils tail
+#' @export
+
+newConcept <- function(new, broader, class = NULL, source, only_new = TRUE,
+                       attributes = NULL, ontoDir = NULL){
+
+  newChar <- testCharacter(x = new, ignore.case = FALSE)
+  if(!newChar){
+    new <- as.character(new)
+  }
+  isInt <- testIntegerish(x = broader)
+  isChar <- testCharacter(x = broader)
+  assert(isInt, isChar)
+  assertCharacter(x = class, any.missing = FALSE)
+  assertCharacter(x = source, any.missing = FALSE)
+  assertLogical(x = only_new, any.missing = FALSE, len = 1)
+
+  if(!is.null(ontoDir)){
+    assertFileExists(x = ontoDir, access = "rw", extension = "rds")
+  } else {
+    ontoDir <- getOption("onto_path")
+  }
+
+  ontology <- read_rds(file = ontoDir)
+
+  if(length(class) != length(new)){
+    if(length(class) == 1){
+      class <- rep(x = class, length.out = length(new))
+    } else {
+      stop("the number of elements in 'class' is neither the same as in 'new' nor 1.")
+    }
+  }
+
+  prevID <- str_detect(string = ontology$attributes$source, pattern = source)
+  if(!any(prevID)){
+    prevID <- 0
+  } else {
+    prevID <- str_split(string = max(ontology$labels$code[prevID], na.rm = TRUE), pattern = "_")[[1]]
+    prevID <- as.numeric(tail(prevID, 1))
+    if(is.na(prevID)) prevID <- 0
+  }
+
+  for(i in seq_along(new)){
+    newLabel <- new[i]
+    newClass <- class[i]
+
+    dups <- grep(pattern = newLabel, x = ontology$attributes$label_en)
+    if(length(dups) != 0){
+      if(!only_new){
+        print(ontology$attributes[dups,])
+        continue <- "maybe"
+        while(!continue %in% c("yes", "no")){
+          continue <- readline(prompt = paste0("the concept '", newLabel, "' has already been defined, define anyway? (yes/no): "))
+        }
+        if(!continue == "yes"){
+          next
+        }
+      } else {
+        next
+      }
+    }
+
+    broaderID <- ontology$attributes %>%
+      filter(source == "lucki")
+    assertSubset(x = broader[i], choices = broaderID$label_en, .var.name = paste0("broader[i] (", broader[i], ")"))
+    broaderID <- broaderID %>%
+      filter(label_en == broader[i]) %>%
+      pull(code)
+
+    nestedID <- .get_tree(ontology$mappings, broaderID) %>%
+      filter(broader == broaderID) %>%
+      pull(code)
+
+    if(length(nestedID) == 0){
+      nextID <- paste0(broaderID, "01")
+    } else {
+      if(str_sub(broaderID, 1, 1) == "_"){
+        nextID <- tail(nestedID, 1)
+        nextID <- paste0("_", as.numeric(str_sub(nextID, 2, nchar(nextID)))+1)
+      } else {
+        nextID <- max(as.numeric(nestedID)) + 1
+      }
+    }
+
+    newOut <- tibble(code = as.character(nextID), source = c("external"),
+                     label_en = newLabel, class = newClass)
+    ontology$attributes <- ontology$attributes %>%
+      bind_rows(newOut) %>%
+      arrange(source, code)
+
+    newMapping <- tibble(code = as.character(nextID), broader = as.character(broaderID),
+                         label_en = newLabel, class = newClass)
+    ontology$mappings <- ontology$mappings %>%
+      bind_rows(newMapping) %>%
+      arrange(code)
+
+  }
+
+  write_rds(x = ontology, file = ontoDir)
+  invisible(newOut)
+
+}
