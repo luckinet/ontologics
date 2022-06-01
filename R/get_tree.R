@@ -1,20 +1,21 @@
 #' Get the ontology tree
 #'
 #' @param concepts [`tibble(1)`][tibble]\cr the concepts table of an ontology.
-#' @param topID [][]\cr the ID from which to derive the tree
+#' @param top [`character(1)`][character]\cr the ID from which to derive the
+#'   tree.
 #' @importFrom dplyr filter pull
 #' @export
 
-.get_tree <- function(concepts, topID){
+get_tree <- function(concepts, top){
 
   fin <- NULL
-  outIDs <- topID
+  outIDs <- top
   while(is.null(fin)){
     childID <- concepts %>%
-      filter(broader %in% topID) %>%
+      filter(broader %in% top) %>%
       pull(code)
     if(length(childID) != 0){
-      topID <- childID
+      top <- childID
       outIDs <- c(outIDs, childID)
     } else {
       fin <- TRUE

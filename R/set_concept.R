@@ -6,11 +6,11 @@
 #'   harmonised concepts to which the new concept shall be semantically linked
 #'   via a
 #'   \href{https://www.w3.org/TR/skos-reference/#semantic-relations}{skos:broader}
-#'    relation.
-#' @param class [`character(.)`][character]\cr the class(es) to of the new
-#'   labels.
+#'    relation, see Details.
+#' @param class [`character(.)`][character]\cr the class(es) of the new labels.
 #' @param source [`character(1)`][character]\cr any character uniquely
-#'   identifying the source dataset of the new concept.
+#'   identifying the source dataset of the new concept (for example
+#'   \emph{Author+Year}).
 #' @param only_new [`logical(1)`][logical] ?
 #' @param attributes [`tibble()`][tibble]\cr not yet implemented.
 #' @param ontoDir [`character(1)`][character]\cr the path where the ontology to
@@ -18,7 +18,7 @@
 #'   have used the function \code{\link[luckiTools]{start_occurrenceDB}} or
 #'   \code{\link[luckiTools]{start_arealDB}}, this path is already stored in the
 #'   options (see \code{getOption("onto_path")}).
-#' @family ontology functions
+#' @details bla
 #' @importFrom checkmate testCharacter testIntegerish assert assertFileExists
 #'   assertSubset
 #' @importFrom tibble tibble
@@ -28,8 +28,8 @@
 #' @importFrom utils tail
 #' @export
 
-newConcept <- function(new, broader, class = NULL, source, only_new = TRUE,
-                       attributes = NULL, ontoDir = NULL){
+set_concept <- function(new, broader, class = NULL, source, only_new = TRUE,
+                        attributes = NULL, ontoDir = NULL){
 
   newChar <- testCharacter(x = new, ignore.case = FALSE)
   if(!newChar){
@@ -94,7 +94,7 @@ newConcept <- function(new, broader, class = NULL, source, only_new = TRUE,
       filter(label_en == broader[i]) %>%
       pull(code)
 
-    nestedID <- .get_tree(ontology$mappings, broaderID) %>%
+    nestedID <- get_tree(ontology$mappings, broaderID) %>%
       filter(broader == broaderID) %>%
       pull(code)
 

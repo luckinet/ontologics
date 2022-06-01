@@ -23,7 +23,6 @@
 #'   have used the function \code{\link[luckiTools]{start_occurrenceDB}} or
 #'   \code{\link[luckiTools]{start_arealDB}}, this path is already stored in the
 #'   options (see \code{getOption("onto_path")}).
-#' @family ontology functions
 #' @importFrom checkmate testIntegerish testCharacter assert assertCharacter
 #'   assertChoice assertIntegerish assertFileExists
 #' @importFrom tibble tibble
@@ -33,8 +32,8 @@
 #' @importFrom readr read_rds write_rds
 #' @export
 
-newMapping <- function(concept, external = NULL, match = "close", source = NULL,
-                       mappings = NULL, certainty = NULL, ontoDir = NULL){
+set_mapping <- function(concept, external = NULL, match = "close", source = NULL,
+                        mappings = NULL, certainty = NULL, ontoDir = NULL){
 
   isInt <- testIntegerish(x = concept)
   isChar <- testCharacter(x = concept)

@@ -15,22 +15,21 @@
 #' @examples
 #' \dontrun{
 #' # exact matches
-#' getConcept(label_en = "Forest land")
+#' get_concept(label_en = "Forest land")
 #'
 #' # use regular expressions ...
-#' getConcept(label_en = "/*orest")
+#' get_concept(label_en = "/*orest")
 #'
 #' # ... and filter more
-#' getConcept(label_en = "/*orest", class = "landuse group")
+#' get_concept(label_en = "/*orest", class = "landuse group")
 #'
 #' # get all concepts that depend on another concept
-#' getConcept(label_en = "Forest land", tree = TRUE)
+#' get_concept(label_en = "Forest land", tree = TRUE)
 #'
 #' # get all labels (and filter with other functions)
-#' getConcept(labels = TRUE)
+#' get_concept(labels = TRUE)
 #' }
 #'
-#' @family ontology functions
 #' @importFrom checkmate assertFileExists assertLogical testChoice
 #' @importFrom tibble as_tibble
 #' @importFrom readr read_rds
@@ -41,8 +40,8 @@
 #' @importFrom magrittr set_names
 #' @export
 
-getConcept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #labels = FALSE,
-                       ontoDir = NULL){
+get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #labels = FALSE,
+                        ontoDir = NULL){
 
   if(!is.null(ontoDir)){
     assertFileExists(x = ontoDir, access = "rw", extension = "rds")
@@ -121,7 +120,7 @@ getConcept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #labels
       pull(code) %>%
       unique()
 
-    temp <- .get_tree(onto, topID)
+    temp <- get_tree(onto, topID)
 
   }
 
