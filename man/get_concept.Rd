@@ -19,10 +19,8 @@ ontology tree starting from the given search terms.}
 values that are currently missing from the ontology.}
 
 \item{ontoDir}{\code{\link[=character]{character(1)}}\cr the path where the ontology in
-which to search is stored. In case you are building a point or areal
-database and have used the function \code{\link[luckiTools]{start_occurrenceDB}}
-or \code{\link[luckiTools]{start_arealDB}}, this path is already stored in
-the options (see \code{getOption("onto_path")}).}
+which to search is stored. It can be omitted in case the option "onto_path"
+has been define (see \code{getOption("onto_path")}).}
 }
 \description{
 Get a concept from an ontology

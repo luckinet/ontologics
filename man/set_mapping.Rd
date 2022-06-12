@@ -36,13 +36,11 @@ identifying the source dataset of the new concept.}
 Possible values are between 1 and 4, with meaning \itemize{\item 1 =
 probably unreliable \item 2 = unclear, assigned according to a given
 definition \item 3 = clear, assigned according to a given definition \item
-4 = original, harmonised term (can't be assigned by a user)}}
+4 = original, harmonised term (can't be assigned by a user)}.}
 
-\item{ontoDir}{\code{\link[=character]{character(1)}}\cr the path where the ontology to
-update is stored. In case you are building a point or areal database and
-have used the function \code{\link[luckiTools]{start_occurrenceDB}} or
-\code{\link[luckiTools]{start_arealDB}}, this path is already stored in the
-options (see \code{getOption("onto_path")}).}
+\item{ontoDir}{\code{\link[=character]{character(1)}}\cr the path where the ontology in
+which to search is stored. It can be omitted in case the option "onto_path"
+has been define (see \code{getOption("onto_path")}).}
 }
 \description{
 Extend an ontology by creating mappings to external vocabularies.
