@@ -8,10 +8,8 @@
 #' @param missing [`logical(1)`][logical]\cr whether or not to give only those
 #'   values that are currently missing from the ontology.
 #' @param ontoDir [`character(1)`][character]\cr the path where the ontology in
-#'   which to search is stored. In case you are building a point or areal
-#'   database and have used the function \code{\link[luckiTools]{start_occurrenceDB}}
-#'   or \code{\link[luckiTools]{start_arealDB}}, this path is already stored in
-#'   the options (see \code{getOption("onto_path")}).
+#'   which to search is stored. It can be omitted in case the option "onto_path"
+#'   has been define (see \code{getOption("onto_path")}).
 #' @examples
 #' \dontrun{
 #' # exact matches
@@ -36,6 +34,7 @@
 #' @importFrom tidyselect everything
 #' @importFrom rlang quos eval_tidy
 #' @importFrom dplyr filter pull select
+#' @importFrom purrr map_lgl
 #' @importFrom stringr str_which str_sub
 #' @importFrom magrittr set_names
 #' @export
@@ -50,19 +49,22 @@ get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #label
   }
 
   ontology <- read_rds(file = ontoDir)
-  onto <- left_join(ontology$attributes %>% filter(source %in% c("lucki", "external")),
+  onto <- left_join(ontology$attributes %>% filter(source %in% c("harmonised", "imported")),
                     ontology$mappings %>% select(-label_en, -class), by = "code") %>%
     select(code, label_en, class, everything())
+  newConcepts <- ontology$attributes %>% filter(!source %in% c("harmonised", "imported"))
 
   assertLogical(x = exact, len = 1, any.missing = FALSE)
   assertLogical(x = tree, len = 1, any.missing = FALSE)
 
   attrib <- quos(...)
+  # return(attrib)
 
   if(length(attrib) == 0){
     return(onto)
   }
 
+  # identify attributes that are not in the ontology
   if(!all(names(attrib) %in% colnames(onto))){
     sbst <- names(attrib) %in% colnames(onto)
     theName <- names(attrib)[!sbst]
@@ -84,23 +86,43 @@ get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #label
     for(j in seq_along(toSearch)){
 
       pos <- str_which(string = onto[[names(attrib)[i]]], pattern = toSearch[j])
+      posExt <- str_which(string = newConcepts[[names(attrib)[i]]], pattern = toSearch[j])
 
       if(exact){
         if(is.na(toSearch[j]) | toSearch[j] == ""){
           newTab <- empty
         } else {
-          if(length(pos) == 0){
+          if(length(pos) == 0 & length(posExt) == 0){
             if(missing){
               missTemp <- c(missTemp, toSearch[j])
+              next
             } else{
               stop(paste0("the concept '", toSearch[j], "' (", j, ") is not yet defined."))
             }
           } else {
-            newTab <- onto[onto[[names(attrib)[i]]] %in% toSearch[j],]
+            if(length(pos) != 0){
+              newTab <- onto[onto[[names(attrib)[i]]] %in% toSearch[j],]
+            } else if(length(posExt) != 0){
+              extTab <- newConcepts$code[posExt]
+
+              posExt <- map_lgl(seq_along(onto$external), function(ix){
+                temp <- str_split(onto$external[ix], ", ")[[1]]
+                if(any(temp %in% extTab)){
+                  return(TRUE)
+                } else {
+                  return(FALSE)
+                }
+              })
+              newTab <- onto[posExt,]
+            }
           }
         }
       } else {
         newTab <- onto[pos,]
+      }
+
+      if(dim(newTab)[1] != 1){
+        warning(paste0("concept ", j, " (", toSearch[j],") has ", dim(newTab)[1], " entries"))
       }
 
       if(j == 1){
