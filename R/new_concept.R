@@ -1,4 +1,4 @@
-#' Add a new concept to an ontology
+#' Add a new (harmonised) concept to an ontology
 #'
 #' @param new [`character(.)`][character]\cr the english label(s) of new
 #'   concepts that shall be included in the ontology.
@@ -11,13 +11,11 @@
 #' @param source [`character(1)`][character]\cr any character uniquely
 #'   identifying the source dataset of the new concept (for example
 #'   \emph{Author+Year}).
-#' @param only_new [`logical(1)`][logical] ?
+#' @param overwrite [`logical(1)`][logical] ?
 #' @param attributes [`tibble()`][tibble]\cr not yet implemented.
-#' @param ontoDir [`character(1)`][character]\cr the path where the ontology to
-#'   update is stored. In case you are building a point or areal database and
-#'   have used the function \code{\link[luckiTools]{start_occurrenceDB}} or
-#'   \code{\link[luckiTools]{start_arealDB}}, this path is already stored in the
-#'   options (see \code{getOption("onto_path")}).
+#' @param ontoDir [`character(1)`][character]\cr the path where the ontology in
+#'   which to search is stored. It can be omitted in case the option "onto_path"
+#'   has been define (see \code{getOption("onto_path")}).
 #' @details bla
 #' @importFrom checkmate testCharacter testIntegerish assert assertFileExists
 #'   assertSubset
@@ -28,7 +26,7 @@
 #' @importFrom utils tail
 #' @export
 
-set_concept <- function(new, broader, class = NULL, source, only_new = TRUE,
+new_concept <- function(new, broader, class = NULL, source, overwrite = FALSE,
                         attributes = NULL, ontoDir = NULL){
 
   newChar <- testCharacter(x = new, ignore.case = FALSE)
@@ -40,7 +38,7 @@ set_concept <- function(new, broader, class = NULL, source, only_new = TRUE,
   assert(isInt, isChar)
   assertCharacter(x = class, any.missing = FALSE)
   assertCharacter(x = source, any.missing = FALSE)
-  assertLogical(x = only_new, any.missing = FALSE, len = 1)
+  assertLogical(x = overwrite, any.missing = FALSE, len = 1)
 
   if(!is.null(ontoDir)){
     assertFileExists(x = ontoDir, access = "rw", extension = "rds")
@@ -58,6 +56,14 @@ set_concept <- function(new, broader, class = NULL, source, only_new = TRUE,
     }
   }
 
+  if(length(broader) != length(new)){
+    if(length(broader) == 1){
+      broader <- rep(x = broader, length.out = length(new))
+    } else {
+      stop("the number of elements in 'broader' is neither the same as in 'new' nor 1.")
+    }
+  }
+
   prevID <- str_detect(string = ontology$attributes$source, pattern = source)
   if(!any(prevID)){
     prevID <- 0
@@ -67,19 +73,20 @@ set_concept <- function(new, broader, class = NULL, source, only_new = TRUE,
     if(is.na(prevID)) prevID <- 0
   }
 
+  newOut <- NULL
   for(i in seq_along(new)){
     newLabel <- new[i]
     newClass <- class[i]
 
     dups <- grep(pattern = newLabel, x = ontology$attributes$label_en)
     if(length(dups) != 0){
-      if(!only_new){
+      if(overwrite){
         print(ontology$attributes[dups,])
         continue <- "maybe"
         while(!continue %in% c("yes", "no")){
           continue <- readline(prompt = paste0("the concept '", newLabel, "' has already been defined, define anyway? (yes/no): "))
         }
-        if(!continue == "yes"){
+        if(continue != "yes"){
           next
         }
       } else {
@@ -88,7 +95,7 @@ set_concept <- function(new, broader, class = NULL, source, only_new = TRUE,
     }
 
     broaderID <- ontology$attributes %>%
-      filter(source == "lucki")
+      filter(source == "harmonised")
     assertSubset(x = broader[i], choices = broaderID$label_en, .var.name = paste0("broader[i] (", broader[i], ")"))
     broaderID <- broaderID %>%
       filter(label_en == broader[i]) %>%
@@ -101,19 +108,17 @@ set_concept <- function(new, broader, class = NULL, source, only_new = TRUE,
     if(length(nestedID) == 0){
       nextID <- paste0(broaderID, "01")
     } else {
-      if(str_sub(broaderID, 1, 1) == "_"){
-        nextID <- tail(nestedID, 1)
-        nextID <- paste0("_", as.numeric(str_sub(nextID, 2, nchar(nextID)))+1)
-      } else {
-        nextID <- max(as.numeric(nestedID)) + 1
-      }
+      nextID <- tail(nestedID, 1)
+      tempID <- str_split(nextID, "[.]")[[1]]
+      tempID[length(tempID)] <- formatC(as.numeric(tempID[length(tempID)]) + 1, flag = "0", width = nchar(tempID[length(tempID)]))
+      nextID <- paste0(tempID, collapse = ".")
     }
 
-    newOut <- tibble(code = as.character(nextID), source = c("external"),
+    newOut <- tibble(code = as.character(nextID), source = c("imported"),
                      label_en = newLabel, class = newClass)
     ontology$attributes <- ontology$attributes %>%
       bind_rows(newOut) %>%
-      arrange(source, code)
+      arrange(code, source)
 
     newMapping <- tibble(code = as.character(nextID), broader = as.character(broaderID),
                          label_en = newLabel, class = newClass)
@@ -124,6 +129,10 @@ set_concept <- function(new, broader, class = NULL, source, only_new = TRUE,
   }
 
   write_rds(x = ontology, file = ontoDir)
-  invisible(newOut)
+  if(!is.null(newOut)){
+    invisible(newOut)
+  } else {
+    message("no new harmonised concepts to add.")
+  }
 
 }
