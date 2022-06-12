@@ -17,14 +17,12 @@
 #'   Possible values are between 1 and 4, with meaning \itemize{\item 1 =
 #'   probably unreliable \item 2 = unclear, assigned according to a given
 #'   definition \item 3 = clear, assigned according to a given definition \item
-#'   4 = original, harmonised term (can't be assigned by a user)}
-#' @param ontoDir [`character(1)`][character]\cr the path where the ontology to
-#'   update is stored. In case you are building a point or areal database and
-#'   have used the function \code{\link[luckiTools]{start_occurrenceDB}} or
-#'   \code{\link[luckiTools]{start_arealDB}}, this path is already stored in the
-#'   options (see \code{getOption("onto_path")}).
+#'   4 = original, harmonised term (can't be assigned by a user)}.
+#' @param ontoDir [`character(1)`][character]\cr the path where the ontology in
+#'   which to search is stored. It can be omitted in case the option "onto_path"
+#'   has been define (see \code{getOption("onto_path")}).
 #' @importFrom checkmate testIntegerish testCharacter assert assertCharacter
-#'   assertChoice assertIntegerish assertFileExists
+#'   assertChoice assertIntegerish assertFileExists assertNames
 #' @importFrom tibble tibble
 #' @importFrom dplyr left_join filter pull mutate bind_rows arrange if_else
 #' @importFrom tidyr unite
@@ -39,7 +37,7 @@ set_mapping <- function(concept, external = NULL, match = "close", source = NULL
   isChar <- testCharacter(x = concept)
   assert(isInt, isChar)
   assertCharacter(x = external)
-  assertChoice(x = match, choices = c("close", "exact", "broad", "narrow", "related"))
+  assertNames(x = match, subset.of = c("close", "exact", "broad", "narrow", "related"))
   assertIntegerish(x = certainty, lower = 1, upper = 3)
 
   if(!is.null(ontoDir)){
@@ -54,7 +52,7 @@ set_mapping <- function(concept, external = NULL, match = "close", source = NULL
     if(length(match) == 1){
       match <- rep(x = match, length.out = length(concept))
     } else {
-      stop("the number of elements in 'match' is neither the same as in 'new' nor 1.")
+      stop("the number of elements in 'match' is neither the same as in 'concept' nor 1.")
     }
   }
 
@@ -62,7 +60,7 @@ set_mapping <- function(concept, external = NULL, match = "close", source = NULL
     if(length(certainty) == 1){
       certainty <- rep(x = certainty, length.out = length(concept))
     } else {
-      stop("the number of elements in 'certainty' is neither the same as in 'new' nor 1.")
+      stop("the number of elements in 'certainty' is neither the same as in 'concept' nor 1.")
     }
   }
 
@@ -70,8 +68,8 @@ set_mapping <- function(concept, external = NULL, match = "close", source = NULL
   if(!any(prevID)){
     prevID <- 0
   } else {
-    prevID <- str_split(string = max(ontology$attributes$code[prevID], na.rm = TRUE), pattern = "_")[[1]]
-    prevID <- as.numeric(tail(prevID, 1))
+    prevID <- as.numeric(str_split(ontology$attributes$code[prevID], pattern = "_", simplify = TRUE)[,3])
+    prevID <- max(prevID, na.rm = TRUE)
     if(is.na(prevID)) prevID <- 0
   }
 
@@ -89,7 +87,6 @@ set_mapping <- function(concept, external = NULL, match = "close", source = NULL
       srcRows <- str_detect(ontology$attributes$code, source)
       srcIncluded <- ontology$attributes %>%
         filter(srcRows) %>%
-        filter(source == "external") %>%
         pull(label_en)
       srcNew <- !external[i] %in% srcIncluded
 
@@ -128,7 +125,7 @@ set_mapping <- function(concept, external = NULL, match = "close", source = NULL
 
   }
   ontology$attributes <- ontology$attributes %>%
-    arrange(source, code)
+    arrange(code, source)
 
   ontology$mappings <- tempMappings %>%
     unite(col = external, external, new_code, sep = ", ", na.rm = TRUE) %>%
