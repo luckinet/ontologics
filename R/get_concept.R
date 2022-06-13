@@ -49,12 +49,14 @@ get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #label
   }
 
   onto <- load_ontology(ontoDir = ontoDir)
-  newConcepts <- onto$attributes %>% filter(!source %in% c("harmonised", "imported"))
+  extConcepts <- onto %>%
+    filter(!source %in% c("harmonised", "imported"))
 
   assertLogical(x = exact, len = 1, any.missing = FALSE)
   assertLogical(x = tree, len = 1, any.missing = FALSE)
 
   attrib <- quos(...)
+  # return(attrib)
 
   if(length(attrib) == 0){
     return(onto)
@@ -68,10 +70,10 @@ get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #label
     attrib <- attrib[sbst]
   }
 
-  temp <- data.frame(matrix(ncol = length(colnames(onto)), nrow = 0)) %>%
+  temp <- data.frame(matrix(ncol = length(colnames(onto)), nrow = 0, data = NA_character_)) %>%
     as_tibble() %>%
     set_names(colnames(onto))
-  empty <- data.frame(matrix(ncol = length(colnames(onto)), nrow = 1, data = NA)) %>%
+  empty <- data.frame(matrix(ncol = length(colnames(onto)), nrow = 1, data = NA_character_)) %>%
     as_tibble() %>%
     set_names(colnames(onto))
 
@@ -82,7 +84,7 @@ get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #label
     for(j in seq_along(toSearch)){
 
       pos <- str_which(string = onto[[names(attrib)[i]]], pattern = toSearch[j])
-      posExt <- str_which(string = newConcepts[[names(attrib)[i]]], pattern = toSearch[j])
+      posExt <- str_which(string = extConcepts[[names(attrib)[i]]], pattern = toSearch[j])
 
       if(exact){
         if(is.na(toSearch[j]) | toSearch[j] == ""){
@@ -99,7 +101,7 @@ get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #label
             if(length(pos) != 0){
               newTab <- onto[onto[[names(attrib)[i]]] %in% toSearch[j],]
             } else if(length(posExt) != 0){
-              extTab <- newConcepts$code[posExt]
+              extTab <- extConcepts$code[posExt]
 
               posExt <- map_lgl(seq_along(onto$external), function(ix){
                 temp <- str_split(onto$external[ix], ", ")[[1]]
@@ -118,7 +120,7 @@ get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #label
       }
 
       if(dim(newTab)[1] != 1){
-        warning(paste0("concept ", j, " (", toSearch[j],") has ", dim(newTab)[1], " entries"))
+        warning(paste0("concept ", j, " (", toSearch[j],") has ", dim(newTab)[1], " entries"), call. = FALSE)
       }
 
       if(j == 1){

@@ -29,6 +29,9 @@
 new_concept <- function(new, broader, class = NULL, source, overwrite = FALSE,
                         attributes = NULL, ontoDir = NULL){
 
+  if(is.null(new)){
+    return("no new concepts to harmonise.")
+  }
   newChar <- testCharacter(x = new, ignore.case = FALSE)
   if(!newChar){
     new <- as.character(new)
