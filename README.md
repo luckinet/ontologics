@@ -46,7 +46,7 @@ Install the latest development version from github:
 devtools::install_github("luckinet/ontologics")
 ```
 
-## Create an ontology…
+## Create an ontology
 
 An ontology is any data structure that stores concept of any knowledge
 field in a linked way. It is typically built on a set of

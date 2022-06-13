@@ -50,7 +50,7 @@ devtools::install_github("luckinet/ontologics")
 ```
 
 
-## Create an ontology...
+## Create an ontology
 
 An ontology is any data structure that stores concept of any knowledge field in a linked way. It is typically built on a set of standardised/harmonised terms that have a clear definition and potentially some attributes. According to the SKOS, concepts can have semantic relations or can be mapped to one another. Semantic relations describe how *harmonised concepts* **relate** to one another and mappings describe which concepts *from different vocabularies* should be **linked** to one another.
 
