@@ -1,4 +1,4 @@
-#' Get a concept from an ontology
+#' Get a concept in an ontology
 #'
 #' @param ... combination of column name and value to filter the column by. The
 #'   value to filter by can be provided as regular expression.
@@ -48,17 +48,13 @@ get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #label
     ontoDir <- getOption("onto_path")
   }
 
-  ontology <- read_rds(file = ontoDir)
-  onto <- left_join(ontology$attributes %>% filter(source %in% c("harmonised", "imported")),
-                    ontology$mappings %>% select(-label_en, -class), by = "code") %>%
-    select(code, label_en, class, everything())
-  newConcepts <- ontology$attributes %>% filter(!source %in% c("harmonised", "imported"))
+  onto <- load_ontology(ontoDir = ontoDir)
+  newConcepts <- onto$attributes %>% filter(!source %in% c("harmonised", "imported"))
 
   assertLogical(x = exact, len = 1, any.missing = FALSE)
   assertLogical(x = tree, len = 1, any.missing = FALSE)
 
   attrib <- quos(...)
-  # return(attrib)
 
   if(length(attrib) == 0){
     return(onto)
