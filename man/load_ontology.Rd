@@ -2,7 +2,7 @@
 % Please edit documentation in R/load_ontology.R
 \name{load_ontology}
 \alias{load_ontology}
-\title{Load a gazetteer}
+\title{Load an ontology}
 \usage{
 load_ontology(ontoDir)
 }
@@ -12,12 +12,9 @@ load is stored. It can be omitted in case the option "onto_path" has been
 define (see \code{getOption("onto_path")}).}
 }
 \description{
-Load a gazetteer
+Load an ontology
 }
-\details{
-A \href{https://en.wikipedia.org/wiki/Gazetteer}{gezatteer} is a
-directory "that contains information concerning the geographical makeup,
-social statistics and physical features of a country, region, or
-continent", or in the case here, additionally the ontological relations of
-the areal data.
+\examples{
+load_ontology(system.file("extdata", "territories.rds",
+                          package = "ontologics"))
 }

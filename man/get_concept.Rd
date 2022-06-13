@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_concept.R
 \name{get_concept}
 \alias{get_concept}
-\title{Get a concept from an ontology}
+\title{Get a concept in an ontology}
 \usage{
 get_concept(..., exact = TRUE, tree = FALSE, missing = FALSE, ontoDir = NULL)
 }
@@ -23,7 +23,7 @@ which to search is stored. It can be omitted in case the option "onto_path"
 has been define (see \code{getOption("onto_path")}).}
 }
 \description{
-Get a concept from an ontology
+Get a concept in an ontology
 }
 \examples{
 \dontrun{

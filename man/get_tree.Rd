@@ -4,10 +4,10 @@
 \alias{get_tree}
 \title{Get the ontology tree}
 \usage{
-get_tree(concepts, top)
+get_tree(onto, top)
 }
 \arguments{
-\item{concepts}{\code{\link[=tibble]{tibble(1)}}\cr the concepts table of an ontology.}
+\item{onto}{\code{\link[=tibble]{tibble(1)}}\cr the concepts table of an ontology.}
 
 \item{top}{\code{\link[=character]{character(1)}}\cr the ID from which to derive the
 tree.}
