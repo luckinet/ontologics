@@ -77,51 +77,155 @@
 <!-- badges: end --><div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>The <code>ontologics</code> package provides tools to build and work with an ontology (linked vocabulary) in a tidy workflow.</p>
-<p>And ontology is …</p>
-<p>We currently use the FAO-caliper standard for ontologies (but other data structures might be supported in the future), with the following setup …</p>
+<p>The <code>ontologics</code> package provides tools to build and work with an ontology of <a href="https://en.wikipedia.org/wiki/Linked_data" class="external-link">linked (open) data</a> in a tidy workflow. In the current workflow the data are only available at the three star level in comma-separated values tables, or actually an R-optimised *.rds file of such a table.</p>
+<p>The type of ontology is inspired by the <a href="https://datalab.review.fao.org/datalab/caliper/web/" class="external-link">FAO caliper</a> platform and makes use of the Simple Knowledge Organisation System (<a href="https://www.w3.org/TR/skos-reference/" class="external-link">SKOS</a>).</p>
 <p>The key tasks, beyond creating a formally valid ontology, is <em>extracting</em> concepts and their relation to other concepts and <em>mapping</em> new concepts to an existing ontology to capture and set potentially deviating definitions into relation.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<ol style="list-style-type: decimal"><li>Install the official version from CRAN:</li></ol>
+<p>Install the official version from CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ontologics"</span><span class="op">)</span></code></pre></div>
-<p>or the latest development version from github:</p>
+<p>Install the latest development version from github:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"luckinet/ontologics"</span><span class="op">)</span></code></pre></div>
-<!-- 2) The [vignette](https://ehrmanns.github.io/geometr/articles/geometr.html) gives an in depth introduction, explains the take on interoperability and discusses the spatial class `geom` that comes with `geometr`. --><!-- 3) Have fun being a [geometer](https://en.wikipedia.org/wiki/List_of_geometers)\! -->
 </div>
 <div class="section level2">
-<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+<h2 id="create-an-ontology">Create an ontology…<a class="anchor" aria-label="anchor" href="#create-an-ontology"></a>
 </h2>
-<p>Create an ontology</p>
+<p>An ontology is any data structure that stores concept of any knowledge field in a linked way. It is typically built on a set of standardised/harmonised terms that have a clear definition and potentially some attributes. According to the SKOS, concepts can have semantic relations or can be mapped to one another. Semantic relations describe how <em>harmonised concepts</em> <strong>relate</strong> to one another and mappings describe which concepts <em>from different vocabularies</em> should be <strong>linked</strong> to one another.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># matches &lt;- tibble(new = c(...),</span>
-<span class="co">#                   old = c(...))</span></code></pre></div>
-<p>Extract either the unique concepts …</p>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/luckinet/ontologics" class="external-link">ontologics</a></span><span class="op">)</span>
+
+<span class="co"># work in process</span>
+
+<span class="co"># for now, load an internal ontology</span>
+<span class="va">cropOntology</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"crops.rds"</span>, package <span class="op">=</span> <span class="st">"ontologics"</span><span class="op">)</span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="build-an-ontology-by-adding-incoming-concepts">Build an ontology by adding incoming concepts<a class="anchor" aria-label="anchor" href="#build-an-ontology-by-adding-incoming-concepts"></a>
+</h2>
+<p>When an ontology exists already, it can be used either by looking up which concepts exist in it, which relations the concepts have among each other or by adding and linking new concepts to the already existing concepts.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># get_concept(label_en = matches$old)</span></code></pre></div>
-<p>… or a tree of concepts related to a focal concept</p>
+<code class="sourceCode R"><span class="co"># already existing ontology for some project about crops</span>
+<span class="op">(</span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/load_ontology.html">load_ontology</a></span><span class="op">(</span>ontoDir <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 73 × 6</span>
+<span class="co">#&gt;    code  broader label_en              class source     external</span>
+<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;                 &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;   </span>
+<span class="co">#&gt;  1 _01   &lt;NA&gt;    BIOENERGY CROPS       group harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  2 _0101 _01     Bioenergy herbaceous  class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  3 _0102 _01     Bioenergy woody       class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  4 _0103 _01     Other bioenergy crops class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  5 _02   &lt;NA&gt;    CEREALS               group harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  6 _0201 _02     Barley                class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  7 _0202 _02     Maize                 class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  8 _0203 _02     Millets               class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  9 _0204 _02     Oats                  class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt; 10 _0205 _02     Other cereals         class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt; # … with 63 more rows</span>
+
+<span class="co"># new concepts that occur in some dataset, which should be harmonised with the ontology</span>
+<span class="va">newConcepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Wheat"</span>, <span class="st">"NUTS"</span>, <span class="st">"Avocado"</span><span class="op">)</span></code></pre></div>
+<p>The new concepts are from different conceptual levels, both ‘Wheat’ and ‘Avocado’ are the crop itself, while ‘NUTS’ is an aggregate of various crops (such as walnut, hazelnut, etc). Let’s first find out, whether these concepts are in fact new concepts because they are missing from the ontology.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># get_tree()</span></code></pre></div>
-<p>Also, get those concepts that are missing from a set</p>
+<code class="sourceCode R"><span class="op">(</span><span class="va">missingConcepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_concept.html">get_concept</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="va">newConcepts</span>, missing <span class="op">=</span> <span class="cn">TRUE</span>, ontoDir <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] "Avocado"</span></code></pre></div>
+<p>This tells us that that both ‘NUTS’ and ‘Wheat’ don’t seem to be missing from the ontology. We try to extract these concepts…</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># get_concept(label_en = matches$old, missing = TRUE)</span></code></pre></div>
-<p>Provide new concepts (that are so far unlinked)</p>
+<code class="sourceCode R"><span class="fu"><a href="reference/get_concept.html">get_concept</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="va">newConcepts</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, ontoDir <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 2 × 6</span>
+<span class="co">#&gt;   code  broader label_en class source     external</span>
+<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;   </span>
+<span class="co">#&gt; 1 _0209 _02     Wheat    class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt; 2 _10   &lt;NA&gt;    NUTS     group harmonised &lt;NA&gt;</span></code></pre></div>
+<p>… and see that ‘Wheat’ is a <em>class</em> and not a <em>crop</em> and ‘NUTS’ doesn’t have any <em>broader</em> concept. We should probably check the hierarchical structure of the ontology for these two concepts as well. For ‘NUTS’ we can ask directly for the respective <em>code</em> and for ‘Wheat’ we would ask for the <em>broader</em> code. We see already here that the code has the same length, so ‘NUTS’ and whatever the parent of ‘Wheat’ are should be at the same hierarchical level.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># set_concept(new = c(),</span>
-<span class="co">#             broader = c(), # the labels 'new' should be nested into</span>
-<span class="co">#             class = , # try to keep that as conservative as possible and only come up with new classes, if really needed</span>
-<span class="co">#             source = thisDataset)</span></code></pre></div>
-<p>Map/link those new concepts to existing concepts</p>
+<code class="sourceCode R"><span class="co"># note that this time we are not querring 'label_en' but 'code'</span>
+<span class="fu"><a href="reference/get_concept.html">get_concept</a></span><span class="op">(</span>code <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"_02"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontoDir <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 10 × 6</span>
+<span class="co">#&gt;    code  broader label_en      class source     external</span>
+<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;   </span>
+<span class="co">#&gt;  1 _02   &lt;NA&gt;    CEREALS       group harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  2 _0201 _02     Barley        class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  3 _0202 _02     Maize         class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  4 _0203 _02     Millets       class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  5 _0204 _02     Oats          class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  6 _0205 _02     Other cereals class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  7 _0206 _02     Rice          class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  8 _0207 _02     Rye           class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt;  9 _0208 _02     Sorghum       class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt; 10 _0209 _02     Wheat         class harmonised &lt;NA&gt;</span>
+<span class="fu"><a href="reference/get_concept.html">get_concept</a></span><span class="op">(</span>code <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"_10"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontoDir <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 3 × 6</span>
+<span class="co">#&gt;   code  broader label_en   class source     external</span>
+<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;   </span>
+<span class="co">#&gt; 1 _10   &lt;NA&gt;    NUTS       group harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt; 2 _1001 _10     Treenuts   class harmonised &lt;NA&gt;    </span>
+<span class="co">#&gt; 3 _1002 _10     Other nuts class harmonised &lt;NA&gt;</span></code></pre></div>
+<p>It seems that ‘NUTS’ is not missing from the ontology, and has two child concepts. ‘Wheat’ is also not missing, but is defined as the wrong concept of type <em>class</em>, hence the crop ‘Wheat’ is in fact missing. ‘Avocado’ is also missing and has to be specified as new harmonised concept together with ‘Wheat’.</p>
+<p>By studying the ontology (as above), we can identify the semantic relation between the new concepts and the already harmonised concepts, in other words, into which already existing concepts the new harmonised concepts shall be nested. For the new harmonised concepts, we chose the lower capital letter words to show the difference between those and the external concepts.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># set_mapping(concept = ...,</span>
-<span class="co">#             external = matches$new,</span>
-<span class="co">#             match = , # in most cases that should be "close", see ?newMapping</span>
-<span class="co">#             source = thisDataset,</span>
-<span class="co">#             certainty = ) # value from 1:3</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="reference/new_concept.html">new_concept</a></span><span class="op">(</span>new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wheat"</span>, <span class="st">"avocado"</span><span class="op">)</span>,
+            broader <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Wheat"</span>, <span class="st">"Tropical and subtropical Fruit"</span><span class="op">)</span>,
+            class <span class="op">=</span> <span class="st">"crop"</span>,                                         
+            source <span class="op">=</span> <span class="st">"external_dataset"</span>, 
+            ontoDir <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span></code></pre></div>
+<p>Eventually, all new concepts can be mapped to already harmonised concepts. Even though ‘NUTS’ already exists, this also applies to this new concept, because the already existing concept ‘NUTS’ doesn’t necessarily have to be the same as the new concept ‘NUTS’. This all depends on the respective definitions. When setting a new mapping, the type and the certainty of the match have to be defined. For ‘wheat’ this is a <em>close</em> match, because the concepts are very related. for ‘NUTS’ this is, after checking the theoretical definitions also a <em>close</em> match. ‘Avocado’</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/set_mapping.html">set_mapping</a></span><span class="op">(</span>concept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wheat"</span>, <span class="st">"NUTS"</span>, <span class="st">"avocado"</span><span class="op">)</span>,
+            external <span class="op">=</span> <span class="va">newConcepts</span>,
+            match <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"close"</span>, <span class="st">"close"</span>, <span class="st">"broad"</span><span class="op">)</span>, 
+            source <span class="op">=</span> <span class="st">"external_dataset"</span>,
+            certainty <span class="op">=</span> <span class="fl">3</span>, 
+            ontoDir <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span></code></pre></div>
+<p>Now we can check whether the updated ontology is as we’d expect, for example by looking at the tree of the respective items again. We should expect that the new harmonised concepts now appear in the ontology and that they have some link to an external concept defined.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/get_concept.html">get_concept</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="st">"Wheat"</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontoDir <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 2 × 6</span>
+<span class="co">#&gt;   code    broader label_en class source     external             </span>
+<span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;                </span>
+<span class="co">#&gt; 1 _0209   _02     Wheat    class harmonised &lt;NA&gt;                 </span>
+<span class="co">#&gt; 2 _020901 _0209   wheat    crop  imported   external_dataset_C3_1</span>
+<span class="fu"><a href="reference/get_concept.html">get_concept</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="st">"NUTS"</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontoDir <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 3 × 6</span>
+<span class="co">#&gt;   code  broader label_en   class source     external             </span>
+<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;                </span>
+<span class="co">#&gt; 1 _10   &lt;NA&gt;    NUTS       group harmonised external_dataset_C3_2</span>
+<span class="co">#&gt; 2 _1001 _10     Treenuts   class harmonised &lt;NA&gt;                 </span>
+<span class="co">#&gt; 3 _1002 _10     Other nuts class harmonised &lt;NA&gt;</span>
+<span class="fu"><a href="reference/get_concept.html">get_concept</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="st">"FRUIT"</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontoDir <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 9 × 6</span>
+<span class="co">#&gt;   code    broader label_en                       class source     external      </span>
+<span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;                          &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;         </span>
+<span class="co">#&gt; 1 _06     &lt;NA&gt;    FRUIT                          group harmonised &lt;NA&gt;          </span>
+<span class="co">#&gt; 2 _0601   _06     Berries                        class harmonised &lt;NA&gt;          </span>
+<span class="co">#&gt; 3 _0602   _06     Citrus Fruit                   class harmonised &lt;NA&gt;          </span>
+<span class="co">#&gt; 4 _0603   _06     Grapes                         class harmonised &lt;NA&gt;          </span>
+<span class="co">#&gt; 5 _0604   _06     Pome Fruit                     class harmonised &lt;NA&gt;          </span>
+<span class="co">#&gt; 6 _0605   _06     Stone Fruit                    class harmonised &lt;NA&gt;          </span>
+<span class="co">#&gt; 7 _0606   _06     Tropical and subtropical Fruit class harmonised &lt;NA&gt;          </span>
+<span class="co">#&gt; 8 _060601 _0606   avocado                        crop  imported   external_data…</span>
+<span class="co">#&gt; 9 _0607   _06     Other fruit                    class harmonised &lt;NA&gt;</span></code></pre></div>
+<p>We can, moreover check whether the external concepts are properly defined</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">crops_updated</span> <span class="op">&lt;-</span> <span class="fu">read_rds</span><span class="op">(</span>file <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span>
+<span class="va">crops_updated</span><span class="op">$</span><span class="va">attributes</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu">arrange</span><span class="op">(</span><span class="va">source</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 78 × 4</span>
+<span class="co">#&gt;    code                  source           label_en              class</span>
+<span class="co">#&gt;    &lt;chr&gt;                 &lt;chr&gt;            &lt;chr&gt;                 &lt;chr&gt;</span>
+<span class="co">#&gt;  1 external_dataset_B3_3 external_dataset Avocado               &lt;NA&gt; </span>
+<span class="co">#&gt;  2 external_dataset_C3_1 external_dataset Wheat                 &lt;NA&gt; </span>
+<span class="co">#&gt;  3 external_dataset_C3_2 external_dataset NUTS                  &lt;NA&gt; </span>
+<span class="co">#&gt;  4 _01                   harmonised       BIOENERGY CROPS       group</span>
+<span class="co">#&gt;  5 _0101                 harmonised       Bioenergy herbaceous  class</span>
+<span class="co">#&gt;  6 _0102                 harmonised       Bioenergy woody       class</span>
+<span class="co">#&gt;  7 _0103                 harmonised       Other bioenergy crops class</span>
+<span class="co">#&gt;  8 _02                   harmonised       CEREALS               group</span>
+<span class="co">#&gt;  9 _0201                 harmonised       Barley                class</span>
+<span class="co">#&gt; 10 _0202                 harmonised       Maize                 class</span>
+<span class="co">#&gt; # … with 68 more rows</span></code></pre></div>
 </div>
 </div>
   </div>
