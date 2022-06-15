@@ -1,12 +1,11 @@
-#' Get the ontology tree
+#' Make a tree of an ontology
 #'
 #' @param onto [`tibble(1)`][tibble]\cr the concepts table of an ontology.
 #' @param top [`character(1)`][character]\cr the ID from which to derive the
 #'   tree.
 #' @importFrom dplyr filter pull
-#' @export
 
-get_tree <- function(onto, top){
+make_tree <- function(onto, top){
 
   fin <- NULL
   outIDs <- top
