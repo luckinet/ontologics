@@ -2,7 +2,6 @@
 
 export("%>%")
 export(get_concept)
-export(get_tree)
 export(load_ontology)
 export(new_concept)
 export(set_mapping)
