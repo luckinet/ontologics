@@ -1,33 +1,30 @@
 #' Get a concept in an ontology
 #'
-#' @param ... combination of column name and value to filter the column by. The
+#' @param ... combination of column name and value to filter that column by. The
 #'   value to filter by can be provided as regular expression.
-#' @param exact [`logical(1)`][logical]\cr
+#' @param exact [`logical(1)`][logical]\cr whether or not the value in
+#'   \code{...} shall be matched in full, or whether any partial match should be
+#'   returned.
 #' @param tree [`logical(1)`][logical]\cr whether or not to output the whole
 #'   ontology tree starting from the given search terms.
 #' @param missing [`logical(1)`][logical]\cr whether or not to give only those
 #'   values that are currently missing from the ontology.
-#' @param ontoDir [`character(1)`][character]\cr the path where the ontology in
+#' @param path [`character(1)`][character]\cr the path where the ontology in
 #'   which to search is stored. It can be omitted in case the option "onto_path"
 #'   has been define (see \code{getOption("onto_path")}).
 #' @examples
-#' \dontrun{
+#' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
+#'
 #' # exact matches
-#' get_concept(label_en = "Forest land")
+#' get_concept(label_en = "FODDER CROPS", path = ontoDir)
 #'
 #' # use regular expressions ...
-#' get_concept(label_en = "/*orest")
+#' get_concept(label_en = "/*crops", exact = FALSE, path = ontoDir)
 #'
-#' # ... and filter more
-#' get_concept(label_en = "/*orest", class = "landuse group")
-#'
-#' # get all concepts that depend on another concept
-#' get_concept(label_en = "Forest land", tree = TRUE)
-#'
-#' # get all labels (and filter with other functions)
-#' get_concept(labels = TRUE)
-#' }
-#'
+#' # get all concepts that are nested into another concept
+#' get_concept(label_en = "FODDER CROPS", tree = TRUE, path = ontoDir)
+#' @return A table of a subset of the ontology according to the values in
+#'   \code{...}
 #' @importFrom checkmate assertFileExists assertLogical testChoice
 #' @importFrom tibble as_tibble
 #' @importFrom readr read_rds
@@ -40,15 +37,15 @@
 #' @export
 
 get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #labels = FALSE,
-                        ontoDir = NULL){
+                        path = NULL){
 
-  if(!is.null(ontoDir)){
-    assertFileExists(x = ontoDir, access = "rw", extension = "rds")
+  if(!is.null(path)){
+    assertFileExists(x = path, access = "rw", extension = "rds")
   } else {
-    ontoDir <- getOption("onto_path")
+    path <- getOption("onto_path")
   }
 
-  ontology <- read_rds(file = ontoDir)
+  ontology <- read_rds(file = path)
   onto <- left_join(ontology$attributes %>% filter(source %in% c("harmonised", "imported")),
                     ontology$mappings %>% select(-label_en, -class), by = "code") %>%
     select(code, label_en, class, everything())
@@ -121,7 +118,7 @@ get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #label
         newTab <- onto[pos,]
       }
 
-      if(dim(newTab)[1] != 1){
+      if(dim(newTab)[1] != 1 & exact){
         warning(paste0("concept ", j, " (", toSearch[j],") has ", dim(newTab)[1], " entries"), call. = FALSE)
       }
 
@@ -142,9 +139,12 @@ get_concept <- function(..., exact = TRUE, tree = FALSE, missing = FALSE, #label
       pull(code) %>%
       unique()
 
-    temp <- get_tree(onto, topID)
+    temp <- make_tree(onto, topID)
 
   }
+
+  temp <- temp %>%
+    select(code, broader, label_en, class, external)
 
   if(missing){
     return(missTemp)

@@ -18,9 +18,22 @@
 #'   probably unreliable \item 2 = unclear, assigned according to a given
 #'   definition \item 3 = clear, assigned according to a given definition \item
 #'   4 = original, harmonised term (can't be assigned by a user)}.
-#' @param ontoDir [`character(1)`][character]\cr the path where the ontology in
+#' @param path [`character(1)`][character]\cr the path where the ontology in
 #'   which to search is stored. It can be omitted in case the option "onto_path"
 #'   has been define (see \code{getOption("onto_path")}).
+#' @examples
+#' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
+#'
+#' set_mapping(concept = c("BIOENERGY CROPS", "Bioenergy woody", "Other bioenergy crops"),
+#'             external = c("bioenergy plants", "Wood plantation for fuel", "Algae for bioenergy"),
+#'             match = c("close", "broad", "broad"),
+#'             source = "external_dataset",
+#'             certainty = 3,
+#'             path = ontoDir)
+#'
+#' load_ontology(path = ontoDir)
+#' @return No return value, called for the side effect of adding new mappings to
+#'   an ontology.
 #' @importFrom checkmate testIntegerish testCharacter assert assertCharacter
 #'   assertChoice assertIntegerish assertFileExists assertNames
 #' @importFrom tibble tibble
@@ -31,7 +44,7 @@
 #' @export
 
 set_mapping <- function(concept, external = NULL, match = "close", source = NULL,
-                        mappings = NULL, certainty = NULL, ontoDir = NULL){
+                        mappings = NULL, certainty = NULL, path = NULL){
 
   isInt <- testIntegerish(x = concept)
   isChar <- testCharacter(x = concept)
@@ -40,13 +53,13 @@ set_mapping <- function(concept, external = NULL, match = "close", source = NULL
   assertNames(x = match, subset.of = c("close", "exact", "broad", "narrow", "related"))
   assertIntegerish(x = certainty, lower = 1, upper = 3)
 
-  if(!is.null(ontoDir)){
-    assertFileExists(x = ontoDir, access = "rw", extension = "rds")
+  if(!is.null(path)){
+    assertFileExists(x = path, access = "rw", extension = "rds")
   } else {
-    ontoDir <- getOption("onto_path")
+    path <- getOption("onto_path")
   }
 
-  ontology <- read_rds(file = ontoDir)
+  ontology <- read_rds(file = path)
 
   if(length(match) != length(concept)){
     if(length(match) == 1){
@@ -131,6 +144,6 @@ set_mapping <- function(concept, external = NULL, match = "close", source = NULL
     unite(col = external, external, new_code, sep = ", ", na.rm = TRUE) %>%
     mutate(external = if_else(external == "", NA_character_, external))
 
-  write_rds(x = ontology, file = ontoDir)
+  write_rds(x = ontology, file = path)
 
 }

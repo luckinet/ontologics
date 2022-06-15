@@ -1,5 +1,7 @@
-#' Add a new (harmonised) concept to an ontology
+#' Add a new concept to an ontology
 #'
+#' This adds a new concept to an existing ontology to semantically integrate and
+#' thus harmonise it with the already existing ontology.
 #' @param new [`character(.)`][character]\cr the english label(s) of new
 #'   concepts that shall be included in the ontology.
 #' @param broader [`character(.)`][character]\cr the english label(s) of already
@@ -11,12 +13,24 @@
 #' @param source [`character(1)`][character]\cr any character uniquely
 #'   identifying the source dataset of the new concept (for example
 #'   \emph{Author+Year}).
-#' @param overwrite [`logical(1)`][logical] ?
+#' @param overwrite [`logical(1)`][logical] whether or not to overwrite already
+#'   existing concepts.
 #' @param attributes [`tibble()`][tibble]\cr not yet implemented.
-#' @param ontoDir [`character(1)`][character]\cr the path where the ontology in
+#' @param path [`character(1)`][character]\cr the path where the ontology in
 #'   which to search is stored. It can be omitted in case the option "onto_path"
 #'   has been define (see \code{getOption("onto_path")}).
-#' @details bla
+#' @examples
+#' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
+#'
+#' new_concept(new = c("acacia", "miscanthus"),
+#'             broader = c("Bioenergy woody", "Bioenergy herbaceous"),
+#'             class = "crop",
+#'             source = "external_dataset",
+#'             path = ontoDir)
+#'
+#' load_ontology(path = ontoDir)
+#' @return returns invisibly a table of the new harmonised concepts that were
+#'   added to the ontology, or a message that nothing new was added.
 #' @importFrom checkmate testCharacter testIntegerish assert assertFileExists
 #'   assertSubset
 #' @importFrom tibble tibble
@@ -27,7 +41,7 @@
 #' @export
 
 new_concept <- function(new, broader, class = NULL, source, overwrite = FALSE,
-                        attributes = NULL, ontoDir = NULL){
+                        attributes = NULL, path = NULL){
 
   if(is.null(new)){
     return("no new concepts to harmonise.")
@@ -43,13 +57,13 @@ new_concept <- function(new, broader, class = NULL, source, overwrite = FALSE,
   assertCharacter(x = source, any.missing = FALSE)
   assertLogical(x = overwrite, any.missing = FALSE, len = 1)
 
-  if(!is.null(ontoDir)){
-    assertFileExists(x = ontoDir, access = "rw", extension = "rds")
+  if(!is.null(path)){
+    assertFileExists(x = path, access = "rw", extension = "rds")
   } else {
-    ontoDir <- getOption("onto_path")
+    path <- getOption("onto_path")
   }
 
-  ontology <- read_rds(file = ontoDir)
+  ontology <- read_rds(file = path)
 
   if(length(class) != length(new)){
     if(length(class) == 1){
@@ -104,7 +118,7 @@ new_concept <- function(new, broader, class = NULL, source, overwrite = FALSE,
       filter(label_en == broader[i]) %>%
       pull(code)
 
-    nestedID <- get_tree(ontology$mappings, broaderID) %>%
+    nestedID <- make_tree(ontology$mappings, broaderID) %>%
       filter(broader == broaderID) %>%
       pull(code)
 
@@ -131,7 +145,7 @@ new_concept <- function(new, broader, class = NULL, source, overwrite = FALSE,
 
   }
 
-  write_rds(x = ontology, file = ontoDir)
+  write_rds(x = ontology, file = path)
   if(!is.null(newOut)){
     invisible(newOut)
   } else {
