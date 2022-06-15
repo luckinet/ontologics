@@ -11,7 +11,7 @@ set_mapping(
   source = NULL,
   mappings = NULL,
   certainty = NULL,
-  ontoDir = NULL
+  path = NULL
 )
 }
 \arguments{
@@ -38,10 +38,26 @@ probably unreliable \item 2 = unclear, assigned according to a given
 definition \item 3 = clear, assigned according to a given definition \item
 4 = original, harmonised term (can't be assigned by a user)}.}
 
-\item{ontoDir}{\code{\link[=character]{character(1)}}\cr the path where the ontology in
+\item{path}{\code{\link[=character]{character(1)}}\cr the path where the ontology in
 which to search is stored. It can be omitted in case the option "onto_path"
 has been define (see \code{getOption("onto_path")}).}
 }
+\value{
+No return value, called for the side effect of adding new mappings to
+an ontology.
+}
 \description{
 Extend an ontology by creating mappings to external vocabularies.
+}
+\examples{
+ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
+
+set_mapping(concept = c("BIOENERGY CROPS", "Bioenergy woody", "Other bioenergy crops"),
+            external = c("bioenergy plants", "Wood plantation for fuel", "Algae for bioenergy"),
+            match = c("close", "broad", "broad"),
+            source = "external_dataset",
+            certainty = 3,
+            path = ontoDir)
+
+load_ontology(path = ontoDir)
 }

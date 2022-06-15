@@ -3,6 +3,9 @@
 \name{\%>\%}
 \alias{\%>\%}
 \title{re-export magrittr pipe operator}
+\value{
+No return value, simply re-exporting the pipe operator
+}
 \description{
 re-export magrittr pipe operator
 }

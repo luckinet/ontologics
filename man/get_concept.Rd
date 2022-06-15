@@ -4,13 +4,15 @@
 \alias{get_concept}
 \title{Get a concept in an ontology}
 \usage{
-get_concept(..., exact = TRUE, tree = FALSE, missing = FALSE, ontoDir = NULL)
+get_concept(..., exact = TRUE, tree = FALSE, missing = FALSE, path = NULL)
 }
 \arguments{
-\item{...}{combination of column name and value to filter the column by. The
+\item{...}{combination of column name and value to filter that column by. The
 value to filter by can be provided as regular expression.}
 
-\item{exact}{\code{\link[=logical]{logical(1)}}\cr}
+\item{exact}{\code{\link[=logical]{logical(1)}}\cr whether or not the value in
+\code{...} shall be matched in full, or whether any partial match should be
+returned.}
 
 \item{tree}{\code{\link[=logical]{logical(1)}}\cr whether or not to output the whole
 ontology tree starting from the given search terms.}
@@ -18,29 +20,26 @@ ontology tree starting from the given search terms.}
 \item{missing}{\code{\link[=logical]{logical(1)}}\cr whether or not to give only those
 values that are currently missing from the ontology.}
 
-\item{ontoDir}{\code{\link[=character]{character(1)}}\cr the path where the ontology in
+\item{path}{\code{\link[=character]{character(1)}}\cr the path where the ontology in
 which to search is stored. It can be omitted in case the option "onto_path"
 has been define (see \code{getOption("onto_path")}).}
+}
+\value{
+A table of a subset of the ontology according to the values in
+\code{...}
 }
 \description{
 Get a concept in an ontology
 }
 \examples{
-\dontrun{
+ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
+
 # exact matches
-get_concept(label_en = "Forest land")
+get_concept(label_en = "FODDER CROPS", path = ontoDir)
 
 # use regular expressions ...
-get_concept(label_en = "/*orest")
+get_concept(label_en = "/*crops", exact = FALSE, path = ontoDir)
 
-# ... and filter more
-get_concept(label_en = "/*orest", class = "landuse group")
-
-# get all concepts that depend on another concept
-get_concept(label_en = "Forest land", tree = TRUE)
-
-# get all labels (and filter with other functions)
-get_concept(labels = TRUE)
-}
-
+# get all concepts that are nested into another concept
+get_concept(label_en = "FODDER CROPS", tree = TRUE, path = ontoDir)
 }

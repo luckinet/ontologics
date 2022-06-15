@@ -4,17 +4,22 @@
 \alias{load_ontology}
 \title{Load an ontology}
 \usage{
-load_ontology(ontoDir)
+load_ontology(path)
 }
 \arguments{
-\item{ontoDir}{\code{\link[=character]{character(1)}}\cr the path where the ontology to
+\item{path}{\code{\link[=character]{character(1)}}\cr the path where the ontology to
 load is stored. It can be omitted in case the option "onto_path" has been
 define (see \code{getOption("onto_path")}).}
+}
+\value{
+A table of the full ontology (i.e., where attribute and mapping
+tables are joined).
 }
 \description{
 Load an ontology
 }
 \examples{
-load_ontology(system.file("extdata", "territories.rds",
-                          package = "ontologics"))
+ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
+
+load_ontology(path = ontoDir)
 }

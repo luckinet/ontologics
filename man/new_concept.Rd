@@ -2,7 +2,7 @@
 % Please edit documentation in R/new_concept.R
 \name{new_concept}
 \alias{new_concept}
-\title{Add a new (harmonised) concept to an ontology}
+\title{Add a new concept to an ontology}
 \usage{
 new_concept(
   new,
@@ -11,7 +11,7 @@ new_concept(
   source,
   overwrite = FALSE,
   attributes = NULL,
-  ontoDir = NULL
+  path = NULL
 )
 }
 \arguments{
@@ -30,17 +30,31 @@ relation, see Details.}
 identifying the source dataset of the new concept (for example
 \emph{Author+Year}).}
 
-\item{overwrite}{\code{\link[=logical]{logical(1)}} ?}
+\item{overwrite}{\code{\link[=logical]{logical(1)}} whether or not to overwrite already
+existing concepts.}
 
 \item{attributes}{\code{\link[=tibble]{tibble()}}\cr not yet implemented.}
 
-\item{ontoDir}{\code{\link[=character]{character(1)}}\cr the path where the ontology in
+\item{path}{\code{\link[=character]{character(1)}}\cr the path where the ontology in
 which to search is stored. It can be omitted in case the option "onto_path"
 has been define (see \code{getOption("onto_path")}).}
 }
-\description{
-Add a new (harmonised) concept to an ontology
+\value{
+returns invisibly a table of the new harmonised concepts that were
+added to the ontology, or a message that nothing new was added.
 }
-\details{
-bla
+\description{
+This adds a new concept to an existing ontology to semantically integrate and
+thus harmonise it with the already existing ontology.
+}
+\examples{
+ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
+
+new_concept(new = c("acacia", "miscanthus"),
+            broader = c("Bioenergy woody", "Bioenergy herbaceous"),
+            class = "crop",
+            source = "external_dataset",
+            path = ontoDir)
+
+load_ontology(path = ontoDir)
 }
