@@ -30,8 +30,9 @@
 #' @importFrom tibble as_tibble
 #' @importFrom readr read_rds
 #' @importFrom tidyselect everything
+#' @importFrom tidyr separate_rows
 #' @importFrom rlang quos eval_tidy := sym
-#' @importFrom dplyr filter pull select
+#' @importFrom dplyr filter pull select rename
 #' @importFrom purrr map map_dfc
 #' @importFrom stringr str_which str_sub
 #' @importFrom magrittr set_names
@@ -73,41 +74,51 @@ get_concept <- function(..., regex = FALSE, tree = FALSE, missing = FALSE,
     attrib <- attrib[sbst]
   }
 
-  codes <- map(.x = seq_along(attrib), .f = function(ix){
+  matches <- map(.x = seq_along(attrib), .f = function(ix){
     if(regex){
 
       onto %>%
-        filter(str_detect(onto[[names(attrib)[ix]]], paste0(attrib[[ix]], collapse = "|"))) %>%
-        pull(code)
+        filter(str_detect(onto[[names(attrib)[ix]]], paste0(attrib[[ix]], collapse = "|")))
 
     } else{
 
       toSearch <- as.character(eval_tidy(attrib[[ix]]))
-      onto %>%
-        filter(!!sym(names(attrib)[ix]) %in% toSearch) %>%
-        pull(code)
+      extConcp <- tibble(!!sym(names(attrib)[ix]) := toSearch, external = toSearch)
+
+      temp <- onto %>%
+        filter(!!sym(names(attrib)[ix]) %in% toSearch)
+
+      toOut <- temp %>%
+        filter(source %in% c("harmonised", "imported")) %>%
+        select(-external) %>%
+        left_join(extConcp, by = names(attrib)[ix])
+      toMatch <- temp %>%
+        filter(!source %in% c("harmonised", "imported"))
+
+      if(dim(toMatch)[1] != 0){
+        toOut <- onto %>%
+          filter(str_detect(external, paste0(toMatch$code, collapse = "|"))) %>%
+          separate_rows(external, sep = ", ") %>%
+          rename(extCode = external) %>%
+          left_join(toMatch %>% select(extCode = code, external = label_en), by = "extCode") %>%
+          filter(!is.na(external)) %>%
+          select(-extCode) %>%
+          bind_rows(toOut, .)
+      }
+
+      toOut <- extConcp %>%
+        select(external) %>%
+        left_join(toOut, by = "external")
 
     }
   })
 
-  codes <- Reduce(intersect, codes)
+  # codes <- Reduce(intersect, codes)
+  temp <- bind_rows(matches)
 
-  temp <- onto %>%
-    filter(code %in% codes)
-
-  # if missing = TRUE (regex must be FALSE) and thus we can join the input
-  # concepts with the temp output  to find which concepts are missing
   if(missing){
 
-    temp <- map_dfc(.x = seq_along(attrib), .f = function(ix){
-
-      toSearch <- as.character(eval_tidy(attrib[[ix]]))
-      tibble(!!sym(names(attrib)[ix]) := toSearch)
-
-    }) %>%
-      expand.grid() %>%
-      as_tibble() %>%
-      left_join(temp, by = names(attrib)) %>%
+    temp <- temp %>%
       filter(is.na(code))
 
   } else {
