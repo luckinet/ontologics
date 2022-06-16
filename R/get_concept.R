@@ -30,7 +30,7 @@
 #' @importFrom tibble as_tibble
 #' @importFrom readr read_rds
 #' @importFrom tidyselect everything
-#' @importFrom rlang exprs eval_tidy := sym
+#' @importFrom rlang quos eval_tidy := sym
 #' @importFrom dplyr filter pull select
 #' @importFrom purrr map map_dfc
 #' @importFrom stringr str_which str_sub
@@ -58,7 +58,7 @@ get_concept <- function(..., regex = FALSE, tree = FALSE, missing = FALSE,
                     ontology$mappings %>% select(-label_en, -class), by = "code") %>%
     select(code, label_en, class, everything())
 
-  attrib <- exprs(..., .named = TRUE)
+  attrib <- quos(..., .named = TRUE)
   # return(attrib)
 
   if(length(attrib) == 0){
@@ -73,13 +73,6 @@ get_concept <- function(..., regex = FALSE, tree = FALSE, missing = FALSE,
     attrib <- attrib[sbst]
   }
 
-  # temp <- data.frame(matrix(ncol = length(colnames(onto)), nrow = 0, data = NA_character_)) %>%
-  #   as_tibble() %>%
-  #   set_names(colnames(onto))
-  # empty <- data.frame(matrix(ncol = length(colnames(onto)), nrow = 1, data = NA_character_)) %>%
-  #   as_tibble() %>%
-  #   set_names(colnames(onto))
-
   codes <- map(.x = seq_along(attrib), .f = function(ix){
     if(regex){
 
@@ -89,8 +82,9 @@ get_concept <- function(..., regex = FALSE, tree = FALSE, missing = FALSE,
 
     } else{
 
+      toSearch <- as.character(eval_tidy(attrib[[ix]]))
       onto %>%
-        filter(!!sym(names(attrib)[ix]) %in% attrib[[ix]]) %>%
+        filter(!!sym(names(attrib)[ix]) %in% toSearch) %>%
         pull(code)
 
     }
@@ -107,7 +101,8 @@ get_concept <- function(..., regex = FALSE, tree = FALSE, missing = FALSE,
 
     temp <- map_dfc(.x = seq_along(attrib), .f = function(ix){
 
-      tibble(!!sym(names(attrib)[ix]) := attrib[[ix]])
+      toSearch <- as.character(eval_tidy(attrib[[ix]]))
+      tibble(!!sym(names(attrib)[ix]) := toSearch)
 
     }) %>%
       expand.grid() %>%
@@ -120,6 +115,7 @@ get_concept <- function(..., regex = FALSE, tree = FALSE, missing = FALSE,
     if(tree){
 
       topID <- temp %>%
+        filter(source %in% c("harmonised", "imported")) %>%
         pull(code) %>%
         unique()
 
@@ -131,63 +127,6 @@ get_concept <- function(..., regex = FALSE, tree = FALSE, missing = FALSE,
 
   out <- temp %>%
     select(code, broader, label_en, class, external, source)
-
-  # for(i in seq_along(attrib)){
-  #   toSearch <- as.character(eval_tidy(attrib[[i]]))
-  #   outMiss <- NULL
-  #
-  #   for(j in seq_along(toSearch)){
-  #
-  #     pos <- str_which(string = onto[[names(attrib)[i]]], pattern = toSearch[j])
-  #     posExt <- str_which(string = extConcepts[[names(attrib)[i]]], pattern = toSearch[j])
-  #
-  #     if(regex){
-  #       if(is.na(toSearch[j]) | toSearch[j] == ""){
-  #         newTab <- empty
-  #       } else {
-  #         if(length(pos) == 0 & length(posExt) == 0){
-  #           if(missing){
-  #             outMiss <- c(outMiss, toSearch[j])
-  #             next
-  #           } else{
-  #             stop(paste0("the concept '", toSearch[j], "' (", j, ") is not yet defined."))
-  #           }
-  #         } else {
-  #           if(length(pos) != 0){
-  #             newTab <- onto[onto[[names(attrib)[i]]] %in% toSearch[j],]
-  #           } else if(length(posExt) != 0){
-  #             extTab <- extConcepts$code[posExt]
-  #
-  #             posExt <- map_lgl(seq_along(onto$external), function(ix){
-  #               temp <- str_split(onto$external[ix], ", ")[[1]]
-  #               if(any(temp %in% extTab)){
-  #                 return(TRUE)
-  #               } else {
-  #                 return(FALSE)
-  #               }
-  #             })
-  #             newTab <- onto[posExt,]
-  #           }
-  #         }
-  #       }
-  #     } else {
-  #       newTab <- onto[pos,]
-  #     }
-  #
-  #     if(dim(newTab)[1] != 1 & regex){
-  #       warning(paste0("concept ", j, " (", toSearch[j],") has ", dim(newTab)[1], " entries"), call. = FALSE)
-  #     }
-  #
-  #     if(j == 1){
-  #       temp <- newTab
-  #     } else {
-  #       temp <- temp %>%
-  #         bind_rows(newTab)
-  #     }
-  #
-  #   }
-  #
-  # }
 
   return(out)
 

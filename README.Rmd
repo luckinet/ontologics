@@ -80,6 +80,7 @@ The new concepts are from different conceptual levels, both 'Wheat' and 'Avocado
 ```{r get_concepts missing}
 (missingConcepts <- get_concept(label_en = newConcepts, missing = TRUE, path = cropOntology))
 ```
+
 This tells us that that both 'NUTS' and 'Wheat' don't seem to be missing from the ontology. We try to extract these concepts...
 
 ```{r get_concept}
