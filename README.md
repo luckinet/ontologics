@@ -106,7 +106,7 @@ the ontology.
 #> # A tibble: 1 × 6
 #>   code  broader label_en class external source
 #>   <chr> <chr>   <chr>    <chr> <chr>    <chr> 
-#> 1 <NA>  <NA>    Avocado  <NA>  <NA>     <NA>
+#> 1 <NA>  <NA>    <NA>     <NA>  Avocado  <NA>
 ```
 
 This tells us that that both ‘NUTS’ and ‘Wheat’ don’t seem to be missing
@@ -117,8 +117,8 @@ get_concept(label_en = newConcepts[1:2], path = cropOntology)
 #> # A tibble: 2 × 6
 #>   code  broader label_en class external source    
 #>   <chr> <chr>   <chr>    <chr> <chr>    <chr>     
-#> 1 _0209 _02     Wheat    class <NA>     harmonised
-#> 2 _10   <NA>    NUTS     group <NA>     harmonised
+#> 1 _0209 _02     Wheat    class Wheat    harmonised
+#> 2 _10   <NA>    NUTS     group NUTS     harmonised
 ```
 
 … and see that ‘Wheat’ is a *class* and not a *crop* and ‘NUTS’ doesn’t
