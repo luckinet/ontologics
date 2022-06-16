@@ -4,13 +4,13 @@
 \alias{get_concept}
 \title{Get a concept in an ontology}
 \usage{
-get_concept(..., exact = TRUE, tree = FALSE, missing = FALSE, path = NULL)
+get_concept(..., regex = FALSE, tree = FALSE, missing = FALSE, path = NULL)
 }
 \arguments{
 \item{...}{combination of column name and value to filter that column by. The
 value to filter by can be provided as regular expression.}
 
-\item{exact}{\code{\link[=logical]{logical(1)}}\cr whether or not the value in
+\item{regex}{\code{\link[=logical]{logical(1)}}\cr whether or not the value in
 \code{...} shall be matched in full, or whether any partial match should be
 returned.}
 
@@ -38,7 +38,8 @@ ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 get_concept(label_en = "FODDER CROPS", path = ontoDir)
 
 # use regular expressions ...
-get_concept(label_en = "/*crops", exact = FALSE, path = ontoDir)
+get_concept(label_en = "/*crops", regex = TRUE, path = ontoDir)
+get_concept(label_en = "/*crops", broader = "_05", regex = TRUE, path = ontoDir)
 
 # get all concepts that are nested into another concept
 get_concept(label_en = "FODDER CROPS", tree = TRUE, path = ontoDir)
