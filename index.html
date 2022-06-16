@@ -42,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -138,15 +138,15 @@
 <span class="co">#&gt; # A tibble: 1 × 6</span>
 <span class="co">#&gt;   code  broader label_en class external source</span>
 <span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; </span>
-<span class="co">#&gt; 1 &lt;NA&gt;  &lt;NA&gt;    Avocado  &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;</span></code></pre></div>
+<span class="co">#&gt; 1 &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;     &lt;NA&gt;  Avocado  &lt;NA&gt;</span></code></pre></div>
 <p>This tells us that that both ‘NUTS’ and ‘Wheat’ don’t seem to be missing from the ontology. We try to extract these concepts…</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/get_concept.html">get_concept</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="va">newConcepts</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, path <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 2 × 6</span>
 <span class="co">#&gt;   code  broader label_en class external source    </span>
 <span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;     </span>
-<span class="co">#&gt; 1 _0209 _02     Wheat    class &lt;NA&gt;     harmonised</span>
-<span class="co">#&gt; 2 _10   &lt;NA&gt;    NUTS     group &lt;NA&gt;     harmonised</span></code></pre></div>
+<span class="co">#&gt; 1 _0209 _02     Wheat    class Wheat    harmonised</span>
+<span class="co">#&gt; 2 _10   &lt;NA&gt;    NUTS     group NUTS     harmonised</span></code></pre></div>
 <p>… and see that ‘Wheat’ is a <em>class</em> and not a <em>crop</em> and ‘NUTS’ doesn’t have any <em>broader</em> concept. We should probably check the hierarchical structure of the ontology for these two concepts as well. For ‘NUTS’ we can ask directly for the respective <em>code</em> and for ‘Wheat’ we would ask for the <em>broader</em> code. We see already here that the code has the same length, so ‘NUTS’ and whatever the parent of ‘Wheat’ are should be at the same hierarchical level.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># note that this time we are not querring 'label_en' but 'code'</span>
