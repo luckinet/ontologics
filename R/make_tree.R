@@ -1,16 +1,16 @@
 #' Make a tree of an ontology
 #'
-#' @param onto [`tibble(1)`][tibble]\cr the concepts table of an ontology.
+#' @param input [`tibble(1)`][tibble]\cr the concepts table of an ontology.
 #' @param top [`character(1)`][character]\cr the ID from which to derive the
 #'   tree.
 #' @importFrom dplyr filter pull
 
-make_tree <- function(onto, top){
+make_tree <- function(input, top){
 
   fin <- NULL
   outIDs <- top
   while(is.null(fin)){
-    childID <- onto %>%
+    childID <- input %>%
       filter(broader %in% top) %>%
       pull(code)
     if(length(childID) != 0){
@@ -21,7 +21,7 @@ make_tree <- function(onto, top){
     }
   }
 
-  temp <- onto %>%
+  temp <- input %>%
     filter(code %in% outIDs)
 
   return(temp)
