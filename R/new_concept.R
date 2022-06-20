@@ -4,7 +4,7 @@
 #' thus harmonise it with the already existing ontology.
 #' @param new [`character(.)`][character]\cr the english label(s) of new
 #'   concepts that shall be included in the ontology.
-#' @param broader [`character(.)`][character]\cr the english label(s) of already
+#' @param broader [`data.frame(.)`][data.frame]\cr the english label(s) of already
 #'   harmonised concepts to which the new concept shall be semantically linked
 #'   via a
 #'   \href{https://www.w3.org/TR/skos-reference/#semantic-relations}{skos:broader}
@@ -13,35 +13,42 @@
 #' @param source [`character(1)`][character]\cr any character uniquely
 #'   identifying the source dataset of the new concept (for example
 #'   \emph{Author+Year}).
-#' @param overwrite [`logical(1)`][logical] whether or not to overwrite already
-#'   existing concepts.
 #' @param attributes [`tibble()`][tibble]\cr not yet implemented.
-#' @param path [`character(1)`][character]\cr the path where the ontology in
-#'   which to search is stored. It can be omitted in case the option "onto_path"
-#'   has been define (see \code{getOption("onto_path")}).
+#' @param ontology [`ontology(1)`][list]\cr either a path where the
+#'   ontology is stored, or an already loaded ontology.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
+#' onto <- load_ontology(name = "crops", path = ontoDir)
 #'
-#' new_concept(new = c("acacia", "miscanthus"),
-#'             broader = c("Bioenergy woody", "Bioenergy herbaceous"),
-#'             class = "crop",
-#'             source = "external_dataset",
-#'             path = ontoDir)
+#' concepts <- data.frame(old = c("Bioenergy woody", "Bioenergy herbaceous"),
+#'                        new = c("acacia", "miscanthus"))
 #'
-#' load_ontology(path = ontoDir)
+#' onto <- new_source(name = "externalDataset",
+#'                    description = "a vocabulary",
+#'                    homepage = "https://www.something.net",
+#'                    license = "CC-BY-0",
+#'                    ontology = onto)
+#'
+#' onto <- get_concept(terms = concepts$old, ontology = onto) %>%
+#'   new_concept(new = concepts$new,
+#'               broader = .,
+#'               class = "crop",
+#'               source = "externalDataset",
+#'               ontology = onto)
 #' @return returns invisibly a table of the new harmonised concepts that were
 #'   added to the ontology, or a message that nothing new was added.
 #' @importFrom checkmate testCharacter testIntegerish assert assertFileExists
-#'   assertSubset
+#'   assertSubset assertDataFrame
 #' @importFrom tibble tibble
 #' @importFrom dplyr filter pull bind_rows arrange
 #' @importFrom stringr str_detect str_split
 #' @importFrom readr read_rds write_rds
 #' @importFrom utils tail
+#' @importFrom methods new
 #' @export
 
-new_concept <- function(new, broader, class = NULL, source, overwrite = FALSE,
-                        attributes = NULL, path = NULL){
+new_concept <- function(new, broader, class = NULL, source, #overwrite = FALSE,
+                        attributes = NULL, ontology = NULL){
 
   if(is.null(new)){
     return("no new concepts to harmonise.")
@@ -50,20 +57,37 @@ new_concept <- function(new, broader, class = NULL, source, overwrite = FALSE,
   if(!newChar){
     new <- as.character(new)
   }
-  isInt <- testIntegerish(x = broader)
-  isChar <- testCharacter(x = broader)
-  assert(isInt, isChar)
+  assertDataFrame(x = broader)
+  assertNames(x = names(broader), must.include = c("code", "label_en", "class"))
   assertCharacter(x = class, any.missing = FALSE)
   assertCharacter(x = source, any.missing = FALSE)
-  assertLogical(x = overwrite, any.missing = FALSE, len = 1)
 
-  if(!is.null(path)){
-    assertFileExists(x = path, access = "rw", extension = "rds")
+  if(inherits(x = ontology, what = "onto")){
+    isPath <- FALSE
   } else {
-    path <- getOption("onto_path")
+    assertFileExists(x = ontology, access = "rw", extension = "rds")
+    theName <- tail(str_split(string = ontology, "/")[[1]], 1)
+    theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
+
+    ontology <- load_ontology(name = theName, path = ontology)
+    isPath <- TRUE
   }
 
-  ontology <- read_rds(file = path)
+  onto <- ontology@concepts %>%
+    left_join(ontology@labels, by = "code") %>%
+    left_join(ontology@sources %>% select(sourceID, sourceName), by = "sourceID") %>%
+    left_join(ontology@mappings, by = "code")
+
+  testConcept <- broader %>%
+    select(code, label_en, class) %>%
+    left_join(onto, by = c("code", "label_en", "class"))
+
+  if(any(is.na(testConcept$sourceID))){
+    missingConcepts <- testConcept %>%
+      filter(is.na(sourceID)) %>%
+      pull(label_en)
+    stop("the concepts '", paste0(missingConcepts, collapse = ", "), "' don't exist yet as harmonised concepts, please first define them (see function new_concept).")
+  }
 
   if(length(class) != length(new)){
     if(length(class) == 1){
@@ -73,52 +97,53 @@ new_concept <- function(new, broader, class = NULL, source, overwrite = FALSE,
     }
   }
 
-  if(length(broader) != length(new)){
-    if(length(broader) == 1){
-      broader <- rep(x = broader, length.out = length(new))
-    } else {
-      stop("the number of elements in 'broader' is neither the same as in 'new' nor 1.")
-    }
+  srcID <- ontology@sources %>%
+    filter(sourceName %in% source) %>%
+    pull(sourceID)
+
+  if(length(srcID) == 0){
+    stop("please first define the source '", source, "' (see function new_source).")
   }
 
-  prevID <- str_detect(string = ontology$attributes$source, pattern = source)
+  prevID <- str_detect(string = onto$sourceName, pattern = source)
   if(!any(prevID)){
     prevID <- 0
   } else {
-    prevID <- str_split(string = max(ontology$labels$code[prevID], na.rm = TRUE), pattern = "_")[[1]]
-    prevID <- as.numeric(tail(prevID, 1))
+    prevID <- as.numeric(str_split(onto$code[prevID], pattern = "_", simplify = TRUE)[,3])
+    prevID <- max(prevID, na.rm = TRUE)
     if(is.na(prevID)) prevID <- 0
   }
 
-  newOut <- NULL
+  newConcept <- ontology@concepts
+  newLabels <- ontology@labels
+  newMappings <- ontology@mappings
   for(i in seq_along(new)){
     newLabel <- new[i]
     newClass <- class[i]
 
-    dups <- grep(pattern = newLabel, x = ontology$attributes$label_en)
-    if(length(dups) != 0){
-      if(overwrite){
-        print(ontology$attributes[dups,])
-        continue <- "maybe"
-        while(!continue %in% c("yes", "no")){
-          continue <- readline(prompt = paste0("the concept '", newLabel, "' has already been defined, define anyway? (yes/no): "))
-        }
-        if(continue != "yes"){
-          next
-        }
-      } else {
-        next
-      }
-    }
+    # testNew <-dups <- grep(pattern = newLabel, x = ontology$attributes$label_en)
+    # if(length(dups) != 0){
+    #   if(overwrite){
+    #     print(ontology$attributes[dups,])
+    #     continue <- "maybe"
+    #     while(!continue %in% c("yes", "no")){
+    #       continue <- readline(prompt = paste0("the concept '", newLabel, "' has already been defined, define anyway? (yes/no): "))
+    #     }
+    #     if(continue != "yes"){
+    #       next
+    #     }
+    #   } else {
+    #     next
+    #   }
+    # }
 
-    broaderID <- ontology$attributes %>%
-      filter(source == "harmonised")
-    assertSubset(x = broader[i], choices = broaderID$label_en, .var.name = paste0("broader[i] (", broader[i], ")"))
+    broaderID <- onto %>%
+      filter(sourceName == "harmonised")
     broaderID <- broaderID %>%
-      filter(label_en == broader[i]) %>%
+      filter(label_en %in% !!broader$label_en[i]) %>%
       pull(code)
 
-    nestedID <- make_tree(ontology$mappings, broaderID) %>%
+    nestedID <- make_tree(onto, broaderID) %>%
       filter(broader == broaderID) %>%
       pull(code)
 
@@ -131,25 +156,35 @@ new_concept <- function(new, broader, class = NULL, source, overwrite = FALSE,
       nextID <- paste0(tempID, collapse = ".")
     }
 
-    newOut <- tibble(code = as.character(nextID), source = c("imported"),
-                     label_en = newLabel, class = newClass)
-    ontology$attributes <- ontology$attributes %>%
-      bind_rows(newOut) %>%
-      arrange(code, source)
-
-    newMapping <- tibble(code = as.character(nextID), broader = as.character(broaderID),
-                         label_en = newLabel, class = newClass)
-    ontology$mappings <- ontology$mappings %>%
-      bind_rows(newMapping) %>%
-      arrange(code)
+    newConcept <- tibble(code = nextID, sourceID = srcID, broader = broaderID) %>%
+      bind_rows(newConcept)
+    newLabels <- tibble(code = nextID, class = newClass, label_en = newLabel) %>%
+      bind_rows(newLabels)
+    newMappings <- tibble(code = nextID, external = NA_character_) %>%
+      bind_rows(newMappings)
 
   }
 
-  write_rds(x = ontology, file = path)
-  if(!is.null(newOut)){
-    invisible(newOut)
-  } else {
-    message("no new harmonised concepts to add.")
+  newConcept <- newConcept %>%
+    select(code, broader, sourceID) %>%
+    arrange(code)
+  newLabels <- newLabels %>%
+    arrange(code)
+  newMappings <- newMappings %>%
+    arrange(code)
+
+  out <- new(Class = "onto",
+             name = ontology@name,
+             classes = ontology@classes,
+             sources = ontology@sources,
+             concepts = newConcept,
+             labels = newLabels,
+             mappings = newMappings)
+
+  if(isPath){
+    write_rds(x = ontology, file = ontology)
   }
+
+  return(out)
 
 }
