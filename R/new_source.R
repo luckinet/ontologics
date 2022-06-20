@@ -25,11 +25,10 @@
 new_source <- function(name = NULL, description = NULL, homepage = NULL, license = NULL, notes = NULL, ontology = NULL){
 
   assertCharacter(x = name, len = 1)
-  assertCharacter(x = description, len = 1)
-  assertCharacter(x = homepage, len = 1)
-  assertCharacter(x = license, len = 1)
+  assertCharacter(x = description, len = 1, null.ok = TRUE)
+  assertCharacter(x = homepage, len = 1, null.ok = TRUE)
+  assertCharacter(x = license, len = 1, null.ok = TRUE)
   assertCharacter(x = notes, len = 1, null.ok = TRUE)
-  assertClass(x = ontology, classes = "onto")
 
   if(inherits(x = ontology, what = "onto")){
     isPath <- FALSE
