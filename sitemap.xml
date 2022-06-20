@@ -16,6 +16,9 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/reference/dot-makeTreeMap.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_concept.html</loc>
   </url>
   <url>
@@ -28,12 +31,24 @@
     <loc>/reference/make_tree.html</loc>
   </url>
   <url>
+    <loc>/reference/new_class.html</loc>
+  </url>
+  <url>
     <loc>/reference/new_concept.html</loc>
+  </url>
+  <url>
+    <loc>/reference/new_mapping.html</loc>
+  </url>
+  <url>
+    <loc>/reference/new_source.html</loc>
+  </url>
+  <url>
+    <loc>/reference/onto-class.html</loc>
   </url>
   <url>
     <loc>/reference/pipe.html</loc>
   </url>
   <url>
-    <loc>/reference/set_mapping.html</loc>
+    <loc>/reference/show-onto-method.html</loc>
   </url>
 </urlset>

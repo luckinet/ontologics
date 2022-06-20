@@ -53,12 +53,16 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">load_ontology</span><span class="op">(</span><span class="va">path</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">load_ontology</span><span class="op">(</span>name <span class="op">=</span> <span class="cn">NULL</span>, path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>path</dt>
+    <dl><dt>name</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the name of the ontology.</p></dd>
+
+
+<dt>path</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the path where the ontology to
 load is stored. It can be omitted in case the option "onto_path" has been
 define (see <code>getOption("onto_path")</code>).</p></dd>
@@ -74,23 +78,13 @@ tables are joined).</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">ontoDir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"crops.rds"</span>, package <span class="op">=</span> <span class="st">"ontologics"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># start a new/empty ontology ...</span></span>
+<span class="r-in"><span class="fu">load_ontology</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"crops"</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu">load_ontology</span><span class="op">(</span>path <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 73 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    code  broader label_en              class source     external</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> _01   <span style="color: #BB0000;">NA</span>      BIOENERGY CROPS       group harmonised <span style="color: #BB0000;">NA</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> _0101 _01     Bioenergy herbaceous  class harmonised <span style="color: #BB0000;">NA</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> _0102 _01     Bioenergy woody       class harmonised <span style="color: #BB0000;">NA</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> _0103 _01     Other bioenergy crops class harmonised <span style="color: #BB0000;">NA</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> _02   <span style="color: #BB0000;">NA</span>      CEREALS               group harmonised <span style="color: #BB0000;">NA</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> _0201 _02     Barley                class harmonised <span style="color: #BB0000;">NA</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> _0202 _02     Maize                 class harmonised <span style="color: #BB0000;">NA</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> _0203 _02     Millets               class harmonised <span style="color: #BB0000;">NA</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> _0204 _02     Oats                  class harmonised <span style="color: #BB0000;">NA</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> _0205 _02     Other cereals         class harmonised <span style="color: #BB0000;">NA</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 63 more rows</span></span>
+<span class="r-in"><span class="co"># or load an already existing one</span></span>
+<span class="r-in"><span class="fu">load_ontology</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"crops"</span>,</span>
+<span class="r-in">              path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"crops.rds"</span>, package <span class="op">=</span> <span class="st">"ontologics"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"></span>
 </code></pre></div>
     </div>
   </div>

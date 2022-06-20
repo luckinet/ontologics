@@ -181,7 +181,7 @@
             path <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span></code></pre></div>
 <p>Eventually, all new concepts can be mapped to already harmonised concepts. Even though ‘NUTS’ already exists, this also applies to this new concept, because the already existing concept ‘NUTS’ doesn’t necessarily have to be the same as the new concept ‘NUTS’ (<em>note: yes, this is a deliberate example, to make this exact point ;)</em>). This all depends on the respective definitions. When setting a new mapping, the type and the certainty of the match have to be defined. For ‘wheat’ this is a <em>close</em> match, because the concepts are very related. for ‘NUTS’ this is, after checking the theoretical definitions also a <em>close</em> match. ‘Avocado’ is nested into ‘Tropical Fruit’ and thus has the match type <em>broad</em> (because Tropical Fruit is broader than Avocado).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/set_mapping.html">set_mapping</a></span><span class="op">(</span>concept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wheat"</span>, <span class="st">"NUTS"</span>, <span class="st">"avocado"</span><span class="op">)</span>,
+<code class="sourceCode R"><span class="fu">set_mapping</span><span class="op">(</span>concept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wheat"</span>, <span class="st">"NUTS"</span>, <span class="st">"avocado"</span><span class="op">)</span>,
             external <span class="op">=</span> <span class="va">newConcepts</span>,
             match <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"close"</span>, <span class="st">"close"</span>, <span class="st">"broad"</span><span class="op">)</span>, 
             source <span class="op">=</span> <span class="st">"external_dataset"</span>,
@@ -242,6 +242,7 @@
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=ontologics" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/luckinet/ontologics/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/luckinet/ontologics/issues" class="external-link">Report a bug</a></li>
 </ul>
