@@ -4,10 +4,10 @@
 \alias{make_tree}
 \title{Make a tree of an ontology}
 \usage{
-make_tree(onto, top)
+make_tree(input, top)
 }
 \arguments{
-\item{onto}{\code{\link[=tibble]{tibble(1)}}\cr the concepts table of an ontology.}
+\item{input}{\code{\link[=tibble]{tibble(1)}}\cr the concepts table of an ontology.}
 
 \item{top}{\code{\link[=character]{character(1)}}\cr the ID from which to derive the
 tree.}
