@@ -23,6 +23,7 @@ Imports:
     checkmate,
     dplyr,
     magrittr,
+    methods,
     purrr,
     readr,
     rlang,
