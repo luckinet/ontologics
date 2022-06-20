@@ -22,6 +22,17 @@ new_class <- function(class, parent, ontology = NULL){
   assertCharacter(x = parent, len = 1, unique = FALSE)
   assertTRUE(length(class) == length(parent))
 
+  if(inherits(x = ontology, what = "onto")){
+    isPath <- FALSE
+  } else {
+    assertFileExists(x = ontology, access = "rw", extension = "rds")
+    theName <- tail(str_split(string = ontology, "/")[[1]], 1)
+    theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
+
+    ontology <- load_ontology(name = theName, path = ontology)
+    isPath <- TRUE
+  }
+
   newClass <- tibble(class = class, parent = parent)
 
   if(is.na(parent)){

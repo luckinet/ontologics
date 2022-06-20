@@ -69,7 +69,10 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
     isPath <- FALSE
   } else {
     assertFileExists(x = ontology, access = "rw", extension = "rds")
-    ontology <- read_rds(file = ontology)
+    theName <- tail(str_split(string = ontology, "/")[[1]], 1)
+    theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
+
+    ontology <- load_ontology(name = theName, path = ontology)
     isPath <- TRUE
   }
 

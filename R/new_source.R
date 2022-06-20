@@ -31,6 +31,17 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL, license
   assertCharacter(x = notes, len = 1, null.ok = TRUE)
   assertClass(x = ontology, classes = "onto")
 
+  if(inherits(x = ontology, what = "onto")){
+    isPath <- FALSE
+  } else {
+    assertFileExists(x = ontology, access = "rw", extension = "rds")
+    theName <- tail(str_split(string = ontology, "/")[[1]], 1)
+    theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
+
+    ontology <- load_ontology(name = theName, path = ontology)
+    isPath <- TRUE
+  }
+
   if(length(ontology@sources$sourceID) == 0){
     newID <- 1
   } else {
