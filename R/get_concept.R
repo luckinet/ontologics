@@ -108,7 +108,8 @@ get_concept <- function(terms = NULL, ..., regex = FALSE, tree = FALSE, missing 
       left_join(extConcp, by = "label_en") %>%
       distinct()
     toMatch <- tempOut %>%
-      filter(is.na(class))
+      filter(is.na(class)) %>%
+      filter(!label_en %in% toOut$label_en)
 
     if(dim(toMatch)[1] != 0){
       toOut <- onto %>%
