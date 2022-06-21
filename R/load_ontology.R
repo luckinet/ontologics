@@ -22,16 +22,8 @@
 
 load_ontology <- function(name = NULL, path = NULL){
 
-  newOntology <- FALSE
-  if(is.null(path)){
-    newOntology <- TRUE
-  } else {
-    assertFileExists(x = path, access = "r", extension = "rds")
-    temp <- read_rds(path)
-  }
-
   theName <- name
-  if(newOntology){
+  if(is.null(path)){
 
     theClasses <- tibble(level = double(),
                          class = character())
@@ -50,53 +42,71 @@ load_ontology <- function(name = NULL, path = NULL){
     theMappings <- tibble(code = character(),
                           external = character())
 
+    out <- new(Class = "onto",
+               name = theName,
+               classes = theClasses,
+               sources = theSources,
+               concepts = theConcepts,
+               labels = theLabels,
+               mappings = theMappings)
+
   } else {
 
-    # # ask user for the columns in 'temp' that are required to load the ontology
-    # if(is.data.frame(x = temp)){
-    #
-    # } else if(is.list(temp)){
-    #
-    # }
+    assertFileExists(x = path, access = "r", extension = "rds")
+    temp <- read_rds(path)
 
-    # the default (for now) is a list with two tables ('attributes' and 'mappings')
-    theClasses <- temp$attributes %>%
-      rowwise() %>%
-      mutate(level = if_else(nchar(code) == 3, 1, 2)) %>%
-      group_by(class) %>%
-      distinct(level) %>%
-      ungroup() %>%
-      select(level, class)
+    if(inherits(x = temp, what = "onto")) {
 
-    theSources <- temp$attributes %>%
-      mutate(sourceID = seq_along(unique(source)),
-             sourceName = source,
-             description = NA_character_,
-             homepage = NA_character_,
-             license = NA_character_,
-             notes = "imported manually") %>%
-      distinct(sourceID, sourceName, description, homepage, license, notes)
+      out <- temp
 
-    theConcepts <- temp$mappings %>%
-      mutate(sourceID = 1) %>%
-      select(code, broader, sourceID)
+    } else {
 
-    theLabels <- temp$mappings %>%
-      select(code, class, label_en)
+      # # ask user for the columns in 'temp' that are required to load the ontology
+      # if(is.data.frame(x = temp)){
+      #
+      # } else if(is.list(temp)){
+      #
+      # }
 
-    theMappings <- temp$mappings %>%
-      mutate(external = NA_character_) %>%
-      select(code, external)
+      # the default (for now) is a list with two tables ('attributes' and 'mappings')
+      theClasses <- temp$attributes %>%
+        rowwise() %>%
+        mutate(level = if_else(nchar(code) == 3, 1, 2)) %>%
+        group_by(class) %>%
+        distinct(level) %>%
+        ungroup() %>%
+        select(level, class)
+
+      theSources <- temp$attributes %>%
+        mutate(sourceID = seq_along(unique(source)),
+               sourceName = source,
+               description = NA_character_,
+               homepage = NA_character_,
+               license = NA_character_,
+               notes = "imported manually") %>%
+        distinct(sourceID, sourceName, description, homepage, license, notes)
+
+      theConcepts <- temp$mappings %>%
+        mutate(sourceID = 1) %>%
+        select(code, broader, sourceID)
+
+      theLabels <- temp$mappings %>%
+        select(code, class, label_en)
+
+      theMappings <- temp$mappings %>%
+        mutate(external = NA_character_) %>%
+        select(code, external)
+
+      out <- new(Class = "onto",
+                 name = theName,
+                 classes = theClasses,
+                 sources = theSources,
+                 concepts = theConcepts,
+                 labels = theLabels,
+                 mappings = theMappings)
+    }
 
   }
-
-  out <- new(Class = "onto",
-             name = theName,
-             classes = theClasses,
-             sources = theSources,
-             concepts = theConcepts,
-             labels = theLabels,
-             mappings = theMappings)
 
   return(out)
 
