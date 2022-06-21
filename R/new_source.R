@@ -18,7 +18,7 @@
 #'                    ontology = onto)
 #' @importFrom checkmate assertCharacter assertClass
 #' @importFrom tibble tibble
-#' @importFrom dplyr bind_rows
+#' @importFrom dplyr bind_rows distinct
 #' @importFrom methods new
 #' @export
 
@@ -31,20 +31,24 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL, license
   assertCharacter(x = notes, len = 1, null.ok = TRUE)
 
   if(inherits(x = ontology, what = "onto")){
-    isPath <- FALSE
+    ontoPath <- NULL
   } else {
     assertFileExists(x = ontology, access = "rw", extension = "rds")
+    ontoPath <- ontology
     theName <- tail(str_split(string = ontology, "/")[[1]], 1)
     theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
 
-    ontology <- load_ontology(name = theName, path = ontology)
-    isPath <- TRUE
+    ontology <- load_ontology(name = theName, path = ontoPath)
+  }
+
+  if(name %in% ontology@sources$sourceName){
+    warning("the source '", name, "' has already been registered.")
   }
 
   if(length(ontology@sources$sourceID) == 0){
     newID <- 1
   } else {
-    newID <- ontology@sources$sourceID + 1
+    newID <- max(ontology@sources$sourceID) + 1
   }
 
   if(str_detect(name, "_")){
@@ -69,6 +73,10 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL, license
              concepts = ontology@concepts,
              labels = ontology@labels,
              mappings = ontology@mappings)
+
+  if(!is.null(ontoPath)){
+    write_rds(x = out, file = ontoPath)
+  }
 
   return(out)
 }

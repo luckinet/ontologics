@@ -63,14 +63,14 @@ new_concept <- function(new, broader, class = NULL, source, #overwrite = FALSE,
   assertCharacter(x = source, any.missing = FALSE)
 
   if(inherits(x = ontology, what = "onto")){
-    isPath <- FALSE
+    ontoPath <- NULL
   } else {
     assertFileExists(x = ontology, access = "rw", extension = "rds")
+    ontoPath <- ontology
     theName <- tail(str_split(string = ontology, "/")[[1]], 1)
     theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
 
-    ontology <- load_ontology(name = theName, path = ontology)
-    isPath <- TRUE
+    ontology <- load_ontology(name = theName, path = ontoPath)
   }
 
   onto <- ontology@concepts %>%
@@ -109,7 +109,8 @@ new_concept <- function(new, broader, class = NULL, source, #overwrite = FALSE,
   if(!any(prevID)){
     prevID <- 0
   } else {
-    prevID <- as.numeric(str_split(onto$code[prevID], pattern = "_", simplify = TRUE)[,3])
+    prevID <- str_split(onto$code[prevID], pattern = "[.]", simplify = TRUE)
+    prevID <- as.numeric(prevID[, dim(prevID)[2]])
     prevID <- max(prevID, na.rm = TRUE)
     if(is.na(prevID)) prevID <- 0
   }
@@ -121,29 +122,13 @@ new_concept <- function(new, broader, class = NULL, source, #overwrite = FALSE,
     newLabel <- new[i]
     newClass <- class[i]
 
-    # testNew <-dups <- grep(pattern = newLabel, x = ontology$attributes$label_en)
-    # if(length(dups) != 0){
-    #   if(overwrite){
-    #     print(ontology$attributes[dups,])
-    #     continue <- "maybe"
-    #     while(!continue %in% c("yes", "no")){
-    #       continue <- readline(prompt = paste0("the concept '", newLabel, "' has already been defined, define anyway? (yes/no): "))
-    #     }
-    #     if(continue != "yes"){
-    #       next
-    #     }
-    #   } else {
-    #     next
-    #   }
-    # }
-
     broaderID <- onto %>%
       filter(sourceName == "harmonised")
     broaderID <- broaderID %>%
       filter(label_en %in% !!broader$label_en[i]) %>%
       pull(code)
 
-    nestedID <- make_tree(onto, broaderID) %>%
+    nestedID <- make_tree(input = newConcept, top = broaderID) %>%
       filter(broader == broaderID) %>%
       pull(code)
 
@@ -181,8 +166,8 @@ new_concept <- function(new, broader, class = NULL, source, #overwrite = FALSE,
              labels = newLabels,
              mappings = newMappings)
 
-  if(isPath){
-    write_rds(x = ontology, file = ontology)
+  if(!is.null(ontoPath)){
+    write_rds(x = out, file = ontoPath)
   }
 
   return(out)

@@ -23,14 +23,14 @@ new_class <- function(class, parent, ontology = NULL){
   assertTRUE(length(class) == length(parent))
 
   if(inherits(x = ontology, what = "onto")){
-    isPath <- FALSE
+    ontoPath <- NULL
   } else {
     assertFileExists(x = ontology, access = "rw", extension = "rds")
+    ontoPath <- ontology
     theName <- tail(str_split(string = ontology, "/")[[1]], 1)
     theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
 
-    ontology <- load_ontology(name = theName, path = ontology)
-    isPath <- TRUE
+    ontology <- load_ontology(name = theName, path = ontoPath)
   }
 
   newClass <- tibble(class = class, parent = parent)
@@ -57,6 +57,11 @@ new_class <- function(class, parent, ontology = NULL){
              concepts = ontology@concepts,
              labels = ontology@labels,
              mappings = ontology@mappings)
+
+
+  if(!is.null(ontoPath)){
+    write_rds(x = out, file = ontoPath)
+  }
 
   return(out)
 }
