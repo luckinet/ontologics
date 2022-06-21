@@ -1,6 +1,6 @@
 Package: ontologics
 Title: Code-Logics to Handle Ontologies
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: c(
     person("Steffen", "Ehrmann", 
            role = c("aut", "cre"), 
