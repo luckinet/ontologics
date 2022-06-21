@@ -56,10 +56,11 @@ get_concept <- function(terms = NULL, ..., regex = FALSE, tree = FALSE, missing 
 
   if(!inherits(x = ontology, what = "onto")){
     assertFileExists(x = ontology, access = "r", extension = "rds")
+    ontoPath <- ontology
     theName <- tail(str_split(string = ontology, "/")[[1]], 1)
     theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
 
-    ontology <- load_ontology(name = theName, path = ontology)
+    ontology <- load_ontology(name = theName, path = ontoPath)
   }
 
   onto <- ontology@concepts %>%
@@ -102,11 +103,12 @@ get_concept <- function(terms = NULL, ..., regex = FALSE, tree = FALSE, missing 
       filter(label_en %in% terms)
 
     toOut <- tempOut %>%
-      filter(sourceName %in% c("harmonised", "imported")) %>%
+      filter(!is.na(class)) %>%
       select(-external) %>%
-      left_join(extConcp, by = "label_en")
+      left_join(extConcp, by = "label_en") %>%
+      distinct()
     toMatch <- tempOut %>%
-      filter(!sourceName %in% c("harmonised", "imported"))
+      filter(is.na(class))
 
     if(dim(toMatch)[1] != 0){
       toOut <- onto %>%
