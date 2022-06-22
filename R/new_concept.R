@@ -101,6 +101,8 @@ new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = 
     }
   }
 
+  # needs an error message, in case the classes are not yet defined in the ontlogy
+
   srcID <- ontology@sources %>%
     filter(sourceName %in% source) %>%
     pull(sourceID)
@@ -128,8 +130,8 @@ new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = 
     if(!is.null(broader)){
 
       broaderID <- onto %>%
-        filter(sourceName == source)
-      broaderID <- broaderID %>%
+        # filter(sourceName == source)
+        filter(sourceName == ontology@sources$sourceName[1]) %>%
         filter(label_en %in% !!broader$label_en[i]) %>%
         pull(code)
 
