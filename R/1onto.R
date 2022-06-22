@@ -123,6 +123,21 @@ setValidity("onto", function(object){
 
 })
 
+#' View the ontology
+#'
+#' @param ontology [`ontology(1)`][list]\cr the ontology.
+#' @importFrom dplyr left_join
+#' @export
+
+View_onto <- function(ontology = NULL){
+
+  ontology <- ontology@concepts %>%
+    left_join(ontology@labels, by = "code") %>%
+    left_join(ontology@sources %>% select(sourceID, sourceName), by = "sourceID") %>%
+    left_join(ontology@mappings, by = "code")
+  View(ontology)
+}
+
 #' Print onto in the console
 #'
 #' @param object object to \code{show}.
