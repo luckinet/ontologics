@@ -6,7 +6,7 @@
 \usage{
 new_concept(
   new,
-  broader,
+  broader = NULL,
   class = NULL,
   source,
   attributes = NULL,

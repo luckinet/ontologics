@@ -10,8 +10,7 @@ load_ontology(name = NULL, path = NULL)
 \item{name}{\code{\link[=character]{character(1)}}\cr the name of the ontology.}
 
 \item{path}{\code{\link[=character]{character(1)}}\cr the path where the ontology to
-load is stored. It can be omitted in case the option "onto_path" has been
-define (see \code{getOption("onto_path")}).}
+load is stored.}
 }
 \value{
 A table of the full ontology (i.e., where attribute and mapping
@@ -21,10 +20,7 @@ tables are joined).
 Load an ontology
 }
 \examples{
-# start a new/empty ontology ...
-load_ontology(name = "crops")
-
-# or load an already existing one
+# load an already existing ontology
 load_ontology(name = "crops",
               path = system.file("extdata", "crops.rds", package = "ontologics"))
 
