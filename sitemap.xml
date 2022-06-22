@@ -16,6 +16,9 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/reference/View_onto.html</loc>
+  </url>
+  <url>
     <loc>/reference/dot-makeTreeMap.html</loc>
   </url>
   <url>
@@ -50,5 +53,8 @@
   </url>
   <url>
     <loc>/reference/show-onto-method.html</loc>
+  </url>
+  <url>
+    <loc>/reference/start_ontology.html</loc>
   </url>
 </urlset>
