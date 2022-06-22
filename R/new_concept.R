@@ -41,13 +41,13 @@
 #'   assertSubset assertDataFrame
 #' @importFrom tibble tibble
 #' @importFrom dplyr filter pull bind_rows arrange
-#' @importFrom stringr str_detect str_split
+#' @importFrom stringr str_detect str_split str_sub
 #' @importFrom readr read_rds write_rds
 #' @importFrom utils tail
 #' @importFrom methods new
 #' @export
 
-new_concept <- function(new, broader, class = NULL, source, #overwrite = FALSE,
+new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = FALSE,
                         attributes = NULL, ontology = NULL){
 
   if(is.null(new)){
@@ -57,8 +57,7 @@ new_concept <- function(new, broader, class = NULL, source, #overwrite = FALSE,
   if(!newChar){
     new <- as.character(new)
   }
-  assertDataFrame(x = broader)
-  assertNames(x = names(broader), must.include = c("code", "label_en", "class"))
+  assertDataFrame(x = broader, null.ok = TRUE)
   assertCharacter(x = class, any.missing = FALSE)
   assertCharacter(x = source, any.missing = FALSE)
 
@@ -78,15 +77,20 @@ new_concept <- function(new, broader, class = NULL, source, #overwrite = FALSE,
     left_join(ontology@sources %>% select(sourceID, sourceName), by = "sourceID") %>%
     left_join(ontology@mappings, by = "code")
 
-  testConcept <- broader %>%
-    select(code, label_en, class) %>%
-    left_join(onto, by = c("code", "label_en", "class"))
+  if(!is.null(broader)){
 
-  if(any(is.na(testConcept$sourceID))){
-    missingConcepts <- testConcept %>%
-      filter(is.na(sourceID)) %>%
-      pull(label_en)
-    stop("the concepts '", paste0(missingConcepts, collapse = ", "), "' don't exist yet as harmonised concepts, please first define them (see function new_concept).")
+    assertNames(x = names(broader), must.include = c("code", "label_en", "class"))
+
+    testConcept <- broader %>%
+      select(code, label_en, class) %>%
+      left_join(onto, by = c("code", "label_en", "class"))
+
+    if(any(is.na(testConcept$sourceID))){
+      missingConcepts <- testConcept %>%
+        filter(is.na(sourceID)) %>%
+        pull(label_en)
+      stop("the concepts '", paste0(missingConcepts, collapse = ", "), "' don't exist yet as harmonised concepts, please first define them (see function new_concept).")
+    }
   }
 
   if(length(class) != length(new)){
@@ -105,41 +109,52 @@ new_concept <- function(new, broader, class = NULL, source, #overwrite = FALSE,
     stop("please first define the source '", source, "' (see function new_source).")
   }
 
-  prevID <- str_detect(string = onto$sourceName, pattern = source)
-  if(!any(prevID)){
-    prevID <- 0
+  if(!all(is.na(ontology@concepts$code)) & length(ontology@labels$code) == 0){
+    digits <- nchar(ontology@concepts$code[1])
+    newConcept <- tibble(code = character(), broader = character(), sourceID = double())
   } else {
-    prevID <- str_split(onto$code[prevID], pattern = "[.]", simplify = TRUE)
-    prevID <- as.numeric(prevID[, dim(prevID)[2]])
-    prevID <- max(prevID, na.rm = TRUE)
-    if(is.na(prevID)) prevID <- 0
+    digits <- tail(str_split(ontology@concepts$code[1], "[.]")[[1]], 1)
+    digits <- nchar(digits)
+    newConcept <- ontology@concepts
   }
 
-  newConcept <- ontology@concepts
   newLabels <- ontology@labels
   newMappings <- ontology@mappings
+  iter <- 0
   for(i in seq_along(new)){
     newLabel <- new[i]
     newClass <- class[i]
 
-    broaderID <- onto %>%
-      filter(sourceName == "harmonised")
-    broaderID <- broaderID %>%
-      filter(label_en %in% !!broader$label_en[i]) %>%
-      pull(code)
+    if(!is.null(broader)){
 
-    nestedID <- make_tree(input = newConcept, top = broaderID) %>%
-      filter(broader == broaderID) %>%
-      pull(code)
+      broaderID <- onto %>%
+        filter(sourceName == source)
+      broaderID <- broaderID %>%
+        filter(label_en %in% !!broader$label_en[i]) %>%
+        pull(code)
+
+      nestedID <- make_tree(input = newConcept, top = broaderID) %>%
+        filter(broader == broaderID) %>%
+        pull(code)
+
+    } else {
+      nestedID <- iter
+      broaderID <- NA_character_
+    }
 
     if(length(nestedID) == 0){
-      nextID <- paste0(broaderID, "01")
+      nextID <- paste0(c(broaderID, formatC(1, flag = "0", width = digits)), collapse = ".")
     } else {
       nextID <- tail(nestedID, 1)
       tempID <- str_split(nextID, "[.]")[[1]]
-      tempID[length(tempID)] <- formatC(as.numeric(tempID[length(tempID)]) + 1, flag = "0", width = nchar(tempID[length(tempID)]))
+      tempID[length(tempID)] <- formatC(as.numeric(tempID[length(tempID)]) + 1, flag = "0", width = digits) #
       nextID <- paste0(tempID, collapse = ".")
+      if(str_sub(nextID, 1, 1) != "."){
+        nextID <- paste0(".", nextID)
+      }
     }
+
+    iter <- iter + 1
 
     newConcept <- tibble(code = nextID, sourceID = srcID, broader = broaderID) %>%
       bind_rows(newConcept)

@@ -22,7 +22,8 @@
 #' @importFrom methods new
 #' @export
 
-new_source <- function(name = NULL, description = NULL, homepage = NULL, license = NULL, notes = NULL, ontology = NULL){
+new_source <- function(name = NULL, description = NULL, homepage = NULL,
+                       license = NULL, notes = NULL, ontology = NULL){
 
   assertCharacter(x = name, len = 1)
   assertCharacter(x = description, len = 1, null.ok = TRUE)
@@ -67,7 +68,7 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL, license
   theSources <- bind_rows(ontology@sources, newSource)
 
   out <- new(Class = "onto",
-             name = theName,
+             name = ontology@name,
              classes = ontology@classes,
              sources = theSources,
              concepts = ontology@concepts,
