@@ -4,8 +4,8 @@
 #' @param new [`character(.)`][character]\cr the english label(s) of new
 #'   external concepts that shall be mapped to concepts that do already exist in
 #'   the ontology.
-#' @param concept [`data.frame(.)`][data.frame]\cr the english label(s) of already
-#'   harmonised concepts to which the external concepts shall be mapped.
+#' @param concept [`data.frame(.)`][data.frame]\cr the english label(s) of
+#'   already harmonised concepts to which the external concepts shall be mapped.
 #' @param match [`character(1)`][character]\cr the
 #'   \href{https://www.w3.org/TR/skos-reference/#mapping}{skos mapping property}
 #'   used to describe the link, possible values are \code{"close"},
@@ -18,8 +18,8 @@
 #'   probably unreliable \item 2 = unclear, assigned according to a given
 #'   definition \item 3 = clear, assigned according to a given definition \item
 #'   4 = original, harmonised term (can't be assigned by a user)}.
-#' @param ontology [`ontology(1)`][list]\cr either a path where the
-#'   ontology is stored, or an already loaded ontology.
+#' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
+#'   stored, or an already loaded ontology.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(name = "crops", path = ontoDir)
@@ -50,6 +50,7 @@
 #'   assertChoice assertIntegerish assertFileExists assertNames
 #' @importFrom tibble tibble
 #' @importFrom dplyr left_join filter pull mutate bind_rows arrange if_else
+#'   bind_cols
 #' @importFrom tidyr unite
 #' @importFrom stringr str_detect str_split
 #' @importFrom readr read_rds write_rds
@@ -126,6 +127,17 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
     prevID <- max(prevID, na.rm = TRUE)
     if(is.na(prevID)) prevID <- 0
   }
+
+  temp <- bind_cols(concept, tibble(new = new, match = match, certainty = certainty)) %>%
+    separate_rows(new, sep = "\\|")
+  concept <- temp %>%
+    select(code, broader, label_en, class, external, sourceName)
+  new <- temp %>%
+    pull(new)
+  match <- temp %>%
+    pull(match)
+  certainty <- temp %>%
+    pull(certainty)
 
   newConcept <- ontology@concepts
   newLabels <- ontology@labels

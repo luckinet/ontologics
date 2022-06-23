@@ -1,35 +1,6 @@
-#' Geometry class (S4) and methods
+#' Ontology class (S4) and methods
 #'
-#' A \code{geom} stores a table of points, a table of feature to which the
-#' points are associated and a table of groups, to which features are
-#' associated. A \code{geom} can be spatial (if it has a coordinate reference
-#' system assigned to it), but is not by default.
 #'
-#' A \code{geom} has one of three geometry types: \itemize{ \item
-#' \code{"point"}, when none of the points are connected to other points, \item
-#' \code{"line"}, where points with the same \code{fid} are connected following
-#' the sequence of their order, without the line closing in itself and \item
-#' \code{"polygon"}, where points with the same \code{fid} are connected
-#' following the sequence of their order and the line closes in on itself due to
-#' first and last point being the same. Moreover, \code{polygon} objects can
-#' contain holes.}
-#'
-#' The data model for storing points follows the spaghetti model. Points are
-#' stored as a sequence of x and y values, associated to a feature ID. The
-#' feature ID relates coordinates to features and thus common attributes. Points
-#' and Lines are implemented straightforward in this model, but polygons, which
-#' may contain holes, are a bit trickier. In \code{geometr} they are implemented
-#' as follows: \enumerate{ \item All points with the same \code{fid} make up one
-#' polygon, irrespective of it containing holes or not. \item The outer
-#' path/ring of a polygon is composed of all points until a duplicated of its
-#' first point occurs. This signals that all following points are part of
-#' another path/ring, which must be inside the outer path and which consists of
-#' all points until a duplicate of it's first point occurs. \item This repeats
-#' until all points of the feature are processed.}
-#'
-#' Moreover, a \code{geom} has a \emph{reference window}, which is sort of a
-#' second extent that may be bigger (or smaller) than the extent and which
-#' determines the relative position of the points when plotting.
 #'
 #' @slot name [`character(1)`][character]\cr
 #' @slot classes [`data.frame(.)`][data.frame]\cr
