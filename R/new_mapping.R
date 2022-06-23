@@ -166,7 +166,9 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
     if(prop == "E") thisCertainty <- ""
 
     newID <- paste0(source, ".", prop, thisCertainty, ".", prevID + iter)
-
+    if(str_sub(newID, 1, 1) != "."){
+      newID <- paste0(".", newID)
+    }
     newMappings <- newMappings %>%
       mutate(new_code = if_else(code %in% thisConcept$code,
                                 if_else(!is.na(new_code), paste0(new_code, ", ", newID), newID),
