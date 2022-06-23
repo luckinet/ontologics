@@ -3,7 +3,7 @@
 \docType{class}
 \name{onto-class}
 \alias{onto-class}
-\alias{geom}
+\alias{onto}
 \title{Ontology class (S4) and methods}
 \description{
 Ontology class (S4) and methods
