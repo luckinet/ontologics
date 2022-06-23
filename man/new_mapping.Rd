@@ -19,8 +19,8 @@ new_mapping(
 external concepts that shall be mapped to concepts that do already exist in
 the ontology.}
 
-\item{concept}{\code{\link[=data.frame]{data.frame(.)}}\cr the english label(s) of already
-harmonised concepts to which the external concepts shall be mapped.}
+\item{concept}{\code{\link[=data.frame]{data.frame(.)}}\cr the english label(s) of
+already harmonised concepts to which the external concepts shall be mapped.}
 
 \item{match}{\code{\link[=character]{character(1)}}\cr the
 \href{https://www.w3.org/TR/skos-reference/#mapping}{skos mapping property}
@@ -38,8 +38,8 @@ probably unreliable \item 2 = unclear, assigned according to a given
 definition \item 3 = clear, assigned according to a given definition \item
 4 = original, harmonised term (can't be assigned by a user)}.}
 
-\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the
-ontology is stored, or an already loaded ontology.}
+\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
+stored, or an already loaded ontology.}
 }
 \value{
 No return value, called for the side effect of adding new mappings to
