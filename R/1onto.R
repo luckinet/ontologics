@@ -9,7 +9,7 @@
 #' @slot labels [`data.frame(.)`][data.frame]\cr
 #' @slot mappings [`character(1)`][character]\cr
 
-geom <- setClass(Class = "onto",
+onto <- setClass(Class = "onto",
                  slots = c(name = "character",
                            classes = "data.frame",
                            sources = "data.frame",
