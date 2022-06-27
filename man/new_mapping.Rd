@@ -50,7 +50,7 @@ Extend an ontology by creating mappings to external vocabularies.
 }
 \examples{
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
-onto <- load_ontology(name = "crops", path = ontoDir)
+onto <- load_ontology(path = ontoDir)
 
 mapping <- data.frame(old = c("BIOENERGY CROPS", "Bioenergy woody",
                               "Other bioenergy crops"),

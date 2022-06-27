@@ -11,8 +11,6 @@ Ontology class (S4) and methods
 \section{Slots}{
 
 \describe{
-\item{\code{name}}{\code{\link[=character]{character(1)}}\cr}
-
 \item{\code{classes}}{\code{\link[=data.frame]{data.frame(.)}}\cr}
 
 \item{\code{sources}}{\code{\link[=data.frame]{data.frame(.)}}\cr}

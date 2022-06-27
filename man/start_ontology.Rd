@@ -7,11 +7,11 @@
 start_ontology(
   name = NULL,
   path = NULL,
+  code = "_xx",
   description = NULL,
   homepage = NULL,
   license = NULL,
-  notes = NULL,
-  digits = 2
+  notes = NULL
 )
 }
 \arguments{
@@ -20,6 +20,9 @@ start_ontology(
 \item{path}{\code{\link[=character]{character(1)}}\cr the path where the ontology shall
 be stored.}
 
+\item{code}{\code{\link[=double]{double(1)}}\cr format of a single code snippet that is
+concatenated for nested levels.}
+
 \item{description}{\code{\link[=character]{character(1)}}\cr}
 
 \item{homepage}{\code{\link[=character]{character(1)}}\cr}
@@ -27,9 +30,6 @@ be stored.}
 \item{license}{\code{\link[=character]{character(1)}}\cr}
 
 \item{notes}{\code{\link[=character]{character(1)}}\cr}
-
-\item{digits}{\code{\link[=double]{double(1)}}\cr the number of digits the code shall
-have.}
 }
 \value{
 it returns the new, emtpy ontology and also stores that within the

@@ -32,7 +32,7 @@ Add a new valid source to an ontology
 }
 \examples{
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
-onto <- load_ontology(name = "crops", path = ontoDir)
+onto <- load_ontology(path = ontoDir)
 
 onto <- new_source(name = "externalDataset",
                    description = "a vocabulary",

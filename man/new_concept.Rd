@@ -44,7 +44,7 @@ thus harmonise it with the already existing ontology.
 }
 \examples{
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
-onto <- load_ontology(name = "crops", path = ontoDir)
+onto <- load_ontology(path = ontoDir)
 
 concepts <- data.frame(old = c("Bioenergy woody", "Bioenergy herbaceous"),
                        new = c("acacia", "miscanthus"))

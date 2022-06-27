@@ -4,11 +4,9 @@
 \alias{load_ontology}
 \title{Load an ontology}
 \usage{
-load_ontology(name = NULL, path = NULL)
+load_ontology(path = NULL)
 }
 \arguments{
-\item{name}{\code{\link[=character]{character(1)}}\cr the name of the ontology.}
-
 \item{path}{\code{\link[=character]{character(1)}}\cr the path where the ontology to
 load is stored.}
 }
@@ -21,7 +19,6 @@ Load an ontology
 }
 \examples{
 # load an already existing ontology
-load_ontology(name = "crops",
-              path = system.file("extdata", "crops.rds", package = "ontologics"))
+load_ontology(path = system.file("extdata", "crops.rds", package = "ontologics"))
 
 }

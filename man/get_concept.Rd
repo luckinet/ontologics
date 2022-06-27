@@ -41,7 +41,7 @@ Get a concept in an ontology
 }
 \examples{
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
-onto <- load_ontology(name = "crops", path = ontoDir)
+onto <- load_ontology(path = ontoDir)
 
 # exact matches from a loaded ontology ...
 get_concept(terms = "FODDER CROPS", ontology = onto)
