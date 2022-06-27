@@ -2,7 +2,6 @@
 #'
 #'
 #'
-#' @slot name [`character(1)`][character]\cr
 #' @slot classes [`data.frame(.)`][data.frame]\cr
 #' @slot sources [`data.frame(.)`][data.frame]\cr
 #' @slot concepts [`data.frame(.)`][data.frame]\cr
@@ -10,8 +9,7 @@
 #' @slot mappings [`character(1)`][character]\cr
 
 onto <- setClass(Class = "onto",
-                 slots = c(name = "character",
-                           classes = "data.frame",
+                 slots = c(classes = "data.frame",
                            sources = "data.frame",
                            concepts = "data.frame",
                            labels = "data.frame",
@@ -22,14 +20,6 @@ onto <- setClass(Class = "onto",
 setValidity("onto", function(object){
 
   errors = character()
-
-  if(!.hasSlot(object = object, name = "name")){
-    errors = c(errors, "the geom does not have a 'name' slot.")
-  } else {
-    if(!is.character(object@name)){
-      errors = c(errors, "the slot 'name' is not a character")
-    }
-  }
 
   if(!.hasSlot(object = object, name = "classes")){
     errors = c(errors, "the geom does not have a 'classes' slot.")
@@ -94,20 +84,6 @@ setValidity("onto", function(object){
 
 })
 
-#' View the ontology
-#'
-#' @param ontology [`ontology(1)`][list]\cr the ontology.
-#' @importFrom dplyr left_join
-#' @export
-
-View_onto <- function(ontology = NULL){
-
-  ontology <- ontology@concepts %>%
-    left_join(ontology@labels, by = "code") %>%
-    left_join(ontology@sources %>% select(sourceID, sourceName), by = "sourceID") %>%
-    left_join(ontology@mappings, by = "code")
-  View(ontology)
-}
 
 #' Print onto in the console
 #'
