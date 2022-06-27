@@ -30,28 +30,28 @@ new_class <- function(class, parent, ontology = NULL){
     theName <- tail(str_split(string = ontology, "/")[[1]], 1)
     theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
 
-    ontology <- load_ontology(name = theName, path = ontoPath)
+    ontology <- load_ontology(path = ontoPath)
   }
 
   newClass <- tibble(class = class, parent = parent)
 
   if(is.na(parent)){
-    newClass <- newClass %>%
-      mutate(level = 1) %>%
-      select(-parent)
+
+    theClass <- tibble(level = ontology@classes$level[1], class = class)
+
   } else {
     assertSubset(x = parent, choices = ontology@classes$class)
-    newClass <- newClass %>%
-      left_join(ontology@classes, by = c("parent" = "class")) %>%
-      mutate(level = level + 1) %>%
-      select(-parent)
+    newLvl <- ontology@classes %>%
+      filter(class == parent) %>%
+      pull(level)
+    newLvl <- paste0(newLvl, ontology@classes$level[1])
+
+    theClass <- tibble(level = newLvl, class = class) %>%
+      bind_rows(ontology@classes, .) %>%
+      distinct()
   }
 
-  theClass <- bind_rows(ontology@classes, newClass) %>%
-    distinct()
-
   out <- new(Class = "onto",
-             name = ontology@name,
              classes = theClass,
              sources = ontology@sources,
              concepts = ontology@concepts,

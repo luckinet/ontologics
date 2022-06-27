@@ -7,8 +7,8 @@
 #' @param homepage [`character(1)`][character]\cr
 #' @param license [`character(1)`][character]\cr
 #' @param notes [`character(1)`][character]\cr
-#' @param digits [`double(1)`][double]\cr the number of digits the code shall
-#'   have.
+#' @param code [`double(1)`][double]\cr format of a single code snippet that is
+#'   concatenated for nested levels.
 #' @examples
 #' start_ontology(name = "crops", path = tempdir())
 #' @return it returns the new, emtpy ontology and also stores that within the
@@ -18,11 +18,9 @@
 #' @importFrom readr write_rds
 #' @export
 
-start_ontology <- function(name = NULL, path = NULL, description = NULL,
-                           homepage = NULL, license = NULL, notes = NULL,
-                           digits = 2){
+start_ontology <- function(name = NULL, path = NULL, code = "_xx", description = NULL,
+                           homepage = NULL, license = NULL, notes = NULL){
 
-  assertCharacter(x = name, len = 1, any.missing = FALSE)
   assertDirectoryExists(x = path, access = "rw")
 
   if(is.null(description)) description <- ""
@@ -30,18 +28,17 @@ start_ontology <- function(name = NULL, path = NULL, description = NULL,
   if(is.null(license)) license <- ""
   if(is.null(notes)) notes <- ""
 
-  theName <- name
-  theClasses <- tibble(level = double(),
-                       class = character())
-  theSources <- tibble(sourceID = 1,
+  theClasses <- tibble(level = code,
+                       class = NA_character_)
+  theSources <- tibble(sourceID = double(),
                        sourceName = name,
                        description = description,
                        homepage = homepage,
                        license = license,
-                       notes = NA_character_)
-  theConcepts <- tibble(code = formatC(1, flag = "0", width = digits),
-                        broader = NA_character_,
-                        sourceID = 1)
+                       notes = notes)
+  theConcepts <- tibble(code = character(),
+                        broader = character(),
+                        sourceID = double())
   theLabels <- tibble(code = character(),
                       class = character(),
                       label_en = character())
@@ -49,13 +46,12 @@ start_ontology <- function(name = NULL, path = NULL, description = NULL,
                         external = character())
 
   out <- new(Class = "onto",
-             name = theName,
              classes = theClasses,
              sources = theSources,
              concepts = theConcepts,
              labels = theLabels,
              mappings = theMappings)
 
-  write_rds(out, paste0(path, "/", theName, ".rds"))
+  write_rds(out, paste0(path, "/", name, ".rds"))
   return(out)
 }

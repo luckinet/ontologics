@@ -9,7 +9,7 @@
 #'   ontology is stored, or an already loaded ontology.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
-#' onto <- load_ontology(name = "crops", path = ontoDir)
+#' onto <- load_ontology(path = ontoDir)
 #'
 #' onto <- new_source(name = "externalDataset",
 #'                    description = "a vocabulary",
@@ -39,7 +39,7 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL,
     theName <- tail(str_split(string = ontology, "/")[[1]], 1)
     theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
 
-    ontology <- load_ontology(name = theName, path = ontoPath)
+    ontology <- load_ontology(path = ontoPath)
   }
 
   if(name %in% ontology@sources$sourceName){
@@ -68,7 +68,6 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL,
   theSources <- bind_rows(ontology@sources, newSource)
 
   out <- new(Class = "onto",
-             name = ontology@name,
              classes = ontology@classes,
              sources = theSources,
              concepts = ontology@concepts,

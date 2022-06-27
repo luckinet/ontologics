@@ -18,7 +18,7 @@
 #'   ontology is stored, or an already loaded ontology.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
-#' onto <- load_ontology(name = "crops", path = ontoDir)
+#' onto <- load_ontology(path = ontoDir)
 #'
 #' concepts <- data.frame(old = c("Bioenergy woody", "Bioenergy herbaceous"),
 #'                        new = c("acacia", "miscanthus"))
@@ -58,7 +58,7 @@ new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = 
     new <- as.character(new)
   }
   assertDataFrame(x = broader, null.ok = TRUE)
-  assertCharacter(x = class, any.missing = FALSE)
+  assertCharacter(x = class, any.missing = FALSE, null.ok = TRUE)
   assertCharacter(x = source, any.missing = FALSE)
 
   if(inherits(x = ontology, what = "onto")){
@@ -69,7 +69,7 @@ new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = 
     theName <- tail(str_split(string = ontology, "/")[[1]], 1)
     theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
 
-    ontology <- load_ontology(name = theName, path = ontoPath)
+    ontology <- load_ontology(path = ontoPath)
   }
 
   onto <- ontology@concepts %>%
@@ -176,7 +176,6 @@ new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = 
     arrange(code)
 
   out <- new(Class = "onto",
-             name = ontology@name,
              classes = ontology@classes,
              sources = ontology@sources,
              concepts = newConcept,
