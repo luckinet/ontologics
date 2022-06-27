@@ -76,7 +76,7 @@ concepts.
 
 ``` r
 # already existing ontology for some project about crops
-(crops <- load_ontology(name = "crops", path = cropOntology))
+crops <- load_ontology(path = cropOntology)
 
 # where we have to set the external dataset as new source
 crops <- new_source(name = "externalDataset",
@@ -96,24 +96,26 @@ these concepts are in fact new concepts because they are missing from
 the ontology.
 
 ``` r
-(missingConcepts <- get_concept(terms = newConcepts, missing = TRUE, ontology = crops))
-#> # A tibble: 1 × 6
-#>   code  broader label_en class external sourceName
-#>   <chr> <chr>   <chr>    <chr> <chr>    <chr>     
-#> 1 <NA>  <NA>    <NA>     <NA>  Avocado  <NA>
+missingConcepts <- get_concept(terms = newConcepts, missing = TRUE, ontology = crops)
+kable(missingConcepts)
 ```
+
+| code | broader | label_en | class | external | sourceName |
+|:-----|:--------|:---------|:------|:---------|:-----------|
+|      |         |          |       | Avocado  |            |
 
 This tells us that that both ‘NUTS’ and ‘Wheat’ don’t seem to be missing
 from the ontology. We try to extract these concepts…
 
 ``` r
-get_concept(terms = newConcepts[1:2], ontology = crops)
-#> # A tibble: 2 × 6
-#>   code   broader label_en class external sourceName
-#>   <chr>  <chr>   <chr>    <chr> <chr>    <chr>     
-#> 1 .02.09 .02     Wheat    class Wheat    harmonised
-#> 2 .10    <NA>    NUTS     group NUTS     harmonised
+get_concept(terms = newConcepts[1:2], ontology = crops) %>% 
+  kable()
 ```
+
+| code   | broader | label_en | class | external | sourceName |
+|:-------|:--------|:---------|:------|:---------|:-----------|
+| .02.09 | .02     | Wheat    | class | Wheat    | harmonised |
+| .10    |         | NUTS     | group | NUTS     | harmonised |
 
 … and see that ‘Wheat’ is a *class* and not a *crop* and ‘NUTS’ doesn’t
 have any *broader* concept. We should probably check the hierarchical
@@ -124,20 +126,24 @@ length, so ‘NUTS’ and whatever the parent of ‘Wheat’ are should be at
 the same hierarchical level.
 
 ``` r
-# note that this time we are not querring 'label_en' but 'code'
-get_concept(terms = newConcepts[1], tree = TRUE, ontology = crops)
-#> # A tibble: 1 × 6
-#>   code   broader label_en class external sourceName
-#>   <chr>  <chr>   <chr>    <chr> <chr>    <chr>     
-#> 1 .02.09 .02     Wheat    class <NA>     harmonised
-get_concept(terms = newConcepts[2], tree = TRUE, ontology = crops)
-#> # A tibble: 3 × 6
-#>   code   broader label_en   class external sourceName
-#>   <chr>  <chr>   <chr>      <chr> <chr>    <chr>     
-#> 1 .10    <NA>    NUTS       group <NA>     harmonised
-#> 2 .10.01 .10     Treenuts   class <NA>     harmonised
-#> 3 .10.02 .10     Other nuts class <NA>     harmonised
+get_concept(terms = newConcepts[1], tree = TRUE, ontology = crops) %>% 
+  kable()
 ```
+
+| code   | broader | label_en | class | external | sourceName |
+|:-------|:--------|:---------|:------|:---------|:-----------|
+| .02.09 | .02     | Wheat    | class |          | harmonised |
+
+``` r
+get_concept(terms = newConcepts[2], tree = TRUE, ontology = crops) %>% 
+  kable()
+```
+
+| code   | broader | label_en   | class | external | sourceName |
+|:-------|:--------|:-----------|:------|:---------|:-----------|
+| .10    |         | NUTS       | group |          | harmonised |
+| .10.01 | .10     | Treenuts   | class |          | harmonised |
+| .10.02 | .10     | Other nuts | class |          | harmonised |
 
 It seems that ‘NUTS’ is not missing from the ontology, and has two child
 concepts. ‘Wheat’ is also not missing, but is defined as the wrong
@@ -193,30 +199,39 @@ expect that the new harmonised concepts now appear in the ontology and
 that they have some link to an external concept defined.
 
 ``` r
-get_concept(terms = "Wheat", tree = TRUE, ontology = crops)
-#> # A tibble: 2 × 6
-#>   code     broader label_en class external               sourceName     
-#>   <chr>    <chr>   <chr>    <chr> <chr>                  <chr>          
-#> 1 .02.09   .02     Wheat    class <NA>                   harmonised     
-#> 2 .02.0901 .02.09  wheat    crop  externalDataset.C3.902 externalDataset
-get_concept(terms = "NUTS", tree = TRUE, ontology = crops)
-#> # A tibble: 3 × 6
-#>   code   broader label_en   class external               sourceName
-#>   <chr>  <chr>   <chr>      <chr> <chr>                  <chr>     
-#> 1 .10    <NA>    NUTS       group externalDataset.C3.903 harmonised
-#> 2 .10.01 .10     Treenuts   class <NA>                   harmonised
-#> 3 .10.02 .10     Other nuts class <NA>                   harmonised
-get_concept(terms = "FRUIT", tree = TRUE, ontology = crops)
-#> # A tibble: 9 × 6
-#>   code     broader label_en                       class external      sourceName
-#>   <chr>    <chr>   <chr>                          <chr> <chr>         <chr>     
-#> 1 .06      <NA>    FRUIT                          group <NA>          harmonised
-#> 2 .06.01   .06     Berries                        class <NA>          harmonised
-#> 3 .06.02   .06     Citrus Fruit                   class <NA>          harmonised
-#> 4 .06.03   .06     Grapes                         class <NA>          harmonised
-#> 5 .06.04   .06     Pome Fruit                     class <NA>          harmonised
-#> 6 .06.05   .06     Stone Fruit                    class <NA>          harmonised
-#> 7 .06.06   .06     Tropical and subtropical Fruit class <NA>          harmonised
-#> 8 .06.0601 .06.06  avocado                        crop  externalData… externalD…
-#> 9 .06.07   .06     Other fruit                    class <NA>          harmonised
+get_concept(terms = "Wheat", tree = TRUE, ontology = crops) %>% 
+  kable()
 ```
+
+| code      | broader | label_en | class | external              | sourceName      |
+|:----------|:--------|:---------|:------|:----------------------|:----------------|
+| .02.09    | .02     | Wheat    | class |                       | harmonised      |
+| .02.09.01 | .02.09  | wheat    | crop  | .externalDataset.C3.2 | externalDataset |
+
+``` r
+get_concept(terms = "NUTS", tree = TRUE, ontology = crops) %>% 
+  kable()
+```
+
+| code   | broader | label_en   | class | external              | sourceName |
+|:-------|:--------|:-----------|:------|:----------------------|:-----------|
+| .10    |         | NUTS       | group | .externalDataset.C3.3 | harmonised |
+| .10.01 | .10     | Treenuts   | class |                       | harmonised |
+| .10.02 | .10     | Other nuts | class |                       | harmonised |
+
+``` r
+get_concept(terms = "FRUIT", tree = TRUE, ontology = crops) %>% 
+  kable()
+```
+
+| code      | broader | label_en                       | class | external              | sourceName      |
+|:----------|:--------|:-------------------------------|:------|:----------------------|:----------------|
+| .06       |         | FRUIT                          | group |                       | harmonised      |
+| .06.01    | .06     | Berries                        | class |                       | harmonised      |
+| .06.02    | .06     | Citrus Fruit                   | class |                       | harmonised      |
+| .06.03    | .06     | Grapes                         | class |                       | harmonised      |
+| .06.04    | .06     | Pome Fruit                     | class |                       | harmonised      |
+| .06.05    | .06     | Stone Fruit                    | class |                       | harmonised      |
+| .06.06    | .06     | Tropical and subtropical Fruit | class |                       | harmonised      |
+| .06.06.01 | .06.06  | avocado                        | crop  | .externalDataset.B3.4 | externalDataset |
+| .06.07    | .06     | Other fruit                    | class |                       | harmonised      |
