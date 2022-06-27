@@ -53,15 +53,15 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">start_ontology</span><span class="op">(</span>
-  name <span class="op">=</span> <span class="cn">NULL</span>,
-  path <span class="op">=</span> <span class="cn">NULL</span>,
-  description <span class="op">=</span> <span class="cn">NULL</span>,
-  homepage <span class="op">=</span> <span class="cn">NULL</span>,
-  license <span class="op">=</span> <span class="cn">NULL</span>,
-  notes <span class="op">=</span> <span class="cn">NULL</span>,
-  digits <span class="op">=</span> <span class="fl">2</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">start_ontology</span><span class="op">(</span></span>
+<span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  code <span class="op">=</span> <span class="st">"_xx"</span>,</span>
+<span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  homepage <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  license <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  notes <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -73,6 +73,11 @@
 <dt>path</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the path where the ontology shall
 be stored.</p></dd>
+
+
+<dt>code</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/double.html" class="external-link">double(1)</a></code><br> format of a single code snippet that is
+concatenated for nested levels.</p></dd>
 
 
 <dt>description</dt>
@@ -90,11 +95,6 @@ be stored.</p></dd>
 <dt>notes</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br></p></dd>
 
-
-<dt>digits</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/double.html" class="external-link">double(1)</a></code><br> the number of digits the code shall
-have.</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -106,7 +106,7 @@ directory specified in <code>path</code>.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">start_ontology</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"crops"</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">start_ontology</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"crops"</span>, path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
