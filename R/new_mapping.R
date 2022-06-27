@@ -22,7 +22,7 @@
 #'   stored, or an already loaded ontology.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
-#' onto <- load_ontology(name = "crops", path = ontoDir)
+#' onto <- load_ontology(path = ontoDir)
 #'
 #' mapping <- data.frame(old = c("BIOENERGY CROPS", "Bioenergy woody",
 #'                               "Other bioenergy crops"),
@@ -74,7 +74,7 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
     theName <- tail(str_split(string = ontology, "/")[[1]], 1)
     theName <- head(str_split(string = theName, pattern = "[.]")[[1]], 1)
 
-    ontology <- load_ontology(name = theName, path = ontoPath)
+    ontology <- load_ontology(path = ontoPath)
   }
 
   onto <- ontology@concepts %>%
@@ -195,7 +195,6 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
     arrange(code)
 
   out <- new(Class = "onto",
-             name = ontology@name,
              classes = ontology@classes,
              sources = ontology@sources,
              concepts = newConcept,

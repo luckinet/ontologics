@@ -6,7 +6,7 @@
 #'   ontology is stored, or an already loaded ontology.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
-#' onto <- load_ontology(name = "crops", path = ontoDir)
+#' onto <- load_ontology(path = ontoDir)
 #'
 #' onto <- new_class(class = "group", parent = NA, ontology = onto) %>%
 #'         new_class(class = "class", parent = "group", ontology = .) %>%
