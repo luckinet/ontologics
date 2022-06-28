@@ -1,3 +1,7 @@
+# ontologics 0.3.1
+
+- adapt `new_concept()` so that also concepts can be defined that have no class (for various reasons). This now gives a warning, and inserts the concepts with an "undefined" class.
+
 # ontologics 0.3.0
 
 * revise all functions that access an ontology to work either in the `.GlobalEnv`, or at the given path. The argument `path = ` was therefore changed to `ontology = `.
