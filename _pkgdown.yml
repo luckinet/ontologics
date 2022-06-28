@@ -1,0 +1,46 @@
+url: ~
+template:
+  bootstrap: 5
+
+authors:
+  Steffen Ehrmann:
+    href:  https://orcid.org/0000-0002-2958-0796
+title: ontologics
+url: http://luckinet.github.io/ontologics
+development:
+  mode: release
+
+reference:
+  - title: start an ontology
+    desc: functions to start or load an ontology
+    contents:
+      - start_ontology
+      - load_ontology
+  - title: define new concepts
+    contents:
+      - new_source
+      - new_class
+      - new_concept
+      - new_mapping
+  - title: extract information
+    contents:
+      - get_concept
+  - title: helpers
+    contents:
+      - make_tree
+
+navbar:
+  left:
+    - text: "Create an ontology"
+      href: articles/create_an_ontology.html
+    - text: "Map new concepts"
+      href: articles/map_new_concepts.html
+    - text: "Reference"
+      href: reference/index.html
+    - text: "Changelog"
+      href: news/index.html
+  right:
+    - icon: fa-twitter fa-lg
+      href: http://www.twitter.com/DerEhrmann
+    - icon: fa-github
+      href: https://github.com/luckinet/ontologics
