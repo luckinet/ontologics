@@ -2,10 +2,19 @@
 % Please edit documentation in R/imports.R
 \name{\%>\%}
 \alias{\%>\%}
-\title{re-export magrittr pipe operator}
+\title{Pipe operator}
+\usage{
+lhs \%>\% rhs
+}
+\arguments{
+\item{lhs}{A value or the magrittr placeholder.}
+
+\item{rhs}{A function call using the magrittr semantics.}
+}
 \value{
-No return value, simply re-exporting the pipe operator
+The result of calling \code{rhs(lhs)}.
 }
 \description{
-re-export magrittr pipe operator
+See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
 }
+\keyword{internal}

@@ -7,6 +7,11 @@ development:
   mode: release
 
 reference:
+  - title: the onto-class
+    desc: description of the onto class
+    contents:
+      - onto-class
+      - show,onto-method
   - title: start an ontology
     desc: functions to start or load an ontology
     contents:
