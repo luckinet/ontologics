@@ -1,6 +1,11 @@
 pandoc: 2.7.3
 pkgdown: 2.0.5
 pkgdown_sha: ~
-articles: {}
-last_built: 2022-06-27T09:35Z
+articles:
+  create_an_ontology: create_an_ontology.html
+  map_new_concepts: map_new_concepts.html
+last_built: 2022-06-28T12:02Z
+urls:
+  reference: http://luckinet.github.io/ontologics/reference
+  article: http://luckinet.github.io/ontologics/articles
 
