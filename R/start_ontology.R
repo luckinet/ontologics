@@ -18,7 +18,7 @@
 #' @importFrom readr write_rds
 #' @export
 
-start_ontology <- function(name = NULL, path = NULL, code = "_xx", description = NULL,
+start_ontology <- function(name = NULL, path = NULL, code = ".xx", description = NULL,
                            homepage = NULL, license = NULL, notes = NULL){
 
   assertDirectoryExists(x = path, access = "rw")
@@ -30,8 +30,8 @@ start_ontology <- function(name = NULL, path = NULL, code = "_xx", description =
 
   theClasses <- tibble(level = code,
                        class = NA_character_)
-  theSources <- tibble(sourceID = double(),
-                       sourceName = name,
+  theSources <- tibble(sourceID = 1,
+                       sourceName = "harmonised",
                        description = description,
                        homepage = homepage,
                        license = license,
