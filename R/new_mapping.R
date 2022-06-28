@@ -90,7 +90,7 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
     missingConcepts <- testConcept %>%
       filter(is.na(sourceID)) %>%
       pull(label_en)
-    stop("the concepts '", paste0(missingConcepts, collapse = ", "), "' don't exist yet as harmonised concepts, please first define them (see function new_concept).")
+    stop("the concepts '", paste0(missingConcepts, collapse = ", "), "' don't exist yet as harmonised concepts, please first define them with 'new_concept()'.")
   }
 
 
@@ -118,15 +118,6 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
     stop("please first define the source '", source, "' (see function new_source).")
   }
 
-  prevID <- str_detect(string = onto$sourceName, pattern = source)
-  if(!any(prevID)){
-    prevID <- 0
-  } else {
-    prevID <- str_split(onto$code[prevID], pattern = "[.]", simplify = TRUE)
-    prevID <- as.numeric(prevID[, dim(prevID)[2]])
-    prevID <- max(prevID, na.rm = TRUE)
-    if(is.na(prevID)) prevID <- 0
-  }
 
   temp <- bind_cols(concept, tibble(new = new, match = match, certainty = certainty)) %>%
     separate_rows(new, sep = "\\|")
@@ -138,6 +129,16 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
     pull(match)
   certainty <- temp %>%
     pull(certainty)
+
+  prevID <- str_detect(string = onto$code, pattern = source)
+  if(!any(prevID)){
+    prevID <- 0
+  } else {
+    prevID <- str_split(onto$code[prevID], pattern = "[.]", simplify = TRUE)
+    prevID <- as.numeric(prevID[, dim(prevID)[2]])
+    prevID <- max(prevID, na.rm = TRUE)
+    if(is.na(prevID)) prevID <- 0
+  }
 
   newConcept <- ontology@concepts
   newLabels <- ontology@labels
@@ -172,7 +173,8 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
     newMappings <- newMappings %>%
       mutate(new_code = if_else(code %in% thisConcept$code,
                                 if_else(!is.na(new_code), paste0(new_code, ", ", newID), newID),
-                                if_else(!is.na(new_code), new_code, NA_character_)))
+                                if_else(!is.na(new_code), new_code, NA_character_))) %>%
+      bind_rows(tibble(code = newID, external = NA_character_, new_code = NA_character_))
 
     iter <- iter + 1
 
