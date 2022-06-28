@@ -1,0 +1,115 @@
+---
+title: "Create an ontology"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{create_an_ontology}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+library(knitr)
+```
+
+```{r setup}
+library(ontologics)
+library(tibble)
+```
+
+An already existing ontology can either be read in, or a totally new one can be created with `ontologics`. First, let's look at an ontology that is used throughout this package as an example. The function `load_ontology()` loads an ontology in any format that is supported by `ontologics` from a path. Currently, an ontology is expected to be stored as a `*.rds` file with a particular formatting, more options are under development.
+
+```{r}
+cropOntology <- system.file("extdata", "crops.rds", package = "ontologics")
+
+crops <- load_ontology(path = cropOntology)
+
+# currently there is now 'show' function available yet, so let's take a peak at the ontology like so:
+str(crops)
+```
+
+The `onto` class is an S3 class with the 5 slots `@classes`, `@sources`, `@concepts`, `@labels` and `@mappings`, each of which are reflected by a function that allows to add new items to this slot (**note**, the function `new_labels()` is not yet supported).
+
+A new, entirely empty ontology is built by calling the function `start_ontology()`. This requires a bunch of meta-data that will be stored in the ontology and which serve the purpose of properly linking also this ontology to other *linked open data*. 
+
+
+```{r}
+lulc <- start_ontology(name = "land_surface_properties",
+                       path = tempdir(), 
+                       code = ".xx",
+                       description = "showcase of the ontologics R-package", 
+                       homepage = "https://www.luckinet.org", 
+                       license = "CC-BY-4.0")
+
+str(lulc)
+```
+
+All slots, except the `@classes` slot are empty. This slot contains the basic code unit that will be used to set of the hierarchical code in this ontology. It is recommended to always set this with a leading symbol that can't be transformed into a numeric/integer, to avoid problems in case the ontology is opened in a spreadsheet program that may automatically do this transformation without asking or informing the author.
+
+When creating the ontology, it first needs information from where the concepts are sourced. In case no source or a wrong source is provided, the respective functions will inform the user. When starting a new ontology, however, the first source given by the ontology meta-data, while when assigning new items into either slot, the argument  `source = "harmonised"` needs to be chosen.
+
+```{r}
+kable(lulc@sources)
+```
+
+Next, classes and their hierarchy need to be defined. Each concept is always a combination of a code, a label and a class. The code must be unique for each unique concept, but the label or the class can have the same value for two concepts. For instance, the concept `football` can have the class `game` or the class `object` and then mean two different things, despite having the same label.
+
+```{r}
+# currently it is merely possible to set only one class at a time
+lulc <- new_class(class = "landcover", parent = NA, ontology = lulc) %>%
+  new_class(class = "land-use", parent = "landcover", ontology = .)
+
+kable(lulc@classes)
+```
+
+Then, new concepts that have these classes can be defined. In case classes are chosen that are not yet defined, you'll get a warning.
+
+
+```{r}
+lc <- c("Urban fabric", "Industrial, commercial and transport units",
+        "Mine, dump and construction sites", "Artificial, non-agricultural vegetated areas", 
+        "Temporary cropland", "Permanent cropland", "Heterogeneous agricultural areas", 
+        "Forests", "Other Wooded Areas", "Shrubland", "Herbaceous associations", 
+        "Heterogeneous semi-natural areas", "Open spaces with little or no vegetation", 
+        "Inland wetlands", "Marine wetlands", "Inland waters", "Marine waters")
+
+lulc <- new_concept(new = lc,
+                    class = "landcover", 
+                    source = "harmonised", 
+                    ontology = lulc)
+
+list(kable(lulc@concepts, caption = "the concepts"), kable(lulc@labels, caption = "the labels")) %>% 
+  kables()
+```
+
+An ontology is different from a vocabulary in that concepts that are contained in an ontology are related semantically to one another. For exmaple, concepts can be nested into other concepts. Hence, let's create also a second level on concepts that depend on the first level.
+
+
+```{r}
+lu <- tibble(concept = c("Fallow", "Herbaceous crops", "Temporary grazing",
+                         "Permanent grazing", "Shrub orchards", "Palm plantations", 
+                         "Tree orchards", "Woody plantation", "Protective cover", 
+                         "Agroforestry", "Mosaic of agricultural-uses",
+                         "Mosaic of agriculture and natural vegetation", 
+                         "Undisturbed Forest", "Naturally Regenerating Forest",
+                         "Planted Forest", "Temporally Unstocked Forest"),
+             parent = c(rep(lc[5], 3), rep(lc[6], 6),
+                        rep(lc[7], 3), rep(lc[8], 4)))
+
+lulc <- new_concept(new = lu$concept,
+                    broader = get_concept(terms = lu$parent, ontology = lulc),
+                    class = "land-use",
+                    source = "harmonised",
+                    ontology =  lulc)
+
+list(kable(lulc@concepts, caption = "the concepts"), kable(lulc@labels, caption = "the labels")) %>% 
+  kables()
+```
+
+Here we see that `get_concept()` was used to extract those broader concepts, into which the new level is nested. This is to ensure that a valid concept is provided, i.e., one that has already been included into the ontology.
+
+This concludes the basic functions that set up an ontology from scratch. Other functions, for example to set mappings to other ontologies, is discussed in the vignette [Map new concepts](map_new_concepts.html).

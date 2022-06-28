@@ -1,0 +1,131 @@
+---
+title: "Map new concepts"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{map_new_concepts}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+library(knitr)
+```
+
+```{r setup}
+library(ontologics)
+```
+
+When an ontology exists already, it can be used either by looking up which concepts exist in it, which relations the concepts have among each other or by adding and linking new concepts to the already existing concepts. When addint (or mapping) new concepts, we first have to define the source of the new concepts.
+
+```{r concept matches}
+# already existing ontology for some project about crops
+crops <- load_ontology(path = system.file("extdata", "crops.rds", package = "ontologics"))
+
+# where we have to set the external dataset as new source
+crops <- new_source(name = "externalDataset",
+                    description = "a vocabulary",
+                    homepage = "https://www.something.net",
+                    license = "CC-BY-4.0",
+                    ontology = crops)
+
+# new concepts that occur in the external dataset, which should be harmonised with the ontology
+newConcepts <- c("Wheat", "NUTS", "Avocado")
+```
+
+The new concepts are from different conceptual levels, both 'Wheat' and 'Avocado' are the crop itself, while 'NUTS' is an aggregate of various crops (such as walnut, hazelnut, etc). Let's first find out whether these concepts are in fact new concepts because they are missing from the ontology.
+
+```{r get_concepts missing}
+missingConcepts <- get_concept(terms = newConcepts, missing = TRUE, ontology = crops)
+kable(missingConcepts)
+```
+
+This tells us that that both 'NUTS' and 'Wheat' don't seem to be missing from the ontology. We try to extract these concepts...
+
+```{r get_concept}
+get_concept(terms = newConcepts[1:2], ontology = crops) %>% 
+  kable()
+```
+
+... and see that 'Wheat' is a *class* and not a *crop* and 'NUTS' doesn't have any *broader* concept. We should probably check the hierarchical structure of the ontology for these two concepts as well. For 'NUTS' we can ask directly for the respective *code* and for 'Wheat' we would ask for the *broader* code. We see already here that the code has the same length, so 'NUTS' and whatever the parent of 'Wheat' are should be at the same hierarchical level.
+
+```{r get_concept tree}
+get_concept(terms = newConcepts[1], tree = TRUE, ontology = crops) %>% 
+  kable()
+
+get_concept(terms = newConcepts[2], tree = TRUE, ontology = crops) %>% 
+  kable()
+```
+
+It seems that 'NUTS' is not missing from the ontology, and has two child concepts. 'Wheat' is also not missing, but is defined as the wrong concept of type *class*, hence the crop 'Wheat' is in fact missing. 'Avocado' is also missing and has to be specified as new harmonised concept together with 'Wheat'.
+
+By studying the ontology (as above), we can identify the semantic relation between the new concepts and the already harmonised concepts, in other words, into which already existing concepts the new harmonised concepts shall be nested. For the new harmonised concepts, we chose the lower capital letter words to show the difference between those and the external concepts.
+
+```{r set_concept}
+broaderConcepts <- get_concept(terms = c("Wheat", "Tropical and subtropical Fruit"), 
+                               ontology = crops)
+
+crops <- new_concept(new = c("wheat", "avocado"),
+                     broader = broaderConcepts,
+                     class = "crop",
+                     source = "externalDataset",
+                     ontology = crops)
+```
+
+Eventually, all new concepts can be mapped to already harmonised concepts. Even though 'NUTS' already exists, this also applies to this new concept, because the already existing concept 'NUTS' doesn't necessarily have to be the same as the new concept 'NUTS' (*note: yes, this is a deliberate example, to make this exact point!*). This all depends on the respective definitions. When setting a new mapping, the type and the certainty of the match have to be defined. For 'wheat' this is a *close* match, because the concepts are very related. for 'NUTS' this is, after checking the theoretical definitions also a *close* match. 'Avocado' is nested into 'Tropical Fruit' and thus has the match type *broad* (because Tropical Fruit is broader than Avocado).
+
+```{r set_mapping}
+toMap <- get_concept(terms = c("wheat", "NUTS", "avocado"),
+                     ontology = crops)
+
+crops <- new_mapping(concept = toMap,
+                     new = newConcepts,
+                     match = c("close", "close", "broad"),
+                     source = "externalDataset",
+                     certainty = 3,
+                     ontology = crops)
+```
+
+It my be, moreover, that we want to (or have to) add new concepts, that do not have a class defined yet. This can be the case when we have to nest new concepts, our of a range of concepts that do have a valid class, into concepts that are already at the lowest possible hierarchical level. These concepts are, when specified with `class = NA`, `class = c(bla, blubb, NA)`, or `class = NULL`, assigned the actual class `undefined` and you are informed about how to proceed.
+
+```{r}
+broaderConcepts <- get_concept(terms = c("wheat", "wheat"),
+                               ontology = crops)
+
+# for (some of) these concepts we do not know the class ...
+crops <- new_concept(new = c("wheat1", "wheat2"),
+                     broader = broaderConcepts,
+                     class = NA_character_,
+                     source = "externalDataset",
+                     ontology = crops)
+
+get_concept(terms = "Wheat", tree = TRUE, ontology = crops) %>% 
+  kable()
+
+# ... ok, then let's specify that class and re-run new_concept
+crops <- new_class(class = "variety", parent = "crop", ontology = crops)
+
+crops <- new_concept(new = c("wheat1", "wheat2"),
+                     broader = broaderConcepts,
+                     class = "variety",
+                     source = "externalDataset",
+                     ontology = crops)
+```
+
+
+Now we can check whether the updated ontology is as we'd expect, for example by looking at the tree of the respective items again. We should expect that the new harmonised concepts now appear in the ontology and that they have some link to an external concept defined.
+
+```{r new ontology}
+get_concept(terms = "Wheat", tree = TRUE, ontology = crops) %>% 
+  kable()
+
+get_concept(terms = "NUTS", tree = TRUE, ontology = crops) %>% 
+  kable()
+
+get_concept(terms = "FRUIT", tree = TRUE, ontology = crops) %>% 
+  kable()
+```
