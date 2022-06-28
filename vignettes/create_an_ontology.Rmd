@@ -86,7 +86,7 @@ list(kable(lulc@concepts, caption = "the concepts"), kable(lulc@labels, caption 
   kables()
 ```
 
-An ontology is different from a vocabulary in that concepts that are contained in an ontology are related semantically to one another. For exmaple, concepts can be nested into other concepts. Hence, let's create also a second level on concepts that depend on the first level.
+An ontology is different from a vocabulary in that concepts that are contained in an ontology are related semantically to one another. For exmaple, concepts can be nested into other concepts. Hence, let's create also a second level of concepts that depend on the first level.
 
 
 ```{r}

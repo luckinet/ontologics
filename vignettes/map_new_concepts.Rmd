@@ -20,7 +20,7 @@ library(knitr)
 library(ontologics)
 ```
 
-When an ontology exists already, it can be used either by looking up which concepts exist in it, which relations the concepts have among each other or by adding and linking new concepts to the already existing concepts. When addint (or mapping) new concepts, we first have to define the source of the new concepts.
+When an ontology exists already, it can be used either by looking up which concepts exist in it, which relations the concepts have among each other or by adding and linking new concepts to the already existing concepts. When adding (or mapping) new concepts, we first have to define the source of the new concepts.
 
 ```{r concept matches}
 # already existing ontology for some project about crops
@@ -105,7 +105,6 @@ crops <- new_concept(new = c("wheat1", "wheat2"),
 
 get_concept(terms = "Wheat", tree = TRUE, ontology = crops) %>% 
   kable()
-
 # ... ok, then let's specify that class and re-run new_concept
 crops <- new_class(class = "variety", parent = "crop", ontology = crops)
 
