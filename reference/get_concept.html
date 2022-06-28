@@ -153,13 +153,13 @@ ontology is stored, or an already loaded ontology.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> .14.01 .14     Stimulant crops       class <span style="color: #BB0000;">NA</span>       harmonised</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> .14.02 .14     Spice crops           class <span style="color: #BB0000;">NA</span>       harmonised</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> .15.03 .15     Other sugar crops     class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>terms <span class="op">=</span> <span class="st">"/*crops"</span>, broader <span class="op">=</span> <span class="st">"_05"</span>, regex <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Using `as.character()` on a quosure is deprecated as of rlang 0.3.0.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> Please use `as_label()` or `as_name()` instead.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #555555;">This warning is displayed once per session.</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 6 variables: code &lt;chr&gt;, broader &lt;chr&gt;, label_en &lt;chr&gt;, class &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   external &lt;chr&gt;, sourceName &lt;chr&gt;</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>terms <span class="op">=</span> <span class="st">"/*crops"</span>, broader <span class="op">=</span> <span class="st">".05"</span>, regex <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   code   broader label_en           class external sourceName</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .05.01 .05     Grass crops        class <span style="color: #BB0000;">NA</span>       harmonised</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> .05.03 .05     Other fodder crops class <span style="color: #BB0000;">NA</span>       harmonised</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get all concepts that are nested into another concept</span></span></span>
 <span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>terms <span class="op">=</span> <span class="st">"FODDER CROPS"</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
