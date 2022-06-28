@@ -46,6 +46,7 @@ thus harmonise it with the already existing ontology.
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 onto <- load_ontology(path = ontoDir)
 
+# add fully known concepts
 concepts <- data.frame(old = c("Bioenergy woody", "Bioenergy herbaceous"),
                        new = c("acacia", "miscanthus"))
 
@@ -61,4 +62,26 @@ onto <- get_concept(terms = concepts$old, ontology = onto) \%>\%
               class = "crop",
               source = "externalDataset",
               ontology = onto)
+
+# add concepts where the nesting is clear, but not the new class
+concepts <- data.frame(old = c("Barley", "Barley"),
+                       new = c("food", "bio-energy"))
+
+onto <- get_concept(terms = concepts$old, ontology = onto) \%>\%
+  new_concept(new = concepts$new,
+              broader = .,
+              source = "externalDataset",
+              ontology = onto)
+
+# define that class ...
+onto <- new_class(class = "use type", parent = "class", ontology = onto)
+
+# ... and set the concepts again
+onto <- get_concept(terms = concepts$old, ontology = onto) \%>\%
+  new_concept(new = concepts$new,
+              broader = .,
+              class = "use type",
+              source = "externalDataset",
+              ontology = onto)
+
 }

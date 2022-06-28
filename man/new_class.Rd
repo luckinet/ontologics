@@ -21,8 +21,6 @@ Add a new valid class to an ontology
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 onto <- load_ontology(path = ontoDir)
 
-onto <- new_class(class = "group", parent = NA, ontology = onto) \%>\%
-        new_class(class = "class", parent = "group", ontology = .) \%>\%
-        new_class(class = "crop", parent = "class", ontology = .)
+onto <- new_class(class = "use type", parent = "class", ontology = onto)
 
 }

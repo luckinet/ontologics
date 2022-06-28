@@ -7,7 +7,7 @@
 start_ontology(
   name = NULL,
   path = NULL,
-  code = "_xx",
+  code = ".xx",
   description = NULL,
   homepage = NULL,
   license = NULL,
