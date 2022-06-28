@@ -24,7 +24,8 @@
 #'
 #' # use regular expressions ...
 #' get_concept(terms = "/*crops", regex = TRUE, ontology = onto)
-#' get_concept(terms = "/*crops", broader = "_05", regex = TRUE, ontology = onto)
+#'
+#' get_concept(terms = "/*crops", broader = ".05", regex = TRUE, ontology = onto)
 #'
 #' # get all concepts that are nested into another concept
 #' get_concept(terms = "FODDER CROPS", tree = TRUE, ontology = onto)
@@ -35,7 +36,7 @@
 #' @importFrom readr read_rds
 #' @importFrom tidyselect everything
 #' @importFrom tidyr separate_rows
-#' @importFrom rlang quos eval_tidy := sym
+#' @importFrom rlang quos eval_tidy := sym as_name
 #' @importFrom dplyr filter pull select rename
 #' @importFrom purrr map map_dfc
 #' @importFrom stringr str_which str_sub
@@ -91,7 +92,7 @@ get_concept <- function(terms = NULL, ..., regex = FALSE, tree = FALSE, missing 
     for(i in seq_along(attrib)){
 
       toOut <- toOut %>%
-        filter(str_detect(toOut[[names(attrib)[i]]], paste0(attrib[[i]], collapse = "|")))
+        filter(str_detect(toOut[[names(attrib)[i]]], paste0(as_name(attrib[[i]]), collapse = "|")))
 
     }
 

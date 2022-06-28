@@ -51,7 +51,8 @@ get_concept(terms = "FODDER CROPS", ontology = ontoDir)
 
 # use regular expressions ...
 get_concept(terms = "/*crops", regex = TRUE, ontology = onto)
-get_concept(terms = "/*crops", broader = "_05", regex = TRUE, ontology = onto)
+
+get_concept(terms = "/*crops", broader = ".05", regex = TRUE, ontology = onto)
 
 # get all concepts that are nested into another concept
 get_concept(terms = "FODDER CROPS", tree = TRUE, ontology = onto)
