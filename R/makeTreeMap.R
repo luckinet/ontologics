@@ -3,7 +3,7 @@
 #' A tree map is used via the show method of an onto object.
 #' @param onto [`ontology(1)`][list]\cr an already loaded ontology.
 
-.makeTreeMap <- function(onto = NULL){
+# .makeTreeMap <- function(onto = NULL){
 
   # assertClass(x = geom, classes = "geom")
   # theWindow <- getWindow(x = geom)
@@ -63,4 +63,4 @@
   #
   # return(out)
 
-}
+# }
