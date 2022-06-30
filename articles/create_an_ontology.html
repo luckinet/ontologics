@@ -107,9 +107,11 @@
 <span><span class="co"># currently there is no 'show' function available yet, so let's take a peak at the ontology like so:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">crops</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Formal class 'onto' [package "ontologics"] with 5 slots</span></span>
-<span><span class="co">#&gt;   ..@ classes : tibble [3 × 2] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ level: chr [1:3] ".xx" ".xx.xx" ".xx.xx.xx"</span></span>
-<span><span class="co">#&gt;   .. ..$ class: chr [1:3] "group" "class" "crop"</span></span>
+<span><span class="co">#&gt;   ..@ classes : tibble [3 × 4] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;   .. ..$ level     : chr [1:3] ".xx" ".xx.xx" ".xx.xx.xx"</span></span>
+<span><span class="co">#&gt;   .. ..$ class     : chr [1:3] "group" "class" "crop"</span></span>
+<span><span class="co">#&gt;   .. ..$ broader   : chr [1:3] NA "group" "class"</span></span>
+<span><span class="co">#&gt;   .. ..$ definition: chr [1:3] "Groups of crop or livestock commodities" "Classes of crop or livestock commodities" "Crop or livestock commodities"</span></span>
 <span><span class="co">#&gt;   ..@ sources : tibble [1 × 6] (S3: tbl_df/tbl/data.frame)</span></span>
 <span><span class="co">#&gt;   .. ..$ sourceID   : int 1</span></span>
 <span><span class="co">#&gt;   .. ..$ sourceName : chr "harmonised"</span></span>
@@ -140,10 +142,11 @@
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lulc</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Formal class 'onto' [package "ontologics"] with 5 slots</span></span>
-<span><span class="co">#&gt;   ..@ classes : tibble [1 × 3] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ level : chr ".xx"</span></span>
-<span><span class="co">#&gt;   .. ..$ class : chr NA</span></span>
-<span><span class="co">#&gt;   .. ..$ parent: chr NA</span></span>
+<span><span class="co">#&gt;   ..@ classes : tibble [1 × 4] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;   .. ..$ level     : chr ".xx"</span></span>
+<span><span class="co">#&gt;   .. ..$ class     : chr NA</span></span>
+<span><span class="co">#&gt;   .. ..$ broader   : chr NA</span></span>
+<span><span class="co">#&gt;   .. ..$ definition: chr "dummy class that contains the code definition."</span></span>
 <span><span class="co">#&gt;   ..@ sources : tibble [1 × 6] (S3: tbl_df/tbl/data.frame)</span></span>
 <span><span class="co">#&gt;   .. ..$ sourceID   : num 1</span></span>
 <span><span class="co">#&gt;   .. ..$ sourceName : chr "harmonised"</span></span>
@@ -195,26 +198,33 @@
 <p>Next, classes and their hierarchy need to be defined. Each concept is always a combination of a code, a label and a class. The code must be unique for each unique concept, but the label or the class can have the same value for two concepts. For instance, the concept <code>football</code> can have the class <code>game</code> or the class <code>object</code> and then mean two different things, despite having the same label.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># currently it is merely possible to set only one class at a time</span></span>
-<span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"landcover"</span>, parent <span class="op">=</span> <span class="cn">NA</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"land-use"</span>, parent <span class="op">=</span> <span class="st">"landcover"</span>, ontology <span class="op">=</span> <span class="va">.</span><span class="op">)</span></span>
+<span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"landcover"</span>, broader <span class="op">=</span> <span class="cn">NA</span>, </span>
+<span>                  definition <span class="op">=</span> <span class="st">"A good definition of landcover"</span>, </span>
+<span>                  ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"land-use"</span>, broader <span class="op">=</span> <span class="st">"landcover"</span>, </span>
+<span>            definition <span class="op">=</span> <span class="st">"A good definition of land-use"</span>, </span>
+<span>            ontology <span class="op">=</span> <span class="va">.</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">classes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">level</th>
 <th align="left">class</th>
-<th align="left">parent</th>
+<th align="left">broader</th>
+<th align="left">definition</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">.xx</td>
 <td align="left">landcover</td>
 <td align="left">NA</td>
+<td align="left">A good definition of landcover</td>
 </tr>
 <tr class="even">
 <td align="left">.xx.xx</td>
 <td align="left">land-use</td>
 <td align="left">landcover</td>
+<td align="left">A good definition of land-use</td>
 </tr>
 </tbody>
 </table>
@@ -439,11 +449,11 @@
 <span>                         <span class="st">"Mosaic of agriculture and natural vegetation"</span>, </span>
 <span>                         <span class="st">"Undisturbed Forest"</span>, <span class="st">"Naturally Regenerating Forest"</span>,</span>
 <span>                         <span class="st">"Planted Forest"</span>, <span class="st">"Temporally Unstocked Forest"</span><span class="op">)</span>,</span>
-<span>             parent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>, <span class="fl">6</span><span class="op">)</span>,</span>
+<span>             broader <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>, <span class="fl">6</span><span class="op">)</span>,</span>
 <span>                        <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">8</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span>new <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">concept</span>,</span>
-<span>                    broader <span class="op">=</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>terms <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">parent</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span>,</span>
+<span>                    broader <span class="op">=</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>terms <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">broader</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span>,</span>
 <span>                    class <span class="op">=</span> <span class="st">"land-use"</span>,</span>
 <span>                    source <span class="op">=</span> <span class="st">"harmonised"</span>,</span>
 <span>                    ontology <span class="op">=</span>  <span class="va">lulc</span><span class="op">)</span></span>
@@ -820,7 +830,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="https://orcid.org/0000-0002-2958-0796" class="external-link">Steffen Ehrmann</a>.</p>
+<p>Developed by <a href="https://orcid.org/0000-0002-2958-0796" class="external-link">Steffen Ehrmann</a>, Arne Rümmler.</p>
 </div>
 
 <div class="pkgdown">

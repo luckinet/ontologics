@@ -312,7 +312,8 @@
 </table>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># ... ok, then let's specify that class and re-run new_concept</span></span>
-<span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"variety"</span>, parent <span class="op">=</span> <span class="st">"crop"</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
+<span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"variety"</span>, broader <span class="op">=</span> <span class="st">"crop"</span>, definition <span class="op">=</span> <span class="st">""</span>, </span>
+<span>                   ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span>new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wheat1"</span>, <span class="st">"wheat2"</span><span class="op">)</span>,</span>
 <span>                     broader <span class="op">=</span> <span class="va">broaderConcepts</span>,</span>
@@ -507,7 +508,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="https://orcid.org/0000-0002-2958-0796" class="external-link">Steffen Ehrmann</a>.</p>
+<p>Developed by <a href="https://orcid.org/0000-0002-2958-0796" class="external-link">Steffen Ehrmann</a>, Arne Rümmler.</p>
 </div>
 
 <div class="pkgdown">
