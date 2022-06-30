@@ -126,7 +126,7 @@ get_concept <- function(terms = NULL, ..., regex = FALSE, tree = FALSE, missing 
     for(i in seq_along(attrib)){
 
       toOut <- toOut %>%
-        filter(str_detect(toOut[[names(attrib)[i]]], paste0(attrib[[i]], collapse = "|")))
+        filter(str_detect(toOut[[names(attrib)[i]]], paste0(eval_tidy(attrib[[i]]), collapse = "|")))
 
     }
 
