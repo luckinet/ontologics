@@ -29,7 +29,8 @@ start_ontology <- function(name = NULL, path = NULL, code = ".xx", description =
   if(is.null(notes)) notes <- ""
 
   theClasses <- tibble(level = code,
-                       class = NA_character_)
+                       class = NA_character_,
+                       parent = NA_character_)
   theSources <- tibble(sourceID = 1,
                        sourceName = "harmonised",
                        description = description,
