@@ -1,3 +1,5 @@
+# How to use the semantic web interface
+
 # Conversion Rational
 
 
@@ -47,9 +49,9 @@ luckinet:landcover skos:prefLabel "Landcover" .
 ```
 RDF is based on the open world assumption: In the above case that means that not stating a definition of the concept `.08` does not mean that no definition exists; it's simply not known if a definition exists.
 
-## DataFrame 2 RDF
+## RDS 2 RDF
 
-If we look at the tabular pattern of a dataframe of all concepts/classes in the ontology, we see that the first column holds the concept-ID and in the other columns state facts about this ID:
+If we take a look at the tabular pattern of a Data.Frame that contains all concepts/classes in the ontology, we see that the first column holds the concept-ID and in the other columns state facts about this ID:
 
 
 __Concept table:__
@@ -81,3 +83,43 @@ E.g. concept table as RDF pseudocode:
     class land-use ;
     broader .08 .
 ```
+
+### From the RDS object to suitable Data.Frames
+
+Above we showed two Data.Frames to accommodate for two kinds of IDs; harmonised concept IDs and class Ids. The ontology in its entirety bears one more kind of IDs; external IDs. External IDs refer to concepts that are not part of the harmonised concepts in the ontology; they are rather concepts that are defined in other ontologies. An external ID should be referenced if it conveys a similar meaning than a certain harmonised ID. An external ID can also have a label, etc. 
+
+So to sum up, to effectively export the ontology as RDF, we generate 3 Data.Frames (one for every kind of ID) and build the required triples from here on out.
+
+The package internally manages the ontology in 5 Data.Frames for which we now list the column names (and the respective datatypes):
+
+__1. Classes__
+   
+level | class | broader | definition
+-|-|-|-
+chr | chr | chr | chr 
+
+__2. Sources__
+
+sourceID | source_name | description | homepage | license | notes
+-|-|-|-|-|-
+num | chr | chr | chr | chr | chr | chr
+
+__3. Concepts__
+   
+code | broader | sourceID
+-|-|-
+chr | chr | num 
+
+__4. Labels__
+
+code | class | label_en
+-|-|-
+chr | chr | chr 
+
+__5. Mappings__
+
+code | external
+-|-
+chr | num 
+
+## SKOS and XKOS
