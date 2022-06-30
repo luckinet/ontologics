@@ -312,12 +312,13 @@
 </table>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># ... ok, then let's specify that class and re-run new_concept</span></span>
-<span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"variety"</span>, broader <span class="op">=</span> <span class="st">"crop"</span>, definition <span class="op">=</span> <span class="st">""</span>, </span>
+<span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"cultivar"</span>, broader <span class="op">=</span> <span class="st">"crop"</span>, </span>
+<span>                   definition <span class="op">=</span> <span class="st">"type of plant that people have bred for desired traits"</span>, </span>
 <span>                   ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span>new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wheat1"</span>, <span class="st">"wheat2"</span><span class="op">)</span>,</span>
 <span>                     broader <span class="op">=</span> <span class="va">broaderConcepts</span>,</span>
-<span>                     class <span class="op">=</span> <span class="st">"variety"</span>,</span>
+<span>                     class <span class="op">=</span> <span class="st">"cultivar"</span>,</span>
 <span>                     source <span class="op">=</span> <span class="st">"externalDataset"</span>,</span>
 <span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span></code></pre></div>
 <p>Now we can check whether the updated ontology is as we’d expect, for example by looking at the tree of the respective items again. We should expect that the new harmonised concepts now appear in the ontology and that they have some link to an external concept defined.</p>
@@ -354,7 +355,7 @@
 <td align="left">.02.09.01.01</td>
 <td align="left">.02.09.01</td>
 <td align="left">wheat1</td>
-<td align="left">variety</td>
+<td align="left">cultivar</td>
 <td align="left">NA</td>
 <td align="left">externalDataset</td>
 </tr>
@@ -362,7 +363,7 @@
 <td align="left">.02.09.01.02</td>
 <td align="left">.02.09.01</td>
 <td align="left">wheat2</td>
-<td align="left">variety</td>
+<td align="left">cultivar</td>
 <td align="left">NA</td>
 <td align="left">externalDataset</td>
 </tr>
