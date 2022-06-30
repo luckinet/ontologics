@@ -28,7 +28,7 @@ caliper](https://datalab.review.fao.org/datalab/caliper/web/) platform
 and makes use of the Simple Knowledge Organisation System
 ([SKOS](https://www.w3.org/TR/skos-reference/)).
 
-An ontology is any data structure that stores concept of any knowledge
+An ontology is any data structure that stores concepts of any knowledge
 field in a linked way. It is typically built on a set of
 standardised/harmonised terms that have a clear definition and
 potentially some attributes. According to the SKOS, concepts can have
