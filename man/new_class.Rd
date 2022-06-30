@@ -4,15 +4,19 @@
 \alias{new_class}
 \title{Add a new valid class to an ontology}
 \usage{
-new_class(class, parent, ontology = NULL)
+new_class(class, broader, definition, ontology = NULL)
 }
 \arguments{
-\item{class}{\code{\link[=character]{character(1)}}\cr}
+\item{class}{\code{\link[=character]{character(1)}}\cr the new class label.}
 
-\item{parent}{\code{\link[=character]{character(1)}}\cr}
+\item{broader}{\code{\link[=character]{character(1)}}\cr the broader class into which
+the new class is nested.}
 
-\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the
-ontology is stored, or an already loaded ontology.}
+\item{definition}{\code{\link[=character]{character(1)}}\cr a definition of the new
+class.}
+
+\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
+stored, or an already loaded ontology.}
 }
 \description{
 Add a new valid class to an ontology
@@ -21,6 +25,7 @@ Add a new valid class to an ontology
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 onto <- load_ontology(path = ontoDir)
 
-onto <- new_class(class = "use type", parent = "class", ontology = onto)
+onto <- new_class(class = "use type", broader = "class",
+                  definition = "something", ontology = onto)
 
 }

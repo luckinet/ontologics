@@ -28,13 +28,13 @@ cropOntology <- system.file("extdata", "crops.rds", package = "ontologics")
 
 crops <- load_ontology(path = cropOntology)
 
-# currently there is now 'show' function available yet, so let's take a peak at the ontology like so:
+# currently there is no 'show' function available yet, so let's take a peak at the ontology like so:
 str(crops)
 ```
 
 The `onto` class is an S3 class with the 5 slots `@classes`, `@sources`, `@concepts`, `@labels` and `@mappings`, each of which are reflected by a function that allows to add new items to this slot (**note**, the function `new_labels()` is not yet supported).
 
-A new, entirely empty ontology is built by calling the function `start_ontology()`. This requires a bunch of meta-data that will be stored in the ontology and which serve the purpose of properly linking also this ontology to other *linked open data*. 
+A new ontology is built by calling the function `start_ontology()`. This requires a bunch of meta-data that will be stored in the ontology and which serve the purpose of properly linking also this ontology to other *linked open data*. 
 
 
 ```{r}
@@ -60,8 +60,12 @@ Next, classes and their hierarchy need to be defined. Each concept is always a c
 
 ```{r}
 # currently it is merely possible to set only one class at a time
-lulc <- new_class(class = "landcover", parent = NA, ontology = lulc) %>%
-  new_class(class = "land-use", parent = "landcover", ontology = .)
+lulc <- new_class(class = "landcover", broader = NA, 
+                  definition = "A good definition of landcover", 
+                  ontology = lulc) %>%
+  new_class(class = "land-use", broader = "landcover", 
+            definition = "A good definition of land-use", 
+            ontology = .)
 
 kable(lulc@classes)
 ```
@@ -86,7 +90,7 @@ list(kable(lulc@concepts, caption = "the concepts"), kable(lulc@labels, caption 
   kables()
 ```
 
-An ontology is different from a vocabulary in that concepts that are contained in an ontology are related semantically to one another. For exmaple, concepts can be nested into other concepts. Hence, let's create also a second level on concepts that depend on the first level.
+An ontology is different from a vocabulary in that concepts that are contained in an ontology are related semantically to one another. For exmaple, concepts can be nested into other concepts. Hence, let's create also a second level of concepts that depend on the first level.
 
 
 ```{r}
@@ -97,11 +101,11 @@ lu <- tibble(concept = c("Fallow", "Herbaceous crops", "Temporary grazing",
                          "Mosaic of agriculture and natural vegetation", 
                          "Undisturbed Forest", "Naturally Regenerating Forest",
                          "Planted Forest", "Temporally Unstocked Forest"),
-             parent = c(rep(lc[5], 3), rep(lc[6], 6),
+             broader = c(rep(lc[5], 3), rep(lc[6], 6),
                         rep(lc[7], 3), rep(lc[8], 4)))
 
 lulc <- new_concept(new = lu$concept,
-                    broader = get_concept(terms = lu$parent, ontology = lulc),
+                    broader = get_concept(terms = lu$broader, ontology = lulc),
                     class = "land-use",
                     source = "harmonised",
                     ontology =  lulc)

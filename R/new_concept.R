@@ -48,7 +48,8 @@
 #'               ontology = onto)
 #'
 #' # define that class ...
-#' onto <- new_class(class = "use type", parent = "class", ontology = onto)
+#' onto <- new_class(class = "use type", broader = "class",
+#'                   definition = "the way a crop is used", ontology = onto)
 #'
 #' # ... and set the concepts again
 #' onto <- get_concept(terms = concepts$old, ontology = onto) %>%
@@ -172,6 +173,10 @@ new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = 
     digits <- nchar(digits)
     newConcept <- ontology@concepts
   }
+
+  temp <- bind_cols(broader, tibble(new = new))
+
+
 
   newLabels <- ontology@labels
   newMappings <- ontology@mappings

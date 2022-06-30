@@ -1,24 +1,30 @@
 #' Add a new valid class to an ontology
 #'
-#' @param class [`character(1)`][character]\cr
-#' @param parent [`character(1)`][character]\cr
-#' @param ontology [`ontology(1)`][list]\cr either a path where the
-#'   ontology is stored, or an already loaded ontology.
+#' @param class [`character(1)`][character]\cr the new class label.
+#' @param broader [`character(1)`][character]\cr the broader class into which
+#'   the new class is nested.
+#' @param definition [`character(1)`][character]\cr a definition of the new
+#'   class.
+#' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
+#'   stored, or an already loaded ontology.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
 #'
-#' onto <- new_class(class = "use type", parent = "class", ontology = onto)
+#' onto <- new_class(class = "use type", broader = "class",
+#'                   definition = "something", ontology = onto)
 #'
 #' @importFrom checkmate assertCharacter assertClass assertTRUE
 #' @importFrom methods new
 #' @export
 
-new_class <- function(class, parent, ontology = NULL){
+new_class <- function(class, broader, definition, ontology = NULL){
 
   assertCharacter(x = class, len = 1, any.missing = FALSE)
-  assertCharacter(x = parent, len = 1, unique = FALSE)
-  assertTRUE(length(class) == length(parent))
+  assertCharacter(x = broader, len = 1, unique = FALSE)
+  assertCharacter(x = definition, len = 1, any.missing = FALSE)
+  assertTRUE(length(class) == length(broader))
+  assertTRUE(length(class) == length(definition))
 
   if(inherits(x = ontology, what = "onto")){
     ontoPath <- NULL
@@ -31,23 +37,26 @@ new_class <- function(class, parent, ontology = NULL){
     ontology <- load_ontology(path = ontoPath)
   }
 
-  newClass <- tibble(class = class, parent = parent)
+  if(is.na(broader)){
 
-  if(is.na(parent)){
-
-    theClass <- tibble(level = ontology@classes$level[1], class = class)
+    theClass <- tibble(level = ontology@classes$level[1], class = class, broader = NA_character_, definition = definition) %>%
+      bind_rows(ontology@classes, .) %>%
+      distinct()
 
   } else {
-    assertSubset(x = parent, choices = ontology@classes$class)
+    assertSubset(x = broader, choices = ontology@classes$class)
     newLvl <- ontology@classes %>%
-      filter(class == parent) %>%
+      filter(class == !!broader) %>%
       pull(level)
     newLvl <- paste0(newLvl, ontology@classes$level[1])
 
-    theClass <- tibble(level = newLvl, class = class) %>%
+    theClass <- tibble(level = newLvl, class = class, broader = broader, definition = definition) %>%
       bind_rows(ontology@classes, .) %>%
       distinct()
   }
+
+  theClass <- theClass %>%
+    filter(!is.na(class))
 
   out <- new(Class = "onto",
              classes = theClass,
