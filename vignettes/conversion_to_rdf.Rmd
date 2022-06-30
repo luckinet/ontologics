@@ -1,13 +1,83 @@
 # Conversion Rational
 
-## TODO
-
-- [ ] prefixes
-- [ ] analyze table structure
-- [ ] publish ontology
-- [ ] SKOS and XKOS 
 
 
 ## Prefixes
 
-Every resource in an RDF database has to be assigned with an ID. These IDs have to be IRIs (IRIs are a superset of URIs, which are in turn a superset of URLs).
+The IDs that are used in an RDF database have to be IRIs (IRIs are a superset of URIs, which are in turn a superset of URLs). Typically, the structure of URLs is used. In this package, we generate the RDF-IDs of the concepts in the ontology by concatenating a _prefix_ (the string you defined as `homepage`, when you created the ontology) with internal package IDs. The homepage of the example ontology we created in [create an ontology](create_an_ontology.html) is `https://www.luckinet.org`. The internal ID of the concept with the label `Naturally Regenerating Forest` in this ontology is `.08.02`. The resulting IRI-ID for this concept is <https://www.luckinet.org/.08.02>. As you see, `/` was used as concatenation symbol. Another option would be `#`. If the `homepage` string ends on `/` or `#`, this symbol is used for concatenation, otherwise `/` is appended as default. 
+
+The IRI-IDs (IRIs from here) do not have to resolve to an actual resource on the Web, but it is recommended (see [publishing an ontology](publishing_an_ontology.html)). If not possible, at least the prefix should resemble an actual Web page, as it is the case for the example. 
+
+## RDF
+
+In RDF every information is resembled as a sentence like structure called triple. A triple has a subject, a predicate and an object. Every triple states a fact about it's subject and end this statement with a period (`.`). The fact that the concept with the ID `<https://www.luckinet.org/.08.02>` has the label `"Naturally Regenerating Forest"` in RDF actually reads:
+
+```
+@prefix luckinet: <https://www.luckinet.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+luckinet:.08.02 skos:prefLabel "Naturally Regenerating Forest" .
+```
+
+Every subject and predicate in an RDF triple have to be resources (that means they are represented by an IRI); whilst object can be either a resource or a literal value (as in the example above). The definition of the IRI `skos:prefLabel` (<http://www.w3.org/2004/02/skos/core#prefLabel>) is given by the triple:
+
+```
+skos:prefLabel skos:definition "The preferred lexical label for a resource, in a given language." .
+```
+
+We can add some more facts from our ontology to the RDF database. The RDF representation that we use here is called RDF-Turtle. In RDF-Turtle a semicolon at the end of a triple indicates that the next statement also refers to the same subject (which is followingly let out). A comma indicates that the next statement refers to the same subject and object.
+
+```
+@prefix luckinet: <https://www.luckinet.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+luckinet:.08.02 skos:prefLabel "Naturally Regenerating Forest" ;    
+    skos:broader luckinet:.08 .
+    rdf:type luckinet:land-use ;
+    skos:definition "Forest that regenerates naturally (this definition need revision)." . 
+
+luckinet:.08 skos:prefLabel "Forests";
+    rdf:type luckinet:landcover;
+
+luckinet:land-use skos:prefLabel "Land-Use";
+    skos:broader luckinet:landcover .
+
+luckinet:landcover skos:prefLabel "Landcover" .
+```
+RDF is based on the open world assumption: In the above case that means that not stating a definition of the concept `.08` does not mean that no definition exists; it's simply not known if a definition exists.
+
+## DataFrame 2 RDF
+
+If we look at the tabular pattern of a dataframe of all concepts/classes in the ontology, we see that the first column holds the concept-ID and in the other columns state facts about this ID:
+
+
+__Concept table:__
+ID |label|definition|class|broader
+-|-|-|-|-
+.08 | Forests | NA | landcover | NA
+.08.02 | Naturally Regenerating Forest | Forest that regenerates naturally (this definition need revision) | land-use | .08
+
+__Class table:__
+ID |label|definition|broader
+-|-|-|-
+landcover | Landcover | NA | NA
+land-use | Land-Use | NA | landcover
+
+RDF Triples can be generated according to the following scheme: 
+
+```
+<Column[ID].at(index).value> <Column[...].columnName> <Column[...].at(index).value> .
+```
+
+E.g. concept table as RDF pseudocode:
+
+```
+.08 label "Forests" ;
+    class "landcover" .
+
+.08.02 label "Naturally Regenerating Forest" ;
+    definition "Forest that regenerates naturally (this definition need revision)" ;
+    class land-use ;
+    broader .08 .
+```
