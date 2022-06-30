@@ -60,8 +60,12 @@ Next, classes and their hierarchy need to be defined. Each concept is always a c
 
 ```{r}
 # currently it is merely possible to set only one class at a time
-lulc <- new_class(class = "landcover", parent = NA, ontology = lulc) %>%
-  new_class(class = "land-use", parent = "landcover", ontology = .)
+lulc <- new_class(class = "landcover", broader = NA, 
+                  definition = "A good definition of landcover", 
+                  ontology = lulc) %>%
+  new_class(class = "land-use", broader = "landcover", 
+            definition = "A good definition of land-use", 
+            ontology = .)
 
 kable(lulc@classes)
 ```
@@ -97,11 +101,11 @@ lu <- tibble(concept = c("Fallow", "Herbaceous crops", "Temporary grazing",
                          "Mosaic of agriculture and natural vegetation", 
                          "Undisturbed Forest", "Naturally Regenerating Forest",
                          "Planted Forest", "Temporally Unstocked Forest"),
-             parent = c(rep(lc[5], 3), rep(lc[6], 6),
+             broader = c(rep(lc[5], 3), rep(lc[6], 6),
                         rep(lc[7], 3), rep(lc[8], 4)))
 
 lulc <- new_concept(new = lu$concept,
-                    broader = get_concept(terms = lu$parent, ontology = lulc),
+                    broader = get_concept(terms = lu$broader, ontology = lulc),
                     class = "land-use",
                     source = "harmonised",
                     ontology =  lulc)

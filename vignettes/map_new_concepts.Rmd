@@ -106,7 +106,8 @@ crops <- new_concept(new = c("wheat1", "wheat2"),
 get_concept(terms = "Wheat", tree = TRUE, ontology = crops) %>% 
   kable()
 # ... ok, then let's specify that class and re-run new_concept
-crops <- new_class(class = "variety", parent = "crop", ontology = crops)
+crops <- new_class(class = "variety", broader = "crop", definition = "", 
+                   ontology = crops)
 
 crops <- new_concept(new = c("wheat1", "wheat2"),
                      broader = broaderConcepts,
