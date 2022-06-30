@@ -104,7 +104,7 @@
 <span></span>
 <span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_ontology.html">load_ontology</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">cropOntology</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># currently there is now 'show' function available yet, so let's take a peak at the ontology like so:</span></span>
+<span><span class="co"># currently there is no 'show' function available yet, so let's take a peak at the ontology like so:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">crops</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Formal class 'onto' [package "ontologics"] with 5 slots</span></span>
 <span><span class="co">#&gt;   ..@ classes : tibble [3 × 2] (S3: tbl_df/tbl/data.frame)</span></span>
@@ -129,7 +129,7 @@
 <span><span class="co">#&gt;   .. ..$ code    : chr [1:73] ".01" ".01.01" ".01.02" ".01.03" ...</span></span>
 <span><span class="co">#&gt;   .. ..$ external: chr [1:73] NA NA NA NA ...</span></span></code></pre></div>
 <p>The <code>onto</code> class is an S3 class with the 5 slots <code>@classes</code>, <code>@sources</code>, <code>@concepts</code>, <code>@labels</code> and <code>@mappings</code>, each of which are reflected by a function that allows to add new items to this slot (<strong>note</strong>, the function <code>new_labels()</code> is not yet supported).</p>
-<p>A new, entirely empty ontology is built by calling the function <code><a href="../reference/start_ontology.html">start_ontology()</a></code>. This requires a bunch of meta-data that will be stored in the ontology and which serve the purpose of properly linking also this ontology to other <em>linked open data</em>.</p>
+<p>A new ontology is built by calling the function <code><a href="../reference/start_ontology.html">start_ontology()</a></code>. This requires a bunch of meta-data that will be stored in the ontology and which serve the purpose of properly linking also this ontology to other <em>linked open data</em>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/start_ontology.html">start_ontology</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"land_surface_properties"</span>,</span>
 <span>                       path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, </span>
@@ -140,9 +140,10 @@
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lulc</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Formal class 'onto' [package "ontologics"] with 5 slots</span></span>
-<span><span class="co">#&gt;   ..@ classes : tibble [1 × 2] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ level: chr ".xx"</span></span>
-<span><span class="co">#&gt;   .. ..$ class: chr NA</span></span>
+<span><span class="co">#&gt;   ..@ classes : tibble [1 × 3] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;   .. ..$ level : chr ".xx"</span></span>
+<span><span class="co">#&gt;   .. ..$ class : chr NA</span></span>
+<span><span class="co">#&gt;   .. ..$ parent: chr NA</span></span>
 <span><span class="co">#&gt;   ..@ sources : tibble [1 × 6] (S3: tbl_df/tbl/data.frame)</span></span>
 <span><span class="co">#&gt;   .. ..$ sourceID   : num 1</span></span>
 <span><span class="co">#&gt;   .. ..$ sourceName : chr "harmonised"</span></span>
@@ -202,15 +203,18 @@
 <thead><tr class="header">
 <th align="left">level</th>
 <th align="left">class</th>
+<th align="left">parent</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">.xx</td>
 <td align="left">landcover</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.xx.xx</td>
 <td align="left">land-use</td>
+<td align="left">landcover</td>
 </tr>
 </tbody>
 </table>
@@ -426,7 +430,7 @@
 </table>
 </td>
 </tr></tbody></table>
-<p>An ontology is different from a vocabulary in that concepts that are contained in an ontology are related semantically to one another. For exmaple, concepts can be nested into other concepts. Hence, let’s create also a second level on concepts that depend on the first level.</p>
+<p>An ontology is different from a vocabulary in that concepts that are contained in an ontology are related semantically to one another. For exmaple, concepts can be nested into other concepts. Hence, let’s create also a second level of concepts that depend on the first level.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lu</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>concept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Fallow"</span>, <span class="st">"Herbaceous crops"</span>, <span class="st">"Temporary grazing"</span>,</span>
 <span>                         <span class="st">"Permanent grazing"</span>, <span class="st">"Shrub orchards"</span>, <span class="st">"Palm plantations"</span>, </span>
