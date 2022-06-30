@@ -5,7 +5,11 @@ Authors@R: c(
     person("Steffen", "Ehrmann", 
            role = c("aut", "cre"), 
            email = "steffen.ehrmann@posteo.de", 
-           comment = c(ORCID = "0000-0002-2958-0796"))
+           comment = c(ORCID = "0000-0002-2958-0796")),
+    person("Arne", "Rümmler", 
+           role = c("aut", "ctb"),
+           email = "arne.ruemmler@tu-dresden.de",
+           comment = c(ORCID = "0000-0001-8637-9071"))
     )
 Description: Provides tools to build and work with an ontology of linked (open) 
     data in a tidy workflow. It is inspired by the FAO caliper platform and 
