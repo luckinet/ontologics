@@ -28,13 +28,13 @@ cropOntology <- system.file("extdata", "crops.rds", package = "ontologics")
 
 crops <- load_ontology(path = cropOntology)
 
-# currently there is now 'show' function available yet, so let's take a peak at the ontology like so:
+# currently there is no 'show' function available yet, so let's take a peak at the ontology like so:
 str(crops)
 ```
 
 The `onto` class is an S3 class with the 5 slots `@classes`, `@sources`, `@concepts`, `@labels` and `@mappings`, each of which are reflected by a function that allows to add new items to this slot (**note**, the function `new_labels()` is not yet supported).
 
-A new, entirely empty ontology is built by calling the function `start_ontology()`. This requires a bunch of meta-data that will be stored in the ontology and which serve the purpose of properly linking also this ontology to other *linked open data*. 
+A new ontology is built by calling the function `start_ontology()`. This requires a bunch of meta-data that will be stored in the ontology and which serve the purpose of properly linking also this ontology to other *linked open data*. 
 
 
 ```{r}
