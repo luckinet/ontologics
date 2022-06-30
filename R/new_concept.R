@@ -64,14 +64,14 @@
 #' @importFrom checkmate testCharacter testIntegerish assert assertFileExists
 #'   assertSubset assertDataFrame
 #' @importFrom tibble tibble
-#' @importFrom dplyr filter pull bind_rows arrange n
-#' @importFrom stringr str_detect str_split str_sub
+#' @importFrom dplyr filter pull bind_rows arrange n summarise row_number
+#' @importFrom stringr str_detect str_split str_sub str_replace_all
 #' @importFrom readr read_rds write_rds
 #' @importFrom utils tail
 #' @importFrom methods new
 #' @export
 
-new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = FALSE,
+new_concept <- function(new, broader = NULL, class = NULL, source,
                         attributes = NULL, ontology = NULL){
 
   if(is.null(new)){
@@ -84,7 +84,6 @@ new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = 
   assertDataFrame(x = broader, null.ok = TRUE)
   assertCharacter(x = class, null.ok = TRUE)
   assertCharacter(x = source, any.missing = FALSE)
-
 
   if(inherits(x = ontology, what = "onto")){
     ontoPath <- NULL
@@ -153,10 +152,11 @@ new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = 
         pull(label_en)
       stop("the concepts '", paste0(missingConcepts, collapse = ", "), "' don't exist yet as harmonised concepts, please first define them with 'new_concept()'.")
     }
+  } else {
+    broader <- tibble(code = rep(NA_character_, length(new)), label_en = rep(NA_character_, length(new)), class = rep(NA_character_, length(new)))
   }
 
-  # needs an error message, in case the classes are not yet defined in the ontlogy
-
+  # get the source ID
   srcID <- ontology@sources %>%
     filter(sourceName %in% source) %>%
     pull(sourceID)
@@ -165,72 +165,50 @@ new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = 
     stop("please first define the source '", source, "' with 'new_source()'.")
   }
 
+  # determine how many digits each new code should have
   if(!all(is.na(ontology@concepts$code)) & length(ontology@labels$code) == 0){
     digits <- nchar(ontology@concepts$code[1])
-    newConcept <- tibble(code = character(), broader = character(), sourceID = double())
   } else {
     digits <- tail(str_split(ontology@classes$level, "[.]")[[1]], 1)
     digits <- nchar(digits)
-    newConcept <- ontology@concepts
   }
 
-  temp <- bind_cols(broader, tibble(new = new))
+  # and by which symbol the levels are separated
+  seperator <- str_replace_all(string = ontology@classes$level[1], pattern = "x", replacement = "")
 
+  # get concepts that are already defined for the broader concepts
+  nestedIDs <- onto %>%
+    filter(broader %in% !!broader$code) %>%
+    select(code = broader, nestedID = code, top2D = broader, class)
 
+  # get the broader concepts
+  broaderIDs <- onto %>%
+    filter(code %in% !!broader$code) %>%
+    group_by(code, class) %>%
+    summarise(topID = suppressWarnings(max(code))) %>%
+    ungroup() %>%
+    arrange(code)
 
-  newLabels <- ontology@labels
-  newMappings <- ontology@mappings
-  iter <- 0
-  for(i in seq_along(new)){
-    newLabel <- new[i]
-    newClass <- class[i]
+  # assign nested and broader IDs into the temporary object
+  temp <- bind_cols(broader, tibble(new = new, newClass = class)) %>%
+    left_join(nestedIDs, by = c("code", "class")) %>%
+    left_join(broaderIDs, by = c("code", "class")) %>%
+    unite(col = topID, topID, top2D, sep = "", na.rm = TRUE)
 
-    if(!is.null(broader)){
+  # build the new ID
+  temp <- temp %>%
+    group_by(code) %>%
+    mutate(nextID = if_else(!is.na(nestedID),
+                            paste0(topID, seperator, formatC(as.numeric(tail(str_split(nestedID, if_else(seperator == ".", "[.]", seperator))[[1]], 1)) + row_number(), flag = "0", width = digits)),
+                            paste0(topID, seperator, formatC(row_number(), flag = "0", width = digits))),
+           sourceID = srcID,
+           external = NA_character_) %>%
+    ungroup()
 
-      broaderID <- onto %>%
-        # filter(sourceName == source) %>%
-        filter(label_en %in% !!broader$label_en[i]) %>%
-        pull(code)
-
-      nestedID <- make_tree(input = newConcept, top = broaderID) %>%
-        filter(broader == broaderID) %>%
-        pull(code)
-
-    } else {
-      nestedID <- iter
-      broaderID <- NA_character_
-    }
-
-    if(length(nestedID) == 0){
-      nextID <- paste0(c(broaderID, formatC(1, flag = "0", width = digits)), collapse = ".")
-    } else {
-
-      nestedConcepts <- ontology@labels[ontology@labels$code %in% nestedID,]
-
-      if(newLabel %in% nestedConcepts$label_en){
-        nextID <- nestedConcepts$code[nestedConcepts$label_en %in% newLabel]
-      } else {
-        nextID <- tail(nestedID, 1)
-        tempID <- str_split(nextID, "[.]")[[1]]
-        tempID[length(tempID)] <- formatC(as.numeric(tempID[length(tempID)]) + 1, flag = "0", width = digits)
-        nextID <- paste0(tempID, collapse = ".")
-        if(str_sub(nextID, 1, 1) != "."){
-          nextID <- paste0(".", nextID)
-        }
-      }
-
-    }
-
-    iter <- iter + 1
-
-    newConcept <- tibble(code = nextID, sourceID = srcID, broader = broaderID) %>%
-      bind_rows(newConcept)
-    newLabels <- tibble(code = nextID, class = newClass, label_en = newLabel) %>%
-      bind_rows(newLabels)
-    newMappings <- tibble(code = nextID, external = NA_character_) %>%
-      bind_rows(newMappings)
-
-  }
+  newLabels <- temp %>%
+    select(code = nextID, class = newClass, label_en = new) %>%
+    bind_rows(ontology@labels) %>%
+    arrange(code)
 
   # filter concepts that are duplicated because they were previously undefined
   extConcepts <- newLabels %>%
@@ -245,18 +223,93 @@ new_concept <- function(new, broader = NULL, class = NULL, source, #overwrite = 
     bind_rows(extConcepts) %>%
     pull(undef)
 
-  newConcept <- newConcept %>%
-    filter(!undefined) %>%
-    arrange(code) %>%
-    select(code, broader, sourceID)
   newLabels <- newLabels %>%
-    filter(!undefined) %>%
+    filter(!undefined)
+
+  newConcept <- temp %>%
+    select(code = nextID, broader = code, sourceID) %>%
+    bind_rows(ontology@concepts) %>%
     arrange(code) %>%
-    select(code, class, label_en)
-  newMappings <- newMappings %>%
-    filter(!undefined) %>%
+    filter(!undefined)
+  newMappings <- temp %>%
+    select(code = nextID, external) %>%
+    bind_rows(ontology@mappings) %>%
     arrange(code) %>%
-    select(code, external)
+    filter(!undefined)
+
+
+
+  ###################### remove ####################
+
+  # newLabels <- ontology@labels
+  # newMappings <- ontology@mappings
+  # iter <- 0
+  # for(i in seq_along(new)){
+  #   newLabel <- new[i]
+  #   newClass <- class[i]
+  #
+  #   if(!is.null(broader)){
+  #
+  #     broaderID <- onto %>%
+  #       # filter(sourceName == source) %>%
+  #       filter(label_en %in% !!broader$label_en[i]) %>%
+  #       pull(code)
+  #
+  #     nestedID <- make_tree(input = newConcept, top = broaderID) %>%
+  #       filter(broader == broaderID) %>%
+  #       pull(code)
+  #
+  #   } else {
+  #     nestedID <- iter
+  #     broaderID <- NA_character_
+  #   }
+  #
+  #   if(length(nestedID) == 0){
+  #     nextID <- paste0(c(broaderID, formatC(1, flag = "0", width = digits)), collapse = ".")
+  #   } else {
+  #
+  #     nestedConcepts <- ontology@labels[ontology@labels$code %in% nestedID,]
+  #
+  #     if(newLabel %in% nestedConcepts$label_en){
+  #       nextID <- nestedConcepts$code[nestedConcepts$label_en %in% newLabel]
+  #     } else {
+  #       nextID <- tail(str_split(nextID, "[.]")[[1]], 1)
+  #       tempID <- str_split(nextID, "[.]")[[1]]
+  #       tempID[length(tempID)] <- formatC(as.numeric(tempID[length(tempID)]) + 1, flag = "0", width = digits)
+  #       nextID <- paste0(tempID, collapse = ".")
+  #       if(str_sub(nextID, 1, 1) != "."){
+  #         nextID <- paste0(".", nextID)
+  #       }
+  #     }
+  #
+  #   }
+  #
+  #   iter <- iter + 1
+  #
+  #   newConcept <- tibble(code = nextID, sourceID = srcID, broader = broaderID) %>%
+  #     bind_rows(newConcept)
+  #   newLabels <- tibble(code = nextID, class = newClass, label_en = newLabel) %>%
+  #     bind_rows(newLabels)
+  #   newMappings <- tibble(code = nextID, external = NA_character_) %>%
+  #     bind_rows(newMappings)
+  #
+  # }
+
+  # newConcept <- newConcept %>%
+  #   filter(!undefined) %>%
+  #   arrange(code) %>%
+  #   select(code, broader, sourceID)
+  # newLabels <- newLabels %>%
+  #   filter(!undefined) %>%
+  #   arrange(code) %>%
+  #   select(code, class, label_en)
+  # newMappings <- newMappings %>%
+  #   filter(!undefined) %>%
+  #   arrange(code) %>%
+  #   select(code, external)
+
+
+  ###################### remove ####################
 
   out <- new(Class = "onto",
              classes = ontology@classes,
