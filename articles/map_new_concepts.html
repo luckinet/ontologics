@@ -97,7 +97,7 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/luckinet/ontologics" class="external-link">ontologics</a></span><span class="op">)</span></span></code></pre></div>
-<p>When an ontology exists already, it can be used either by looking up which concepts exist in it, which relations the concepts have among each other or by adding and linking new concepts to the already existing concepts. When addint (or mapping) new concepts, we first have to define the source of the new concepts.</p>
+<p>When an ontology exists already, it can be used either by looking up which concepts exist in it, which relations the concepts have among each other or by adding and linking new concepts to the already existing concepts. When adding (or mapping) new concepts, we first have to define the source of the new concepts.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># already existing ontology for some project about crops</span></span>
 <span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_ontology.html">load_ontology</a></span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"crops.rds"</span>, package <span class="op">=</span> <span class="st">"ontologics"</span><span class="op">)</span><span class="op">)</span></span>
