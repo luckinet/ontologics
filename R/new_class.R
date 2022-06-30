@@ -31,23 +31,26 @@ new_class <- function(class, parent, ontology = NULL){
     ontology <- load_ontology(path = ontoPath)
   }
 
-  newClass <- tibble(class = class, parent = parent)
-
   if(is.na(parent)){
 
-    theClass <- tibble(level = ontology@classes$level[1], class = class)
+    theClass <- tibble(level = ontology@classes$level[1], class = class, parent = NA_character_) %>%
+      bind_rows(ontology@classes, .) %>%
+      distinct()
 
   } else {
     assertSubset(x = parent, choices = ontology@classes$class)
     newLvl <- ontology@classes %>%
-      filter(class == parent) %>%
+      filter(class == !!parent) %>%
       pull(level)
     newLvl <- paste0(newLvl, ontology@classes$level[1])
 
-    theClass <- tibble(level = newLvl, class = class) %>%
+    theClass <- tibble(level = newLvl, class = class, parent = parent) %>%
       bind_rows(ontology@classes, .) %>%
       distinct()
   }
+
+  theClass <- theClass %>%
+    filter(!is.na(class))
 
   out <- new(Class = "onto",
              classes = theClass,
