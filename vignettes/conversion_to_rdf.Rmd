@@ -1,0 +1,13 @@
+# Conversion Rational
+
+## TODO
+
+- [ ] prefixes
+- [ ] analyze table structure
+- [ ] publish ontology
+- [ ] SKOS and XKOS 
+
+
+## Prefixes
+
+Every resource in an RDF database has to be assigned with an ID. These IDs have to be IRIs (IRIs are a superset of URIs, which are in turn a superset of URLs).
