@@ -90,7 +90,7 @@ crops <- new_mapping(concept = toMap,
                      ontology = crops)
 ```
 
-It my be, moreover, that we want to (or have to) add new concepts, that do not have a class defined yet. This can be the case when we have to nest new concepts, our of a range of concepts that do have a valid class, into concepts that are already at the lowest possible hierarchical level. These concepts are, when specified with `class = NA`, `class = c(bla, blubb, NA)`, or `class = NULL`, assigned the actual class `undefined` and you are informed about how to proceed.
+It may be, moreover, that we want to (or have to) add new concepts, that do not have a class defined yet. This can be the case when we have to nest new concepts, our of a range of concepts that do have a valid class, into concepts that are already at the lowest possible hierarchical level. These concepts are, when specified with `class = NA`, `class = c(bla, blubb, NA)`, or `class = NULL`, assigned the actual class `undefined` and you are informed about how to proceed.
 
 ```{r}
 broaderConcepts <- get_concept(terms = c("wheat", "wheat"),
@@ -114,7 +114,6 @@ crops <- new_concept(new = c("wheat1", "wheat2"),
                      source = "externalDataset",
                      ontology = crops)
 ```
-
 
 Now we can check whether the updated ontology is as we'd expect, for example by looking at the tree of the respective items again. We should expect that the new harmonised concepts now appear in the ontology and that they have some link to an external concept defined.
 
