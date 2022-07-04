@@ -19,6 +19,7 @@ library(knitr)
 ```{r setup}
 library(ontologics)
 library(tibble)
+library(dplyr, warn.conflicts = FALSE)
 ```
 
 An already existing ontology can either be read in, or a totally new one can be created with `ontologics`. First, let's look at an ontology that is used throughout this package as an example. The function `load_ontology()` loads an ontology in any format that is supported by `ontologics` from a path. Currently, an ontology is expected to be stored as a `*.rds` file with a particular formatting, more options are under development.
@@ -61,10 +62,10 @@ Next, classes and their hierarchy need to be defined. Each concept is always a c
 ```{r}
 # currently it is merely possible to set only one class at a time
 lulc <- new_class(class = "landcover", broader = NA, 
-                  definition = "A good definition of landcover", 
+                  description = "A good definition of landcover", 
                   ontology = lulc) %>%
   new_class(class = "land-use", broader = "landcover", 
-            definition = "A good definition of land-use", 
+            description = "A good definition of land-use", 
             ontology = .)
 
 kable(lulc@classes)
@@ -105,7 +106,7 @@ lu <- tibble(concept = c("Fallow", "Herbaceous crops", "Temporary grazing",
                         rep(lc[7], 3), rep(lc[8], 4)))
 
 lulc <- new_concept(new = lu$concept,
-                    broader = get_concept(terms = lu$broader, ontology = lulc),
+                    broader = get_concept(x = lu %>% select(label_en = broader), ontology = lulc),
                     class = "land-use",
                     source = "harmonised",
                     ontology =  lulc)

@@ -7,8 +7,9 @@
 new_concept(
   new,
   broader = NULL,
+  description = NULL,
   class = NULL,
-  source,
+  source = NULL,
   attributes = NULL,
   ontology = NULL
 )
@@ -17,11 +18,14 @@ new_concept(
 \item{new}{\code{\link[=character]{character(.)}}\cr the english label(s) of new
 concepts that shall be included in the ontology.}
 
-\item{broader}{\code{\link[=data.frame]{data.frame(.)}}\cr the english label(s) of already
-harmonised concepts to which the new concept shall be semantically linked
-via a
+\item{broader}{\code{\link[=data.frame]{data.frame(.)}}\cr the english label(s) of
+already harmonised concepts to which the new concept shall be semantically
+linked via a
 \href{https://www.w3.org/TR/skos-reference/#semantic-relations}{skos:broader}
 relation, see Details.}
+
+\item{description}{\code{\link[=character]{character(.)}}\cr a verbatim description of
+the new concept(s).}
 
 \item{class}{\code{\link[=character]{character(.)}}\cr the class(es) of the new labels.}
 
@@ -31,8 +35,8 @@ identifying the source dataset of the new concept (for example
 
 \item{attributes}{\code{\link[=tibble]{tibble()}}\cr not yet implemented.}
 
-\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the
-ontology is stored, or an already loaded ontology.}
+\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
+stored, or an already loaded ontology.}
 }
 \value{
 returns invisibly a table of the new harmonised concepts that were
@@ -56,7 +60,7 @@ onto <- new_source(name = "externalDataset",
                    license = "CC-BY-0",
                    ontology = onto)
 
-onto <- get_concept(terms = concepts$old, ontology = onto) \%>\%
+onto <- get_concept(x = data.frame(label_en = concepts$old), ontology = onto) \%>\%
   new_concept(new = concepts$new,
               broader = .,
               class = "crop",
@@ -67,7 +71,7 @@ onto <- get_concept(terms = concepts$old, ontology = onto) \%>\%
 concepts <- data.frame(old = c("Barley", "Barley"),
                        new = c("food", "bio-energy"))
 
-onto <- get_concept(terms = concepts$old, ontology = onto) \%>\%
+onto <- get_concept(x = data.frame(label_en = concepts$old), ontology = onto) \%>\%
   new_concept(new = concepts$new,
               broader = .,
               source = "externalDataset",
@@ -75,10 +79,10 @@ onto <- get_concept(terms = concepts$old, ontology = onto) \%>\%
 
 # define that class ...
 onto <- new_class(class = "use type", broader = "class",
-                  definition = "the way a crop is used", ontology = onto)
+                  description = "the way a crop is used", ontology = onto)
 
 # ... and set the concepts again
-onto <- get_concept(terms = concepts$old, ontology = onto) \%>\%
+onto <- get_concept(x = data.frame(label_en = concepts$old), ontology = onto) \%>\%
   new_concept(new = concepts$new,
               broader = .,
               class = "use type",

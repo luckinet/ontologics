@@ -5,7 +5,7 @@
 \title{Get a concept in an ontology}
 \usage{
 get_concept(
-  terms = NULL,
+  x = NULL,
   ...,
   regex = FALSE,
   tree = FALSE,
@@ -14,7 +14,7 @@ get_concept(
 )
 }
 \arguments{
-\item{terms}{\code{\link[=character]{character(1)}}\cr}
+\item{x}{\code{\link[=character]{character(1)}}\cr}
 
 \item{...}{combination of column name and value to filter that column by. The
 value to filter by can be provided as regular expression.}
@@ -44,16 +44,16 @@ ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 onto <- load_ontology(path = ontoDir)
 
 # exact matches from a loaded ontology ...
-get_concept(terms = "FODDER CROPS", ontology = onto)
+get_concept(x = data.frame(label_en = "FODDER CROPS"), ontology = onto)
 
 # ... or one stored on the harddisc
-get_concept(terms = "FODDER CROPS", ontology = ontoDir)
+get_concept(x = data.frame(label_en = "FODDER CROPS"), ontology = ontoDir)
 
 # use regular expressions ...
-get_concept(terms = "/*crops", regex = TRUE, ontology = onto)
+get_concept(x = data.frame(label_en = "/*crops"), regex = TRUE, ontology = onto)
 
-get_concept(terms = "/*crops", broader = ".05", regex = TRUE, ontology = onto)
+get_concept(x = data.frame(label_en = "/*crops"), broader = ".05", regex = TRUE, ontology = onto)
 
 # get all concepts that are nested into another concept
-get_concept(terms = "FODDER CROPS", tree = TRUE, ontology = onto)
+get_concept(x = data.frame(label_en = "FODDER CROPS"), tree = TRUE, ontology = onto)
 }

@@ -14,18 +14,23 @@ new_source(
 )
 }
 \arguments{
-\item{name}{\code{\link[=character]{character(1)}}\cr}
+\item{name}{\code{\link[=character]{character(1)}}\cr the name of the new source (should
+not contain empty spaces).}
 
-\item{description}{\code{\link[=character]{character(1)}}\cr}
+\item{description}{\code{\link[=character]{character(1)}}\cr a verbatim description of
+the new source.}
 
-\item{homepage}{\code{\link[=character]{character(1)}}\cr}
+\item{homepage}{\code{\link[=character]{character(1)}}\cr the homepage of the new source
+(this could be the basis of the concept URIs).}
 
-\item{license}{\code{\link[=character]{character(1)}}\cr}
+\item{license}{\code{\link[=character]{character(1)}}\cr the licenses under which the
+new source is published.}
 
-\item{notes}{\code{\link[=character]{character(1)}}\cr}
+\item{notes}{\code{\link[=character]{character(1)}}\cr any notes on the new source that
+don't fit into any of the other meta-data fields here.}
 
-\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the
-ontology is stored, or an already loaded ontology.}
+\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
+stored, or an already loaded ontology.}
 }
 \description{
 Add a new valid source to an ontology
