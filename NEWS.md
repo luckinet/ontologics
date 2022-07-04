@@ -1,5 +1,8 @@
 # ontologics 0.3.2
 
+- adapt column names according to issue https://github.com/luckinet/ontologics/issues/5
+- revise how to extract copcents via `get_concept()`. Now you have to provide a table that contains the column name on which to subset and the values in that column that should be filtered from the ontology.
+
 # ontologics 0.3.1
 
 - adapt `new_concept()` so that also concepts can be defined that have no class (for various reasons). This now gives a warning, and inserts the concepts with an "undefined" class.
