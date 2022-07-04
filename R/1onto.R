@@ -27,8 +27,8 @@ setValidity("onto", function(object){
     if(!is.data.frame(object@classes)){
       errors = c(errors, "the slot 'classes' is not a data.frame.")
     }
-    if(!all(c("level", "class") %in% names(object@classes))){
-      errors = c(errors, "the ontology must have a classes-table with the columns 'level' and 'class'.")
+    if(!all(c("id", "class_label", "has_broader", "description") %in% names(object@classes))){
+      errors = c(errors, "the ontology must have a classes-table with the columns 'id' and 'class_label', 'has_broader' and 'description'.")
     }
   }
 
@@ -38,8 +38,8 @@ setValidity("onto", function(object){
     if(!is.data.frame(object@sources)){
       errors = c(errors, "the slot 'sources' is not a data.frame.")
     }
-    if(!all(c("sourceID", "sourceName", "description", "homepage", "license", "notes") %in% names(object@sources))){
-      errors = c(errors, "the ontology must have a sources-table with the columns 'sourceID', 'sourceName', 'description', 'homepage', 'license' and 'notes'.")
+    if(!all(c("source_id", "source_label", "description", "homepage", "license", "notes") %in% names(object@sources))){
+      errors = c(errors, "the ontology must have a sources-table with the columns 'source_id', 'source_label', 'description', 'homepage', 'license' and 'notes'.")
     }
   }
 
@@ -49,8 +49,8 @@ setValidity("onto", function(object){
     if(!is.data.frame(object@concepts)){
       errors = c(errors, "the slot 'concepts' is not a data.frame.")
     }
-    if(!all(c("code", "broader", "sourceID") %in% names(object@concepts))){
-      errors = c(errors, "the ontology must have a concepts-table with the columns 'code', 'broader' and 'sourceID'.")
+    if(!all(c("id", "has_broader", "source_id") %in% names(object@concepts))){
+      errors = c(errors, "the ontology must have a concepts-table with the columns 'id', 'has_broader' and 'source_id'.")
     }
   }
 
@@ -60,8 +60,8 @@ setValidity("onto", function(object){
     if(!is.data.frame(object@labels)){
       errors = c(errors, "the slot 'labels' is not a data.frame.")
     }
-    if(!all(c("code", "class", "label_en") %in% names(object@labels))){
-      errors = c(errors, "the ontology must have a labels-table with the columns 'code', 'class' and 'label_en'.")
+    if(!all(c("id", "class", "label_en", "description") %in% names(object@labels))){
+      errors = c(errors, "the ontology must have a labels-table with the columns 'id', 'class', 'label_en' and 'description'.")
     }
   }
 
@@ -71,8 +71,8 @@ setValidity("onto", function(object){
     if(!is.data.frame(object@mappings)){
       errors = c(errors, "the slot 'mappings' is not a data.frame.")
     }
-    if(!all(c("code", "external") %in% names(object@mappings))){
-      errors = c(errors, "the ontology must have a mappings-table with the columns 'code' and 'external'.")
+    if(!all(c("id", "external_id") %in% names(object@mappings))){
+      errors = c(errors, "the ontology must have a mappings-table with the columns 'id' and 'external_id'.")
     }
   }
 
