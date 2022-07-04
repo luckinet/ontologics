@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -66,7 +66,7 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_concept</span><span class="op">(</span></span>
-<span>  terms <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  regex <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -77,7 +77,7 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>terms</dt>
+    <dl><dt>x</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br></p></dd>
 
 
@@ -123,53 +123,60 @@ ontology is stored, or an already loaded ontology.</p></dd>
 <span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_ontology.html">load_ontology</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># exact matches from a loaded ontology ...</span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>terms <span class="op">=</span> <span class="st">"FODDER CROPS"</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   code  broader label_en     class external     sourceName</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .05   <span style="color: #BB0000;">NA</span>      FODDER CROPS group FODDER CROPS harmonised</span>
+<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="st">"FODDER CROPS"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    id has_broader     label_en class external_id source_label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 .05        &lt;NA&gt; FODDER CROPS group        &lt;NA&gt;   harmonised</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ... or one stored on the harddisc</span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>terms <span class="op">=</span> <span class="st">"FODDER CROPS"</span>, ontology <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   code  broader label_en     class external     sourceName</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .05   <span style="color: #BB0000;">NA</span>      FODDER CROPS group FODDER CROPS harmonised</span>
+<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="st">"FODDER CROPS"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    id has_broader     label_en class external_id source_label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 .05        &lt;NA&gt; FODDER CROPS group        &lt;NA&gt;   harmonised</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># use regular expressions ...</span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>terms <span class="op">=</span> <span class="st">"/*crops"</span>, regex <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="st">"/*crops"</span><span class="op">)</span>, regex <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 12 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    code   broader label_en              class external sourceName</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> .01.03 .01     Other bioenergy crops class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> .03.01 .03     Fibre crops           class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> .04.02 .04     Woody flower crops    class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> .05.01 .05     Grass crops           class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> .05.03 .05     Other fodder crops    class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> .08.01 .08     Leguminous crops      class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> .09.01 .09     Medicinal crops       class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> .11.01 .11     Oilseed crops         class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> .12.01 .12     Other crops           class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> .14.01 .14     Stimulant crops       class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> .14.02 .14     Spice crops           class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> .15.03 .15     Other sugar crops     class <span style="color: #BB0000;">NA</span>       harmonised</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    id     has_broader label_en              class external_id source_label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> .01.03 .01         Other bioenergy crops class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> .03.01 .03         Fibre crops           class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> .04.02 .04         Woody flower crops    class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> .05.01 .05         Grass crops           class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> .05.03 .05         Other fodder crops    class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> .08.01 .08         Leguminous crops      class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> .09.01 .09         Medicinal crops       class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> .11.01 .11         Oilseed crops         class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> .12.01 .12         Other crops           class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> .14.01 .14         Stimulant crops       class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> .14.02 .14         Spice crops           class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> .15.03 .15         Other sugar crops     class <span style="color: #BB0000;">NA</span>          harmonised  </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>terms <span class="op">=</span> <span class="st">"/*crops"</span>, broader <span class="op">=</span> <span class="st">".05"</span>, regex <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   code   broader label_en           class external sourceName</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .05.01 .05     Grass crops        class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> .05.03 .05     Other fodder crops class <span style="color: #BB0000;">NA</span>       harmonised</span>
+<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="st">"/*crops"</span><span class="op">)</span>, broader <span class="op">=</span> <span class="st">".05"</span>, regex <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'broader' is not a column in the ontology and is thus ignored.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 12 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    id     has_broader label_en              class external_id source_label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> .01.03 .01         Other bioenergy crops class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> .03.01 .03         Fibre crops           class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> .04.02 .04         Woody flower crops    class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> .05.01 .05         Grass crops           class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> .05.03 .05         Other fodder crops    class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> .08.01 .08         Leguminous crops      class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> .09.01 .09         Medicinal crops       class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> .11.01 .11         Oilseed crops         class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> .12.01 .12         Other crops           class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> .14.01 .14         Stimulant crops       class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> .14.02 .14         Spice crops           class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> .15.03 .15         Other sugar crops     class <span style="color: #BB0000;">NA</span>          harmonised  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get all concepts that are nested into another concept</span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>terms <span class="op">=</span> <span class="st">"FODDER CROPS"</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="st">"FODDER CROPS"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   code   broader label_en           class external sourceName</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .05    <span style="color: #BB0000;">NA</span>      FODDER CROPS       group <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> .05.01 .05     Grass crops        class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> .05.02 .05     Fodder legumes     class <span style="color: #BB0000;">NA</span>       harmonised</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> .05.03 .05     Other fodder crops class <span style="color: #BB0000;">NA</span>       harmonised</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   id     has_broader label_en           class external_id source_label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .05    <span style="color: #BB0000;">NA</span>          FODDER CROPS       group <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> .05.01 .05         Grass crops        class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> .05.02 .05         Fodder legumes     class <span style="color: #BB0000;">NA</span>          harmonised  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> .05.03 .05         Other fodder crops class <span style="color: #BB0000;">NA</span>          harmonised  </span>
 </code></pre></div>
     </div>
   </div>

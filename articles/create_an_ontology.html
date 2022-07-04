@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -97,7 +97,8 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/luckinet/ontologics" class="external-link">ontologics</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>An already existing ontology can either be read in, or a totally new one can be created with <code>ontologics</code>. First, let’s look at an ontology that is used throughout this package as an example. The function <code><a href="../reference/load_ontology.html">load_ontology()</a></code> loads an ontology in any format that is supported by <code>ontologics</code> from a path. Currently, an ontology is expected to be stored as a <code>*.rds</code> file with a particular formatting, more options are under development.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cropOntology</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"crops.rds"</span>, package <span class="op">=</span> <span class="st">"ontologics"</span><span class="op">)</span></span>
@@ -108,28 +109,29 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">crops</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Formal class 'onto' [package "ontologics"] with 5 slots</span></span>
 <span><span class="co">#&gt;   ..@ classes : tibble [3 × 4] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ level     : chr [1:3] ".xx" ".xx.xx" ".xx.xx.xx"</span></span>
-<span><span class="co">#&gt;   .. ..$ class     : chr [1:3] "group" "class" "crop"</span></span>
-<span><span class="co">#&gt;   .. ..$ broader   : chr [1:3] NA "group" "class"</span></span>
-<span><span class="co">#&gt;   .. ..$ definition: chr [1:3] "Groups of crop or livestock commodities" "Classes of crop or livestock commodities" "Crop or livestock commodities"</span></span>
+<span><span class="co">#&gt;   .. ..$ id         : chr [1:3] ".xx" ".xx.xx" ".xx.xx.xx"</span></span>
+<span><span class="co">#&gt;   .. ..$ class_label: chr [1:3] "group" "class" "crop"</span></span>
+<span><span class="co">#&gt;   .. ..$ has_broader: chr [1:3] NA "group" "class"</span></span>
+<span><span class="co">#&gt;   .. ..$ description: chr [1:3] "Groups of crop or livestock commodities" "Classes of crop or livestock commodities" "Crop or livestock commodities"</span></span>
 <span><span class="co">#&gt;   ..@ sources : tibble [1 × 6] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ sourceID   : int 1</span></span>
-<span><span class="co">#&gt;   .. ..$ sourceName : chr "harmonised"</span></span>
-<span><span class="co">#&gt;   .. ..$ description: chr NA</span></span>
-<span><span class="co">#&gt;   .. ..$ homepage   : chr NA</span></span>
-<span><span class="co">#&gt;   .. ..$ license    : chr NA</span></span>
-<span><span class="co">#&gt;   .. ..$ notes      : chr "imported manually"</span></span>
+<span><span class="co">#&gt;   .. ..$ source_id   : int 1</span></span>
+<span><span class="co">#&gt;   .. ..$ source_label: chr "harmonised"</span></span>
+<span><span class="co">#&gt;   .. ..$ description : chr NA</span></span>
+<span><span class="co">#&gt;   .. ..$ homepage    : chr NA</span></span>
+<span><span class="co">#&gt;   .. ..$ license     : chr NA</span></span>
+<span><span class="co">#&gt;   .. ..$ notes       : chr "imported manually"</span></span>
 <span><span class="co">#&gt;   ..@ concepts: tibble [73 × 3] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ code    : chr [1:73] ".01" ".01.01" ".01.02" ".01.03" ...</span></span>
-<span><span class="co">#&gt;   .. ..$ broader : chr [1:73] NA ".01" ".01" ".01" ...</span></span>
-<span><span class="co">#&gt;   .. ..$ sourceID: num [1:73] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;   ..@ labels  : tibble [73 × 3] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ code    : chr [1:73] ".01" ".01.01" ".01.02" ".01.03" ...</span></span>
-<span><span class="co">#&gt;   .. ..$ class   : chr [1:73] "group" "class" "class" "class" ...</span></span>
-<span><span class="co">#&gt;   .. ..$ label_en: chr [1:73] "BIOENERGY CROPS" "Bioenergy herbaceous" "Bioenergy woody" "Other bioenergy crops" ...</span></span>
+<span><span class="co">#&gt;   .. ..$ id         : chr [1:73] ".01" ".01.01" ".01.02" ".01.03" ...</span></span>
+<span><span class="co">#&gt;   .. ..$ has_broader: chr [1:73] NA ".01" ".01" ".01" ...</span></span>
+<span><span class="co">#&gt;   .. ..$ source_id  : num [1:73] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;   ..@ labels  : tibble [73 × 4] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;   .. ..$ id         : chr [1:73] ".01" ".01.01" ".01.02" ".01.03" ...</span></span>
+<span><span class="co">#&gt;   .. ..$ class      : chr [1:73] "group" "class" "class" "class" ...</span></span>
+<span><span class="co">#&gt;   .. ..$ label_en   : chr [1:73] "BIOENERGY CROPS" "Bioenergy herbaceous" "Bioenergy woody" "Other bioenergy crops" ...</span></span>
+<span><span class="co">#&gt;   .. ..$ description: chr [1:73] NA NA NA NA ...</span></span>
 <span><span class="co">#&gt;   ..@ mappings: tibble [73 × 2] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ code    : chr [1:73] ".01" ".01.01" ".01.02" ".01.03" ...</span></span>
-<span><span class="co">#&gt;   .. ..$ external: chr [1:73] NA NA NA NA ...</span></span></code></pre></div>
+<span><span class="co">#&gt;   .. ..$ id         : chr [1:73] ".01" ".01.01" ".01.02" ".01.03" ...</span></span>
+<span><span class="co">#&gt;   .. ..$ external_id: chr [1:73] NA NA NA NA ...</span></span></code></pre></div>
 <p>The <code>onto</code> class is an S3 class with the 5 slots <code>@classes</code>, <code>@sources</code>, <code>@concepts</code>, <code>@labels</code> and <code>@mappings</code>, each of which are reflected by a function that allows to add new items to this slot (<strong>note</strong>, the function <code>new_labels()</code> is not yet supported).</p>
 <p>A new ontology is built by calling the function <code><a href="../reference/start_ontology.html">start_ontology()</a></code>. This requires a bunch of meta-data that will be stored in the ontology and which serve the purpose of properly linking also this ontology to other <em>linked open data</em>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -143,28 +145,29 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lulc</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Formal class 'onto' [package "ontologics"] with 5 slots</span></span>
 <span><span class="co">#&gt;   ..@ classes : tibble [1 × 4] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ level     : chr ".xx"</span></span>
-<span><span class="co">#&gt;   .. ..$ class     : chr NA</span></span>
-<span><span class="co">#&gt;   .. ..$ broader   : chr NA</span></span>
-<span><span class="co">#&gt;   .. ..$ definition: chr "dummy class that contains the code definition."</span></span>
+<span><span class="co">#&gt;   .. ..$ id         : chr ".xx"</span></span>
+<span><span class="co">#&gt;   .. ..$ class_label: chr NA</span></span>
+<span><span class="co">#&gt;   .. ..$ has_broader: chr NA</span></span>
+<span><span class="co">#&gt;   .. ..$ description: chr "dummy class that contains the code definition."</span></span>
 <span><span class="co">#&gt;   ..@ sources : tibble [1 × 6] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ sourceID   : num 1</span></span>
-<span><span class="co">#&gt;   .. ..$ sourceName : chr "harmonised"</span></span>
-<span><span class="co">#&gt;   .. ..$ description: chr "showcase of the ontologics R-package"</span></span>
-<span><span class="co">#&gt;   .. ..$ homepage   : chr "https://www.luckinet.org"</span></span>
-<span><span class="co">#&gt;   .. ..$ license    : chr "CC-BY-4.0"</span></span>
-<span><span class="co">#&gt;   .. ..$ notes      : chr ""</span></span>
+<span><span class="co">#&gt;   .. ..$ source_id   : num 1</span></span>
+<span><span class="co">#&gt;   .. ..$ source_label: chr "harmonised"</span></span>
+<span><span class="co">#&gt;   .. ..$ description : chr "showcase of the ontologics R-package"</span></span>
+<span><span class="co">#&gt;   .. ..$ homepage    : chr "https://www.luckinet.org"</span></span>
+<span><span class="co">#&gt;   .. ..$ license     : chr "CC-BY-4.0"</span></span>
+<span><span class="co">#&gt;   .. ..$ notes       : chr ""</span></span>
 <span><span class="co">#&gt;   ..@ concepts: tibble [0 × 3] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ code    : chr(0) </span></span>
-<span><span class="co">#&gt;   .. ..$ broader : chr(0) </span></span>
-<span><span class="co">#&gt;   .. ..$ sourceID: num(0) </span></span>
-<span><span class="co">#&gt;   ..@ labels  : tibble [0 × 3] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ code    : chr(0) </span></span>
-<span><span class="co">#&gt;   .. ..$ class   : chr(0) </span></span>
-<span><span class="co">#&gt;   .. ..$ label_en: chr(0) </span></span>
+<span><span class="co">#&gt;   .. ..$ id         : chr(0) </span></span>
+<span><span class="co">#&gt;   .. ..$ has_broader: chr(0) </span></span>
+<span><span class="co">#&gt;   .. ..$ source_id  : num(0) </span></span>
+<span><span class="co">#&gt;   ..@ labels  : tibble [0 × 4] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;   .. ..$ id         : chr(0) </span></span>
+<span><span class="co">#&gt;   .. ..$ class      : chr(0) </span></span>
+<span><span class="co">#&gt;   .. ..$ label_en   : chr(0) </span></span>
+<span><span class="co">#&gt;   .. ..$ description: chr(0) </span></span>
 <span><span class="co">#&gt;   ..@ mappings: tibble [0 × 2] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. ..$ code    : chr(0) </span></span>
-<span><span class="co">#&gt;   .. ..$ external: chr(0)</span></span></code></pre></div>
+<span><span class="co">#&gt;   .. ..$ id         : chr(0) </span></span>
+<span><span class="co">#&gt;   .. ..$ external_id: chr(0)</span></span></code></pre></div>
 <p>All slots, except the <code>@classes</code> slot are empty. This slot contains the basic code unit that will be used to set of the hierarchical code in this ontology. It is recommended to always set this with a leading symbol that can’t be transformed into a numeric/integer, to avoid problems in case the ontology is opened in a spreadsheet program that may automatically do this transformation without asking or informing the author.</p>
 <p>When creating the ontology, it first needs information from where the concepts are sourced. In case no source or a wrong source is provided, the respective functions will inform the user. When starting a new ontology, however, the first source given by the ontology meta-data, while when assigning new items into either slot, the argument <code>source = "harmonised"</code> needs to be chosen.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -172,15 +175,15 @@
 <table class="table">
 <colgroup>
 <col width="9%">
-<col width="11%">
-<col width="37%">
-<col width="25%">
-<col width="10%">
-<col width="6%">
+<col width="12%">
+<col width="36%">
+<col width="24%">
+<col width="9%">
+<col width="5%">
 </colgroup>
 <thead><tr class="header">
-<th align="right">sourceID</th>
-<th align="left">sourceName</th>
+<th align="right">source_id</th>
+<th align="left">source_label</th>
 <th align="left">description</th>
 <th align="left">homepage</th>
 <th align="left">license</th>
@@ -199,19 +202,19 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># currently it is merely possible to set only one class at a time</span></span>
 <span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"landcover"</span>, broader <span class="op">=</span> <span class="cn">NA</span>, </span>
-<span>                  definition <span class="op">=</span> <span class="st">"A good definition of landcover"</span>, </span>
+<span>                  description <span class="op">=</span> <span class="st">"A good definition of landcover"</span>, </span>
 <span>                  ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"land-use"</span>, broader <span class="op">=</span> <span class="st">"landcover"</span>, </span>
-<span>            definition <span class="op">=</span> <span class="st">"A good definition of land-use"</span>, </span>
+<span>            description <span class="op">=</span> <span class="st">"A good definition of land-use"</span>, </span>
 <span>            ontology <span class="op">=</span> <span class="va">.</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">classes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">level</th>
-<th align="left">class</th>
-<th align="left">broader</th>
-<th align="left">definition</th>
+<th align="left">id</th>
+<th align="left">class_label</th>
+<th align="left">has_broader</th>
+<th align="left">description</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -221,7 +224,7 @@
 <td align="left">A good definition of landcover</td>
 </tr>
 <tr class="even">
-<td align="left">.xx.xx</td>
+<td align="left">.xx</td>
 <td align="left">land-use</td>
 <td align="left">landcover</td>
 <td align="left">A good definition of land-use</td>
@@ -249,9 +252,9 @@
 <table class="table">
 <caption>the concepts</caption>
 <thead><tr class="header">
-<th align="left">code</th>
-<th align="left">broader</th>
-<th align="right">sourceID</th>
+<th align="left">id</th>
+<th align="left">has_broader</th>
+<th align="right">source_id</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -346,95 +349,113 @@
 <table class="table">
 <caption>the labels</caption>
 <thead><tr class="header">
-<th align="left">code</th>
+<th align="left">id</th>
 <th align="left">class</th>
 <th align="left">label_en</th>
+<th align="left">description</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">.01</td>
 <td align="left">landcover</td>
 <td align="left">Urban fabric</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.02</td>
 <td align="left">landcover</td>
 <td align="left">Industrial, commercial and transport units</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.03</td>
 <td align="left">landcover</td>
 <td align="left">Mine, dump and construction sites</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.04</td>
 <td align="left">landcover</td>
 <td align="left">Artificial, non-agricultural vegetated areas</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.05</td>
 <td align="left">landcover</td>
 <td align="left">Temporary cropland</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.06</td>
 <td align="left">landcover</td>
 <td align="left">Permanent cropland</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.07</td>
 <td align="left">landcover</td>
 <td align="left">Heterogeneous agricultural areas</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.08</td>
 <td align="left">landcover</td>
 <td align="left">Forests</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.09</td>
 <td align="left">landcover</td>
 <td align="left">Other Wooded Areas</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.10</td>
 <td align="left">landcover</td>
 <td align="left">Shrubland</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.11</td>
 <td align="left">landcover</td>
 <td align="left">Herbaceous associations</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.12</td>
 <td align="left">landcover</td>
 <td align="left">Heterogeneous semi-natural areas</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.13</td>
 <td align="left">landcover</td>
 <td align="left">Open spaces with little or no vegetation</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.14</td>
 <td align="left">landcover</td>
 <td align="left">Inland wetlands</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.15</td>
 <td align="left">landcover</td>
 <td align="left">Marine wetlands</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.16</td>
 <td align="left">landcover</td>
 <td align="left">Inland waters</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.17</td>
 <td align="left">landcover</td>
 <td align="left">Marine waters</td>
+<td align="left">NA</td>
 </tr>
 </tbody>
 </table>
@@ -453,7 +474,7 @@
 <span>                        <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">8</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span>new <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">concept</span>,</span>
-<span>                    broader <span class="op">=</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>terms <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">broader</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span>,</span>
+<span>                    broader <span class="op">=</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">lu</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>label_en <span class="op">=</span> <span class="va">broader</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span>,</span>
 <span>                    class <span class="op">=</span> <span class="st">"land-use"</span>,</span>
 <span>                    source <span class="op">=</span> <span class="st">"harmonised"</span>,</span>
 <span>                    ontology <span class="op">=</span>  <span class="va">lulc</span><span class="op">)</span></span>
@@ -465,9 +486,9 @@
 <table class="table">
 <caption>the concepts</caption>
 <thead><tr class="header">
-<th align="left">code</th>
-<th align="left">broader</th>
-<th align="right">sourceID</th>
+<th align="left">id</th>
+<th align="left">has_broader</th>
+<th align="right">source_id</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -642,175 +663,209 @@
 <table class="table">
 <caption>the labels</caption>
 <thead><tr class="header">
-<th align="left">code</th>
+<th align="left">id</th>
 <th align="left">class</th>
 <th align="left">label_en</th>
+<th align="left">description</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">.01</td>
 <td align="left">landcover</td>
 <td align="left">Urban fabric</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.02</td>
 <td align="left">landcover</td>
 <td align="left">Industrial, commercial and transport units</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.03</td>
 <td align="left">landcover</td>
 <td align="left">Mine, dump and construction sites</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.04</td>
 <td align="left">landcover</td>
 <td align="left">Artificial, non-agricultural vegetated areas</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.05</td>
 <td align="left">landcover</td>
 <td align="left">Temporary cropland</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.05.01</td>
 <td align="left">land-use</td>
 <td align="left">Fallow</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.05.02</td>
 <td align="left">land-use</td>
 <td align="left">Herbaceous crops</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.05.03</td>
 <td align="left">land-use</td>
 <td align="left">Temporary grazing</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.06</td>
 <td align="left">landcover</td>
 <td align="left">Permanent cropland</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.06.01</td>
 <td align="left">land-use</td>
 <td align="left">Permanent grazing</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.06.02</td>
 <td align="left">land-use</td>
 <td align="left">Shrub orchards</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.06.03</td>
 <td align="left">land-use</td>
 <td align="left">Palm plantations</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.06.04</td>
 <td align="left">land-use</td>
 <td align="left">Tree orchards</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.06.05</td>
 <td align="left">land-use</td>
 <td align="left">Woody plantation</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.06.06</td>
 <td align="left">land-use</td>
 <td align="left">Protective cover</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.07</td>
 <td align="left">landcover</td>
 <td align="left">Heterogeneous agricultural areas</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.07.01</td>
 <td align="left">land-use</td>
 <td align="left">Agroforestry</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.07.02</td>
 <td align="left">land-use</td>
 <td align="left">Mosaic of agricultural-uses</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.07.03</td>
 <td align="left">land-use</td>
 <td align="left">Mosaic of agriculture and natural vegetation</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.08</td>
 <td align="left">landcover</td>
 <td align="left">Forests</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.08.01</td>
 <td align="left">land-use</td>
 <td align="left">Undisturbed Forest</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.08.02</td>
 <td align="left">land-use</td>
 <td align="left">Naturally Regenerating Forest</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.08.03</td>
 <td align="left">land-use</td>
 <td align="left">Planted Forest</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.08.04</td>
 <td align="left">land-use</td>
 <td align="left">Temporally Unstocked Forest</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.09</td>
 <td align="left">landcover</td>
 <td align="left">Other Wooded Areas</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.10</td>
 <td align="left">landcover</td>
 <td align="left">Shrubland</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.11</td>
 <td align="left">landcover</td>
 <td align="left">Herbaceous associations</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.12</td>
 <td align="left">landcover</td>
 <td align="left">Heterogeneous semi-natural areas</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.13</td>
 <td align="left">landcover</td>
 <td align="left">Open spaces with little or no vegetation</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.14</td>
 <td align="left">landcover</td>
 <td align="left">Inland wetlands</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.15</td>
 <td align="left">landcover</td>
 <td align="left">Marine wetlands</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.16</td>
 <td align="left">landcover</td>
 <td align="left">Inland waters</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.17</td>
 <td align="left">landcover</td>
 <td align="left">Marine waters</td>
+<td align="left">NA</td>
 </tr>
 </tbody>
 </table>
