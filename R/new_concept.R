@@ -4,18 +4,20 @@
 #' thus harmonise it with the already existing ontology.
 #' @param new [`character(.)`][character]\cr the english label(s) of new
 #'   concepts that shall be included in the ontology.
-#' @param broader [`data.frame(.)`][data.frame]\cr the english label(s) of already
-#'   harmonised concepts to which the new concept shall be semantically linked
-#'   via a
+#' @param broader [`data.frame(.)`][data.frame]\cr the english label(s) of
+#'   already harmonised concepts to which the new concept shall be semantically
+#'   linked via a
 #'   \href{https://www.w3.org/TR/skos-reference/#semantic-relations}{skos:broader}
 #'    relation, see Details.
+#' @param description [`character(.)`][character]\cr a verbatim description of
+#'   the new concept(s).
 #' @param class [`character(.)`][character]\cr the class(es) of the new labels.
 #' @param source [`character(1)`][character]\cr any character uniquely
 #'   identifying the source dataset of the new concept (for example
 #'   \emph{Author+Year}).
 #' @param attributes [`tibble()`][tibble]\cr not yet implemented.
-#' @param ontology [`ontology(1)`][list]\cr either a path where the
-#'   ontology is stored, or an already loaded ontology.
+#' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
+#'   stored, or an already loaded ontology.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
@@ -30,7 +32,7 @@
 #'                    license = "CC-BY-0",
 #'                    ontology = onto)
 #'
-#' onto <- get_concept(terms = concepts$old, ontology = onto) %>%
+#' onto <- get_concept(x = data.frame(label_en = concepts$old), ontology = onto) %>%
 #'   new_concept(new = concepts$new,
 #'               broader = .,
 #'               class = "crop",
@@ -41,7 +43,7 @@
 #' concepts <- data.frame(old = c("Barley", "Barley"),
 #'                        new = c("food", "bio-energy"))
 #'
-#' onto <- get_concept(terms = concepts$old, ontology = onto) %>%
+#' onto <- get_concept(x = data.frame(label_en = concepts$old), ontology = onto) %>%
 #'   new_concept(new = concepts$new,
 #'               broader = .,
 #'               source = "externalDataset",
@@ -49,10 +51,10 @@
 #'
 #' # define that class ...
 #' onto <- new_class(class = "use type", broader = "class",
-#'                   definition = "the way a crop is used", ontology = onto)
+#'                   description = "the way a crop is used", ontology = onto)
 #'
 #' # ... and set the concepts again
-#' onto <- get_concept(terms = concepts$old, ontology = onto) %>%
+#' onto <- get_concept(x = data.frame(label_en = concepts$old), ontology = onto) %>%
 #'   new_concept(new = concepts$new,
 #'               broader = .,
 #'               class = "use type",
@@ -71,8 +73,8 @@
 #' @importFrom methods new
 #' @export
 
-new_concept <- function(new, broader = NULL, class = NULL, source,
-                        attributes = NULL, ontology = NULL){
+new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
+                        source = NULL, attributes = NULL, ontology = NULL){
 
   if(is.null(new)){
     return("no new concepts to harmonise.")
@@ -82,6 +84,7 @@ new_concept <- function(new, broader = NULL, class = NULL, source,
     new <- as.character(new)
   }
   assertDataFrame(x = broader, null.ok = TRUE)
+  assertCharacter(x = description, null.ok = TRUE)
   assertCharacter(x = class, null.ok = TRUE)
   assertCharacter(x = source, any.missing = FALSE)
 
@@ -97,9 +100,9 @@ new_concept <- function(new, broader = NULL, class = NULL, source,
   }
 
   onto <- ontology@concepts %>%
-    left_join(ontology@labels, by = "code") %>%
-    left_join(ontology@sources %>% select(sourceID, sourceName), by = "sourceID") %>%
-    left_join(ontology@mappings, by = "code")
+    left_join(ontology@labels, by = "id") %>%
+    left_join(ontology@sources %>% select(source_id, source_label), by = "source_id") %>%
+    left_join(ontology@mappings, by = "id")
 
   if(!is.null(class)){
 
@@ -118,8 +121,8 @@ new_concept <- function(new, broader = NULL, class = NULL, source,
 
     } else {
 
-      if(!any(ontology@classes$class %in% class)){
-        missingClasses <- unique(class[!class %in% ontology@classes$class])
+      if(!any(ontology@classes$class_label %in% class)){
+        missingClasses <- unique(class[!class %in% ontology@classes$class_labelclass_label])
         stop("the class(es) '", paste0(missingClasses, collapse = ", "), "' don't exist yet, please first define them with 'new_class()'.")
       }
 
@@ -140,75 +143,88 @@ new_concept <- function(new, broader = NULL, class = NULL, source,
 
   if(!is.null(broader)){
 
-    assertNames(x = names(broader), must.include = c("code", "label_en", "class"))
+    assertNames(x = names(broader), must.include = c("id", "label_en", "class"))
 
     testConcept <- broader %>%
-      select(code, label_en, class) %>%
-      left_join(onto, by = c("code", "label_en", "class"))
+      select(id, label_en, class) %>%
+      left_join(onto, by = c("id", "label_en", "class"))
 
-    if(any(is.na(testConcept$sourceID))){
+    if(any(is.na(testConcept$source_id))){
       missingConcepts <- testConcept %>%
-        filter(is.na(sourceID)) %>%
+        filter(is.na(source_id)) %>%
         pull(label_en)
       stop("the concepts '", paste0(missingConcepts, collapse = ", "), "' don't exist yet as harmonised concepts, please first define them with 'new_concept()'.")
     }
   } else {
-    broader <- tibble(code = rep(NA_character_, length(new)), label_en = rep(NA_character_, length(new)), class = rep(NA_character_, length(new)))
+    broader <- tibble(id = rep(NA_character_, length(new)), label_en = rep(NA_character_, length(new)), class = rep(NA_character_, length(new)))
+  }
+
+  if(!is.null(description)){
+
+    if(length(description) != length(new)){
+      if(length(description) == 1){
+        description <- rep(x = description, length.out = length(new))
+      } else {
+        stop("the number of elements in 'description' is neither the same as in 'new' nor 1.")
+      }
+    }
+  } else {
+    description <- NA_character_
   }
 
   # get the source ID
   srcID <- ontology@sources %>%
-    filter(sourceName %in% source) %>%
-    pull(sourceID)
+    filter(source_label %in% source) %>%
+    pull(source_id)
 
   if(length(srcID) == 0){
     stop("please first define the source '", source, "' with 'new_source()'.")
   }
 
   # determine how many digits each new code should have
-  if(!all(is.na(ontology@concepts$code)) & length(ontology@labels$code) == 0){
-    digits <- nchar(ontology@concepts$code[1])
+  if(!all(is.na(ontology@concepts$id)) & length(ontology@labels$id) == 0){
+    digits <- nchar(ontology@concepts$id[1])
   } else {
-    digits <- tail(str_split(ontology@classes$level, "[.]")[[1]], 1)
+    digits <- tail(str_split(ontology@classes$id, "[.]")[[1]], 1)
     digits <- nchar(digits)
   }
 
   # and by which symbol the levels are separated
-  seperator <- str_replace_all(string = ontology@classes$level[1], pattern = "x", replacement = "")
+  seperator <- str_replace_all(string = ontology@classes$id[1], pattern = "x", replacement = "")
 
   # get concepts that are already defined for the broader concepts
   nestedIDs <- onto %>%
-    filter(broader %in% !!broader$code) %>%
-    select(code = broader, nestedID = code, top2D = broader, class)
+    filter(has_broader %in% !!broader$id) %>%
+    select(id = has_broader, nestedID = id, top2D = has_broader, class)
 
   # get the broader concepts
   broaderIDs <- onto %>%
-    filter(code %in% !!broader$code) %>%
-    group_by(code, class) %>%
-    summarise(topID = suppressWarnings(max(code))) %>%
+    filter(id %in% !!broader$id) %>%
+    group_by(id, class) %>%
+    summarise(topID = suppressWarnings(max(id))) %>%
     ungroup() %>%
-    arrange(code)
+    arrange(id)
 
   # assign nested and broader IDs into the temporary object
-  temp <- bind_cols(broader, tibble(new = new, newClass = class)) %>%
-    left_join(nestedIDs, by = c("code", "class")) %>%
-    left_join(broaderIDs, by = c("code", "class")) %>%
+  temp <- bind_cols(broader, tibble(new = new, newClass = class, description = description)) %>%
+    left_join(nestedIDs, by = c("id", "class")) %>%
+    left_join(broaderIDs, by = c("id", "class")) %>%
     unite(col = topID, topID, top2D, sep = "", na.rm = TRUE)
 
   # build the new ID
   temp <- temp %>%
-    group_by(code) %>%
+    group_by(id) %>%
     mutate(nextID = if_else(!is.na(nestedID),
                             paste0(topID, seperator, formatC(as.numeric(tail(str_split(nestedID, if_else(seperator == ".", "[.]", seperator))[[1]], 1)) + row_number(), flag = "0", width = digits)),
                             paste0(topID, seperator, formatC(row_number(), flag = "0", width = digits))),
-           sourceID = srcID,
-           external = NA_character_) %>%
+           source_id = srcID,
+           external_id = NA_character_) %>%
     ungroup()
 
   newLabels <- temp %>%
-    select(code = nextID, class = newClass, label_en = new) %>%
+    select(id = nextID, class = newClass, label_en = new) %>%
     bind_rows(ontology@labels) %>%
-    arrange(code)
+    arrange(id)
 
   # filter concepts that are duplicated because they were previously undefined
   extConcepts <- newLabels %>%
@@ -227,89 +243,16 @@ new_concept <- function(new, broader = NULL, class = NULL, source,
     filter(!undefined)
 
   newConcept <- temp %>%
-    select(code = nextID, broader = code, sourceID) %>%
+    select(id = nextID, has_broader = id, source_id) %>%
     bind_rows(ontology@concepts) %>%
-    arrange(code) %>%
+    arrange(id) %>%
     filter(!undefined)
   newMappings <- temp %>%
-    select(code = nextID, external) %>%
+    select(id = nextID, external_id) %>%
     bind_rows(ontology@mappings) %>%
-    arrange(code) %>%
+    arrange(id) %>%
     filter(!undefined)
 
-
-
-  ###################### remove ####################
-
-  # newLabels <- ontology@labels
-  # newMappings <- ontology@mappings
-  # iter <- 0
-  # for(i in seq_along(new)){
-  #   newLabel <- new[i]
-  #   newClass <- class[i]
-  #
-  #   if(!is.null(broader)){
-  #
-  #     broaderID <- onto %>%
-  #       # filter(sourceName == source) %>%
-  #       filter(label_en %in% !!broader$label_en[i]) %>%
-  #       pull(code)
-  #
-  #     nestedID <- make_tree(input = newConcept, top = broaderID) %>%
-  #       filter(broader == broaderID) %>%
-  #       pull(code)
-  #
-  #   } else {
-  #     nestedID <- iter
-  #     broaderID <- NA_character_
-  #   }
-  #
-  #   if(length(nestedID) == 0){
-  #     nextID <- paste0(c(broaderID, formatC(1, flag = "0", width = digits)), collapse = ".")
-  #   } else {
-  #
-  #     nestedConcepts <- ontology@labels[ontology@labels$code %in% nestedID,]
-  #
-  #     if(newLabel %in% nestedConcepts$label_en){
-  #       nextID <- nestedConcepts$code[nestedConcepts$label_en %in% newLabel]
-  #     } else {
-  #       nextID <- tail(str_split(nextID, "[.]")[[1]], 1)
-  #       tempID <- str_split(nextID, "[.]")[[1]]
-  #       tempID[length(tempID)] <- formatC(as.numeric(tempID[length(tempID)]) + 1, flag = "0", width = digits)
-  #       nextID <- paste0(tempID, collapse = ".")
-  #       if(str_sub(nextID, 1, 1) != "."){
-  #         nextID <- paste0(".", nextID)
-  #       }
-  #     }
-  #
-  #   }
-  #
-  #   iter <- iter + 1
-  #
-  #   newConcept <- tibble(code = nextID, sourceID = srcID, broader = broaderID) %>%
-  #     bind_rows(newConcept)
-  #   newLabels <- tibble(code = nextID, class = newClass, label_en = newLabel) %>%
-  #     bind_rows(newLabels)
-  #   newMappings <- tibble(code = nextID, external = NA_character_) %>%
-  #     bind_rows(newMappings)
-  #
-  # }
-
-  # newConcept <- newConcept %>%
-  #   filter(!undefined) %>%
-  #   arrange(code) %>%
-  #   select(code, broader, sourceID)
-  # newLabels <- newLabels %>%
-  #   filter(!undefined) %>%
-  #   arrange(code) %>%
-  #   select(code, class, label_en)
-  # newMappings <- newMappings %>%
-  #   filter(!undefined) %>%
-  #   arrange(code) %>%
-  #   select(code, external)
-
-
-  ###################### remove ####################
 
   out <- new(Class = "onto",
              classes = ontology@classes,

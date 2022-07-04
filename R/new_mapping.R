@@ -36,7 +36,7 @@
 #'                    license = "CC-BY-0",
 #'                    ontology = onto)
 #'
-#' onto <- get_concept(terms = mapping$old, ontology = onto) %>%
+#' onto <- get_concept(x = data.frame(label_en = mapping$old), ontology = onto) %>%
 #'   new_mapping(new = mapping$new,
 #'               concept = .,
 #'               match = mapping$type,
@@ -61,7 +61,7 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
                         mappings = NULL, certainty = NULL, ontology = NULL){
 
   assertDataFrame(x = concept)
-  assertNames(x = names(concept), must.include = c("code", "label_en", "class"))
+  assertNames(x = names(concept), must.include = c("id", "label_en", "class"))
   assertCharacter(x = new)
   assertNames(x = match, subset.of = c("close", "exact", "broad", "narrow", "related"))
   assertIntegerish(x = certainty, lower = 1, upper = 3)
@@ -78,41 +78,41 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
   }
 
   onto <- ontology@concepts %>%
-    left_join(ontology@labels, by = "code") %>%
-    left_join(ontology@sources %>% select(sourceID, sourceName), by = "sourceID") %>%
-    left_join(ontology@mappings, by = "code")
+    left_join(ontology@labels, by = "id") %>%
+    left_join(ontology@sources %>% select(source_id, source_label), by = "source_id") %>%
+    left_join(ontology@mappings, by = "id")
 
   testConcept <- concept %>%
-    select(code, label_en, class) %>%
-    left_join(onto, by = c("code", "label_en", "class"))
+    select(id, label_en, class) %>%
+    left_join(onto, by = c("id", "label_en", "class"))
 
-  if(any(is.na(testConcept$sourceID))){
+  if(any(is.na(testConcept$source_id))){
     missingConcepts <- testConcept %>%
-      filter(is.na(sourceID)) %>%
+      filter(is.na(source_id)) %>%
       pull(label_en)
     stop("the concepts '", paste0(missingConcepts, collapse = ", "), "' don't exist yet as harmonised concepts, please first define them with 'new_concept()'.")
   }
 
 
-  if(length(match) != length(concept$code)){
+  if(length(match) != length(concept$id)){
     if(length(match) == 1){
-      match <- rep(x = match, length.out = length(concept$code))
+      match <- rep(x = match, length.out = length(concept$id))
     } else {
       stop("the number of elements in 'match' is neither the same as in 'concept' nor 1.")
     }
   }
 
-  if(length(certainty) != length(concept$code)){
+  if(length(certainty) != length(concept$id)){
     if(length(certainty) == 1){
-      certainty <- rep(x = certainty, length.out = length(concept$code))
+      certainty <- rep(x = certainty, length.out = length(concept$id))
     } else {
       stop("the number of elements in 'certainty' is neither the same as in 'concept' nor 1.")
     }
   }
 
   srcID <- ontology@sources %>%
-    filter(sourceName %in% source) %>%
-    pull(sourceID)
+    filter(source_label %in% source) %>%
+    pull(source_id)
 
   if(length(srcID) == 0){
     stop("please first define the source '", source, "' (see function new_source).")
@@ -122,7 +122,7 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
   temp <- bind_cols(concept, tibble(new = new, match = match, certainty = certainty)) %>%
     separate_rows(new, sep = "\\|")
   concept <- temp %>%
-    select(code, broader, label_en, class, external, sourceName)
+    select(id, has_broader, label_en, class, external_id, source_label)
   new <- temp %>%
     pull(new)
   match <- temp %>%
@@ -130,11 +130,11 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
   certainty <- temp %>%
     pull(certainty)
 
-  prevID <- str_detect(string = onto$code, pattern = source)
+  prevID <- str_detect(string = onto$id, pattern = source)
   if(!any(prevID)){
     prevID <- 0
   } else {
-    prevID <- str_split(onto$code[prevID], pattern = "[.]", simplify = TRUE)
+    prevID <- str_split(onto$id[prevID], pattern = "[.]", simplify = TRUE)
     prevID <- as.numeric(prevID[, dim(prevID)[2]])
     prevID <- max(prevID, na.rm = TRUE)
     if(is.na(prevID)) prevID <- 0
@@ -143,17 +143,17 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
   newConcept <- ontology@concepts
   newLabels <- ontology@labels
   newMappings <- ontology@mappings %>%
-    mutate(new_code = NA_character_)
+    mutate(new_id = NA_character_)
   iter <- 1
-  for(i in seq_along(concept$code)){
+  for(i in seq_along(concept$id)){
 
     thisConcept <- concept[i,]
 
     # is the external concept new?
-    codeIncl <- ontology@concepts %>%
-      filter(sourceID %in% srcID)
+    idIncl <- ontology@concepts %>%
+      filter(source_id %in% srcID)
     srcIncl <- ontology@labels %>%
-      filter(code %in% codeIncl)
+      filter(id %in% idIncl)
     srcNew <- !new[i] %in% srcIncl
 
     if(!srcNew){
@@ -171,30 +171,30 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
       newID <- paste0(".", newID)
     }
     newMappings <- newMappings %>%
-      mutate(new_code = if_else(code %in% thisConcept$code,
-                                if_else(!is.na(new_code), paste0(new_code, ", ", newID), newID),
-                                if_else(!is.na(new_code), new_code, NA_character_))) %>%
-      bind_rows(tibble(code = newID, external = NA_character_, new_code = NA_character_))
+      mutate(new_id = if_else(id %in% thisConcept$id,
+                                if_else(!is.na(new_id), paste0(new_id, ", ", newID), newID),
+                                if_else(!is.na(new_id), new_id, NA_character_))) %>%
+      bind_rows(tibble(id = newID, external_id = NA_character_, new_id = NA_character_))
 
     iter <- iter + 1
 
-    newConcept <- tibble(code = newID, sourceID = srcID) %>%
+    newConcept <- tibble(id = newID, source_id = srcID) %>%
       bind_rows(newConcept)
-    newLabels <- tibble(code = newID, class = NA_character_, label_en = new[i]) %>%
+    newLabels <- tibble(id = newID, class = NA_character_, label_en = new[i], description = NA_character_) %>%
       bind_rows(newLabels)
 
   }
 
   newConcept <- newConcept %>%
-    select(code, broader, sourceID) %>%
-    arrange(code)
+    select(id, has_broader, source_id) %>%
+    arrange(id)
   newLabels <- newLabels %>%
-    arrange(code)
+    arrange(id)
   newMappings <- newMappings %>%
-    unite(col = new, external, new_code, sep = ", ", na.rm = TRUE) %>%
-    mutate(external = if_else(new == "", NA_character_, new)) %>%
+    unite(col = new, external_id, new_id, sep = ", ", na.rm = TRUE) %>%
+    mutate(external_id = if_else(new == "", NA_character_, new)) %>%
     select(-new) %>%
-    arrange(code)
+    arrange(id)
 
   out <- new(Class = "onto",
              classes = ontology@classes,
