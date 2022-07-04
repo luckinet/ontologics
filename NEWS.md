@@ -1,3 +1,5 @@
+# ontologics 0.3.2
+
 # ontologics 0.3.1
 
 - adapt `new_concept()` so that also concepts can be defined that have no class (for various reasons). This now gives a warning, and inserts the concepts with an "undefined" class.
