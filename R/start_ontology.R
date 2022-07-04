@@ -28,24 +28,25 @@ start_ontology <- function(name = NULL, path = NULL, code = ".xx", description =
   if(is.null(license)) license <- ""
   if(is.null(notes)) notes <- ""
 
-  theClasses <- tibble(level = code,
-                       class = NA_character_,
-                       broader = NA_character_,
-                       definition = "dummy class that contains the code definition.")
-  theSources <- tibble(sourceID = 1,
-                       sourceName = "harmonised",
+  theClasses <- tibble(id = code,
+                       class_label = NA_character_,
+                       has_broader = NA_character_,
+                       description = "dummy class that contains the code definition.")
+  theSources <- tibble(source_id = 1,
+                       source_label = "harmonised",
                        description = description,
                        homepage = homepage,
                        license = license,
                        notes = notes)
-  theConcepts <- tibble(code = character(),
-                        broader = character(),
-                        sourceID = double())
-  theLabels <- tibble(code = character(),
+  theConcepts <- tibble(id = character(),
+                        has_broader = character(),
+                        source_id = double())
+  theLabels <- tibble(id = character(),
                       class = character(),
-                      label_en = character())
-  theMappings <- tibble(code = character(),
-                        external = character())
+                      label_en = character(),
+                      description = character())
+  theMappings <- tibble(id = character(),
+                        external_id = character())
 
   out <- new(Class = "onto",
              classes = theClasses,
