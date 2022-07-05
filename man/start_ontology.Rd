@@ -23,13 +23,17 @@ be stored.}
 \item{code}{\code{\link[=double]{double(1)}}\cr format of a single code snippet that is
 concatenated for nested levels.}
 
-\item{description}{\code{\link[=character]{character(1)}}\cr}
+\item{description}{\code{\link[=character]{character(1)}}\cr a brief description of the
+new ontology.}
 
-\item{homepage}{\code{\link[=character]{character(1)}}\cr}
+\item{homepage}{\code{\link[=character]{character(1)}}\cr the url to the homepage of the
+new ontology.}
 
-\item{license}{\code{\link[=character]{character(1)}}\cr}
+\item{license}{\code{\link[=character]{character(1)}}\cr any string describing the
+license under which this ontology can be (re)used.}
 
-\item{notes}{\code{\link[=character]{character(1)}}\cr}
+\item{notes}{\code{\link[=character]{character(1)}}\cr any notes that might apply to
+this ontology.}
 }
 \value{
 it returns the new, emtpy ontology and also stores that within the

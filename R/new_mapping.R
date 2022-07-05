@@ -133,7 +133,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
   if(!any(prevID)){
     prevID <- 0
   } else {
-    prevID <- str_split(theConcepts$id[prevID], pattern = "[.]", simplify = TRUE)
+    prevID <- str_split(theConcepts$external$id[prevID], pattern = "_", simplify = TRUE)
     prevID <- as.numeric(prevID[, dim(prevID)[2]])
     prevID <- max(prevID, na.rm = TRUE)
     if(is.na(prevID)) prevID <- 0
@@ -141,16 +141,22 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
 
   temp <- bind_cols(target, tibble(new = new, match = match, certainty = certainty,
                                    description = description, has_source = srcID)) %>%
-    separate_rows(new, sep = "\\|") %>%
-    mutate(match = paste0("new_", match, "_match"),
-           newid = paste0(source, "_", row_number() + prevID))
+    separate_rows(new, sep = " \\| ")
 
   theConcepts$external <- temp %>%
+    distinct(new, description, has_source) %>%
+    filter(new != "") %>%
+    mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
     select(id = newid, label = new, description, has_source) %>%
     bind_rows(ontology@concepts$external)
 
   toOut <- temp %>%
-    mutate(newid = paste0(newid, ".", certainty)) %>%
+    left_join(theConcepts$external %>% select(new = label, newid = id), by = "new") %>%
+    mutate(newid = paste0(newid, ".", certainty),
+           match = paste0("new_", match, "_match")) %>%
+    group_by(id, label, match) %>%
+    summarise(newid = paste0(newid, collapse = " | ")) %>%
+    ungroup() %>%
     pivot_wider(id_cols = c(id, label), names_from = match, values_from = newid) %>%
     full_join(theConcepts$harmonised, by = c("id", "label"))
 
