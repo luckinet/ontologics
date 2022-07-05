@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -65,23 +65,51 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">new_class</span><span class="op">(</span><span class="va">class</span>, <span class="va">broader</span>, <span class="va">description</span>, ontology <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">new_class</span><span class="op">(</span></span>
+<span>  <span class="va">new</span>,</span>
+<span>  <span class="va">target</span>,</span>
+<span>  <span class="va">description</span>,</span>
+<span>  harmonised <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  source <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  match <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ontology <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>class</dt>
+    <dl><dt>new</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the new class label.</p></dd>
 
 
-<dt>broader</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the broader class into which
-the new class is nested.</p></dd>
+<dt>target</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the class to which the new class
+shall be related.</p></dd>
 
 
 <dt>description</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> a verbatim description of
 the new class.</p></dd>
+
+
+<dt>harmonised</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not the new class is
+a harmonised class or not. In case it is a harmonised class, the relation
+between <code>new</code> and <code>target</code> will be a SKOS:broader relation, so
+that the new class is nested into the target class. In case it is not a
+harmonised class but an external class, the relation between the two
+concepts is determined by the value provided to <code>match</code>.</p></dd>
+
+
+<dt>source</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> in case <code>harmonised =
+FALSE</code>, the new/external concepts requires a source description.</p></dd>
+
+
+<dt>match</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> in case <code>harmonised =
+  FALSE</code>, the new/external concepts requires a match-value describing the
+relation between <code>new</code> and <code>target</code>.</p></dd>
 
 
 <dt>ontology</dt>
@@ -95,8 +123,8 @@ stored, or an already loaded ontology.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">ontoDir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"crops.rds"</span>, package <span class="op">=</span> <span class="st">"ontologics"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_ontology.html">load_ontology</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu">new_class</span><span class="op">(</span>class <span class="op">=</span> <span class="st">"use type"</span>, broader <span class="op">=</span> <span class="st">"class"</span>,</span></span>
-<span class="r-in"><span>                  description <span class="op">=</span> <span class="st">"something"</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu">new_class</span><span class="op">(</span>new <span class="op">=</span> <span class="st">"use type"</span>, target <span class="op">=</span> <span class="st">"class"</span>, description <span class="op">=</span> <span class="st">"something"</span>,</span></span>
+<span class="r-in"><span>                  harmonised <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
