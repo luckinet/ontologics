@@ -6,10 +6,10 @@
 \usage{
 new_mapping(
   new = NULL,
-  concept,
-  match = "close",
+  target,
   source = NULL,
-  mappings = NULL,
+  description = NULL,
+  match = "close",
   certainty = NULL,
   ontology = NULL
 )
@@ -19,18 +19,19 @@ new_mapping(
 external concepts that shall be mapped to concepts that do already exist in
 the ontology.}
 
-\item{concept}{\code{\link[=data.frame]{data.frame(.)}}\cr the english label(s) of
+\item{target}{\code{\link[=data.frame]{data.frame(.)}}\cr the english label(s) of
 already harmonised concepts to which the external concepts shall be mapped.}
+
+\item{source}{\code{\link[=character]{character(1)}}\cr any character uniquely
+identifying the source dataset of the new concept.}
+
+\item{description}{\code{\link[=character]{character(.)}}\cr a verbatim description of
+the new concept mapping(s).}
 
 \item{match}{\code{\link[=character]{character(1)}}\cr the
 \href{https://www.w3.org/TR/skos-reference/#mapping}{skos mapping property}
 used to describe the link, possible values are \code{"close"},
 \code{"exact"}, \code{"broad"}, \code{"narrow"} and \code{"related"}.}
-
-\item{source}{\code{\link[=character]{character(1)}}\cr any character uniquely
-identifying the source dataset of the new concept.}
-
-\item{mappings}{\code{\link[=tibble]{tibble()}}\cr not yet implemented.}
 
 \item{certainty}{\code{\link[=integer]{integerish(1)}}\cr the certainty of the match.
 Possible values are between 1 and 4, with meaning \itemize{\item 1 =
@@ -56,7 +57,7 @@ mapping <- data.frame(old = c("BIOENERGY CROPS", "Bioenergy woody",
                               "Other bioenergy crops"),
                       new = c("bioenergy plants", "Wood plantation for fuel",
                               "Algae for bioenergy"),
-                      type = c("close", "broad", "broad"))
+                      type = c("close", "broader", "broader"))
 
 onto <- new_source(name = "externalDataset",
                    description = "a vocabulary",
@@ -64,9 +65,9 @@ onto <- new_source(name = "externalDataset",
                    license = "CC-BY-0",
                    ontology = onto)
 
-onto <- get_concept(x = data.frame(label_en = mapping$old), ontology = onto) \%>\%
+onto <- get_concept(x = data.frame(label = mapping$old), ontology = onto) \%>\%
   new_mapping(new = mapping$new,
-              concept = .,
+              target = .,
               match = mapping$type,
               source = "externalDataset",
               certainty = 3,

@@ -9,8 +9,6 @@ new_concept(
   broader = NULL,
   description = NULL,
   class = NULL,
-  source = NULL,
-  attributes = NULL,
   ontology = NULL
 )
 }
@@ -28,12 +26,6 @@ relation, see Details.}
 the new concept(s).}
 
 \item{class}{\code{\link[=character]{character(.)}}\cr the class(es) of the new labels.}
-
-\item{source}{\code{\link[=character]{character(1)}}\cr any character uniquely
-identifying the source dataset of the new concept (for example
-\emph{Author+Year}).}
-
-\item{attributes}{\code{\link[=tibble]{tibble()}}\cr not yet implemented.}
 
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
@@ -60,33 +52,30 @@ onto <- new_source(name = "externalDataset",
                    license = "CC-BY-0",
                    ontology = onto)
 
-onto <- get_concept(x = data.frame(label_en = concepts$old), ontology = onto) \%>\%
+onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) \%>\%
   new_concept(new = concepts$new,
               broader = .,
               class = "crop",
-              source = "externalDataset",
               ontology = onto)
 
 # add concepts where the nesting is clear, but not the new class
 concepts <- data.frame(old = c("Barley", "Barley"),
                        new = c("food", "bio-energy"))
 
-onto <- get_concept(x = data.frame(label_en = concepts$old), ontology = onto) \%>\%
+onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) \%>\%
   new_concept(new = concepts$new,
               broader = .,
-              source = "externalDataset",
               ontology = onto)
 
 # define that class ...
-onto <- new_class(class = "use type", broader = "class",
+onto <- new_class(new = "use type", target = "class", harmonised = TRUE,
                   description = "the way a crop is used", ontology = onto)
 
 # ... and set the concepts again
-onto <- get_concept(x = data.frame(label_en = concepts$old), ontology = onto) \%>\%
+onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) \%>\%
   new_concept(new = concepts$new,
               broader = .,
               class = "use type",
-              source = "externalDataset",
               ontology = onto)
 
 }
