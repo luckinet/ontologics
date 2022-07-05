@@ -10,25 +10,27 @@
 #'   ontology tree starting from the given search terms.
 #' @param missing [`logical(1)`][logical]\cr whether or not to give only those
 #'   values that are currently missing from the ontology.
-#' @param ontology [`ontology(1)`][list]\cr either a path where the
-#'   ontology is stored, or an already loaded ontology.
+#' @param mappings [`logical(1)`][logical]\cr whether or not to give the
+#'   concepts including mappings to external concepts.
+#' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
+#'   stored, or an already loaded ontology.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
 #'
 #' # exact matches from a loaded ontology ...
-#' get_concept(x = data.frame(label_en = "FODDER CROPS"), ontology = onto)
+#' get_concept(x = data.frame(label = "FODDER CROPS"), ontology = onto)
 #'
 #' # ... or one stored on the harddisc
-#' get_concept(x = data.frame(label_en = "FODDER CROPS"), ontology = ontoDir)
+#' get_concept(x = data.frame(label = "FODDER CROPS"), ontology = ontoDir)
 #'
 #' # use regular expressions ...
-#' get_concept(x = data.frame(label_en = "/*crops"), regex = TRUE, ontology = onto)
+#' get_concept(x = data.frame(label = "/*crops"), regex = TRUE, ontology = onto)
 #'
-#' get_concept(x = data.frame(label_en = "/*crops"), broader = ".05", regex = TRUE, ontology = onto)
+#' get_concept(x = data.frame(label = "/*crops"), has_broader = ".05", regex = TRUE, ontology = onto)
 #'
 #' # get all concepts that are nested into another concept
-#' get_concept(x = data.frame(label_en = "FODDER CROPS"), tree = TRUE, ontology = onto)
+#' get_concept(x = data.frame(label = "FODDER CROPS"), tree = TRUE, ontology = onto)
 #' @return A table of a subset of the ontology according to the values in
 #'   \code{...}
 #' @importFrom checkmate assertFileExists assertLogical testChoice
@@ -45,7 +47,7 @@
 #' @export
 
 get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
-                        missing = FALSE, ontology = NULL){
+                        missing = FALSE, mappings = FALSE, ontology = NULL){
 
   # documentation for x is missing
 
@@ -53,6 +55,7 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
   assertLogical(x = regex, len = 1, any.missing = FALSE)
   assertLogical(x = tree, len = 1, any.missing = FALSE)
   assertLogical(x = missing, len = 1, any.missing = FALSE)
+  assertLogical(x = mappings, len = 1, any.missing = FALSE)
   if(regex & missing){
     stop("you can only search for missing items with 'regex = FALSE'.")
   }
@@ -66,17 +69,14 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
     ontology <- load_ontology(path = ontoPath)
   }
 
-  onto <- ontology@concepts %>%
-    left_join(ontology@labels, by = "id") %>%
-    left_join(ontology@sources %>% select(source_id, source_label), by = "source_id") %>%
-    left_join(ontology@mappings, by = "id")
+  theConcepts <- ontology@concepts
 
   attrib <- quos(..., .named = TRUE)
   # return(attrib)
 
   # identify attributes that are not in the ontology
-  if(!all(names(attrib) %in% colnames(onto))){
-    sbst <- names(attrib) %in% colnames(onto)
+  if(!all(names(attrib) %in% colnames(theConcepts$harmonised))){
+    sbst <- names(attrib) %in% colnames(theConcepts$harmonised)
     theName <- names(attrib)[!sbst]
     warning(paste0("'", paste0(theName, collapse = ", "), "' is not a column in the ontology and is thus ignored."))
     attrib <- attrib[sbst]
@@ -85,10 +85,10 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
   if(regex){
 
     if(!is.null(x)){
-      toOut <- onto %>%
-        filter(str_detect(label_en, x$label_en))
+      toOut <- ontology@concepts$harmonised %>%
+        filter(str_detect(label, x$label))
     } else {
-      toOut <- onto
+      toOut <- ontology@concepts$harmonised
     }
 
     for(i in seq_along(attrib)){
@@ -100,32 +100,21 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
 
   } else {
 
-    assertNames(x = names(x), subset.of = c("id", "has_broader", "source_id", "class", "label_en", "source_label", "external_id"))
+    assertNames(x = names(x), subset.of = c("id", "has_broader", "source_id", "class", "label", "source_label", "external_id"))
 
-    # extConcp <- tibble(label_en = x, external = x)
-    # extConcp <- tibble(label_en = x)
+    toOut <- x %>%
+      left_join(theConcepts$harmonised, by = colnames(x))
 
-    # tempOut <- onto %>%
-    #   filter(label_en %in% x)
-
-    tempOut <- x %>%
-      left_join(onto, by = colnames(x))
-
-    toOut <- tempOut %>%
-      filter(!is.na(class))# %>%
-      # select(-external) %>%
-      # left_join(extConcp, by = "label_en") %>%
-      # distinct()
-    toMatch <- tempOut %>%
-      filter(is.na(class)) %>%
-      filter(!label_en %in% toOut$label_en)
+    toMatch <- x %>%
+      left_join(theConcepts$external, by = colnames(x)) %>%
+      filter(!is.na(id))
 
     if(dim(toMatch)[1] != 0){
-      toOut <- onto %>%
-        filter(str_detect(external_id, paste0(toMatch$id, collapse = "|"))) %>%
-        separate_rows(external_id, sep = ", ") %>%
-        rename(extid = external_id) %>%
-        left_join(toMatch %>% select(extid = id, external_id = label_en), by = "extid") %>%
+      toOut <- theConcepts$harmonised %>%
+        filter(str_detect(has_close_match, paste0(toMatch$id, collapse = "|"))) %>%
+        separate_rows(has_close_match, sep = ", ") %>%
+        rename(extid = has_close_match) %>%
+        left_join(toMatch %>% select(extid = id, external_id = label), by = "extid") %>%
         filter(!is.na(external_id)) %>%
         select(-extid) %>%
         bind_rows(toOut, .)
@@ -150,11 +139,10 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
     if(tree){
 
       topID <- toOut %>%
-        filter(source_label %in% c("harmonised", "imported")) %>%
         pull(id) %>%
         unique()
 
-      temp <- make_tree(onto, topID)
+      temp <- make_tree(theConcepts$harmonised, topID)
 
     } else {
       temp <- toOut %>%
@@ -163,8 +151,12 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
 
   }
 
-  out <- temp %>%
-    select(id, has_broader, label_en, class, external_id, source_label)
+  if(mappings){
+    out <- temp
+  } else {
+    out <- temp %>%
+      select(id, has_broader, label, class)
+  }
 
   return(out)
 
