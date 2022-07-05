@@ -22,20 +22,21 @@
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
 #'
-#' onto <- new_class(new = "use type", target = "class", description = "something",
-#'                   harmonised = TRUE, ontology = onto)
+#' onto <- new_class(
+#'   new = "use type", target = "class", description = "something",
+#'   harmonised = TRUE, ontology = onto
+#' )
 #'
 #' @importFrom checkmate assertCharacter assertClass assertTRUE
 #' @importFrom methods new
 #' @export
 
 new_class <- function(new, target, description, harmonised = FALSE,
-                      source = NULL, match = NULL, ontology = NULL){
-
+                      source = NULL, match = NULL, ontology = NULL) {
   assertCharacter(x = new, len = 1, any.missing = FALSE)
   assertLogical(x = harmonised, len = 1, any.missing = FALSE)
 
-  if(inherits(x = ontology, what = "onto")){
+  if (inherits(x = ontology, what = "onto")) {
     ontoPath <- NULL
   } else {
     assertFileExists(x = ontology, access = "rw", extension = "rds")
@@ -49,63 +50,64 @@ new_class <- function(new, target, description, harmonised = FALSE,
   theClasses <- ontology@classes
 
   # is it a harmonised class ...
-  if(harmonised){
-
+  if (harmonised) {
     assertCharacter(x = target, len = 1, unique = FALSE)
     assertCharacter(x = description, len = 1, any.missing = FALSE)
     assertTRUE(length(new) == length(target))
     assertTRUE(length(new) == length(description))
 
-    if(is.na(target)){
-
-      temp <- tibble(id = theClasses$harmonised$id[1],
-                     label = new,
-                     description = description,
-                     has_broader = NA_character_,
-                     has_close_match = NA_character_,
-                     has_narrower_match = NA_character_,
-                     has_broader_match = NA_character_,
-                     has_exact_match = NA_character_) %>%
+    if (is.na(target)) {
+      temp <- tibble(
+        level = theClasses$harmonised$level[1],
+        label = new,
+        description = description,
+        has_broader = NA_character_,
+        has_close_match = NA_character_,
+        has_narrower_match = NA_character_,
+        has_broader_match = NA_character_,
+        has_exact_match = NA_character_
+      ) %>%
         bind_rows(theClasses$harmonised) %>%
         filter(description != "dummy class that contains the code definition.") %>%
         distinct()
 
       theClasses$harmonised <- temp
     } else {
-
       assertSubset(x = target, choices = theClasses$harmonised$label)
       newLvl <- theClasses$harmonised %>%
         filter(label == !!target) %>%
-        pull(id)
-      newLvl <- paste0(newLvl, theClasses$harmonised$id[1])
+        pull(level)
+      newLvl <- paste0(newLvl, theClasses$harmonised$level[1])
 
-      temp <- tibble(id = newLvl,
-                     label = new,
-                     description = description,
-                     has_broader = target,
-                     has_close_match = NA_character_,
-                     has_narrower_match = NA_character_,
-                     has_broader_match = NA_character_,
-                     has_exact_match = NA_character_) %>%
+      temp <- tibble(
+        level = newLvl,
+        label = new,
+        description = description,
+        has_broader = target,
+        has_close_match = NA_character_,
+        has_narrower_match = NA_character_,
+        has_broader_match = NA_character_,
+        has_exact_match = NA_character_
+      ) %>%
         bind_rows(theClasses$harmonised, .) %>%
         distinct()
 
       theClasses$harmonised <- temp
     }
-
-
   } else {
 
 
   }
 
-  out <- new(Class = "onto",
-             sources = ontology@sources,
-             classes = theClasses,
-             concepts = ontology@concepts)
+  out <- new(
+    Class = "onto",
+    sources = ontology@sources,
+    classes = theClasses,
+    concepts = ontology@concepts
+  )
 
 
-  if(!is.null(ontoPath)){
+  if (!is.null(ontoPath)) {
     write_rds(x = out, file = ontoPath)
   }
 

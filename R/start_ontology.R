@@ -19,57 +19,68 @@
 #' @export
 
 start_ontology <- function(name = NULL, path = NULL, code = ".xx", description = NULL,
-                           homepage = NULL, license = NULL, notes = NULL){
-
+                           homepage = NULL, license = NULL, notes = NULL) {
   assertDirectoryExists(x = path, access = "rw")
 
-  if(is.null(description)) description <- ""
-  if(is.null(homepage)) homepage <- ""
-  if(is.null(license)) license <- ""
-  if(is.null(notes)) notes <- ""
+  if (is.null(description)) description <- ""
+  if (is.null(homepage)) homepage <- ""
+  if (is.null(license)) license <- ""
+  if (is.null(notes)) notes <- ""
 
-  theSources <- tibble(id = as.character(1),
-                       label = "harmonised",
-                       description = description,
-                       homepage = homepage,
-                       license = license,
-                       notes = notes)
+  theSources <- tibble(
+    id = as.character(1),
+    label = "harmonised",
+    description = description,
+    homepage = homepage,
+    license = license,
+    notes = notes
+  )
 
   theClasses <- list(
-    harmonised = tibble(id = code,
-                        label = NA_character_,
-                        description = "dummy class that contains the code definition.",
-                        has_broader = NA_character_,
-                        has_close_match = NA_character_,
-                        has_narrower_match = NA_character_,
-                        has_broader_match = NA_character_,
-                        has_exact_match = NA_character_),
-    external = tibble(id = NA_character_,
-                      label = NA_character_,
-                      description = NA_character_,
-                      has_source = NA_character_)
+    harmonised = tibble(
+      level = code,
+      label = NA_character_,
+      description = "dummy class that contains the code definition.",
+      has_broader = NA_character_,
+      has_close_match = NA_character_,
+      has_narrower_match = NA_character_,
+      has_broader_match = NA_character_,
+      has_exact_match = NA_character_
+    ),
+    external = tibble(
+      id = NA_character_,
+      label = NA_character_,
+      description = NA_character_,
+      has_source = NA_character_
+    )
   )
 
   theConcepts <- list(
-    harmonised = tibble(id = character(),
-                        label = character(),
-                        description = character(),
-                        class = character(),
-                        has_broader = character(),
-                        has_close_match = character(),
-                        has_narrower_match = character(),
-                        has_broader_match = character(),
-                        has_exact_match = character()),
-    external = tibble(id = character(),
-                      label = character(),
-                      description = character(),
-                      has_source = character())
+    harmonised = tibble(
+      id = character(),
+      label = character(),
+      description = character(),
+      class = character(),
+      has_broader = character(),
+      has_close_match = character(),
+      has_narrower_match = character(),
+      has_broader_match = character(),
+      has_exact_match = character()
+    ),
+    external = tibble(
+      id = character(),
+      label = character(),
+      description = character(),
+      has_source = character()
+    )
   )
 
-  out <- new(Class = "onto",
-             sources = theSources,
-             classes = theClasses,
-             concepts = theConcepts)
+  out <- new(
+    Class = "onto",
+    sources = theSources,
+    classes = theClasses,
+    concepts = theConcepts
+  )
 
   write_rds(out, paste0(path, "/", name, ".rds"))
   return(out)
