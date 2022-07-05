@@ -11,14 +11,10 @@ Ontology class (S4) and methods
 \section{Slots}{
 
 \describe{
-\item{\code{classes}}{\code{\link[=data.frame]{data.frame(.)}}\cr}
-
 \item{\code{sources}}{\code{\link[=data.frame]{data.frame(.)}}\cr}
 
+\item{\code{classes}}{\code{\link[=data.frame]{data.frame(.)}}\cr}
+
 \item{\code{concepts}}{\code{\link[=data.frame]{data.frame(.)}}\cr}
-
-\item{\code{labels}}{\code{\link[=data.frame]{data.frame(.)}}\cr}
-
-\item{\code{mappings}}{\code{\link[=character]{character(1)}}\cr}
 }}
 

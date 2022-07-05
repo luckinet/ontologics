@@ -47,15 +47,16 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL,
     ontology <- load_ontology(path = ontoPath)
   }
 
-  if(name %in% ontology@sources$source_label){
+  if(name %in% ontology@sources$label){
     warning("the source '", name, "' has already been registered.")
   }
 
-  if(length(ontology@sources$source_id) == 0){
+  if(length(ontology@sources$id) == 0){
     newID <- 1
   } else {
-    newID <- max(ontology@sources$source_id) + 1
+    newID <- max(as.numeric(ontology@sources$id)) + 1
   }
+  newID <- as.character(newID)
 
   if(str_detect(name, "_")){
     stop("please provide a name that doesn't contain '_' symbols.")
@@ -63,8 +64,8 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL,
     theName <- name
   }
 
-  newSource <- tibble(source_id = newID,
-                      source_label = name,
+  newSource <- tibble(id = newID,
+                      label = name,
                       description = description,
                       homepage = homepage,
                       license = license,
@@ -73,11 +74,9 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL,
   theSources <- bind_rows(ontology@sources, newSource)
 
   out <- new(Class = "onto",
-             classes = ontology@classes,
              sources = theSources,
-             concepts = ontology@concepts,
-             labels = ontology@labels,
-             mappings = ontology@mappings)
+             classes = ontology@classes,
+             concepts = ontology@concepts)
 
   if(!is.null(ontoPath)){
     write_rds(x = out, file = ontoPath)

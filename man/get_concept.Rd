@@ -10,6 +10,7 @@ get_concept(
   regex = FALSE,
   tree = FALSE,
   missing = FALSE,
+  mappings = FALSE,
   ontology = NULL
 )
 }
@@ -29,8 +30,11 @@ ontology tree starting from the given search terms.}
 \item{missing}{\code{\link[=logical]{logical(1)}}\cr whether or not to give only those
 values that are currently missing from the ontology.}
 
-\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the
-ontology is stored, or an already loaded ontology.}
+\item{mappings}{\code{\link[=logical]{logical(1)}}\cr whether or not to give the
+concepts including mappings to external concepts.}
+
+\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
+stored, or an already loaded ontology.}
 }
 \value{
 A table of a subset of the ontology according to the values in
@@ -44,16 +48,16 @@ ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 onto <- load_ontology(path = ontoDir)
 
 # exact matches from a loaded ontology ...
-get_concept(x = data.frame(label_en = "FODDER CROPS"), ontology = onto)
+get_concept(x = data.frame(label = "FODDER CROPS"), ontology = onto)
 
 # ... or one stored on the harddisc
-get_concept(x = data.frame(label_en = "FODDER CROPS"), ontology = ontoDir)
+get_concept(x = data.frame(label = "FODDER CROPS"), ontology = ontoDir)
 
 # use regular expressions ...
-get_concept(x = data.frame(label_en = "/*crops"), regex = TRUE, ontology = onto)
+get_concept(x = data.frame(label = "/*crops"), regex = TRUE, ontology = onto)
 
-get_concept(x = data.frame(label_en = "/*crops"), broader = ".05", regex = TRUE, ontology = onto)
+get_concept(x = data.frame(label = "/*crops"), has_broader = ".05", regex = TRUE, ontology = onto)
 
 # get all concepts that are nested into another concept
-get_concept(x = data.frame(label_en = "FODDER CROPS"), tree = TRUE, ontology = onto)
+get_concept(x = data.frame(label = "FODDER CROPS"), tree = TRUE, ontology = onto)
 }
