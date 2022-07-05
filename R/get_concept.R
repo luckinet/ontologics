@@ -1,6 +1,7 @@
 #' Get a concept in an ontology
 #'
-#' @param x [`character(1)`][character]\cr
+#' @param x [`character(1)`][character]\cr a table containing all columns of the
+#'   ontology that shall be filter by the values in those columns.
 #' @param ... combination of column name and value to filter that column by. The
 #'   value to filter by can be provided as regular expression.
 #' @param regex [`logical(1)`][logical]\cr whether or not the value in
@@ -48,8 +49,6 @@
 
 get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
                         missing = FALSE, mappings = FALSE, ontology = NULL){
-
-  # documentation for x is missing
 
   assertDataFrame(x = x, null.ok = FALSE)
   assertLogical(x = regex, len = 1, any.missing = FALSE)
@@ -105,8 +104,9 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
     toOut <- x %>%
       left_join(theConcepts$harmonised, by = colnames(x))
 
+    matchCols <- colnames(x)[colnames(x) %in% colnames(theConcepts$external)]
     toMatch <- x %>%
-      left_join(theConcepts$external, by = colnames(x)) %>%
+      left_join(theConcepts$external, matchCols) %>%
       filter(!is.na(id))
 
     if(dim(toMatch)[1] != 0){

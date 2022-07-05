@@ -15,7 +15,8 @@ get_concept(
 )
 }
 \arguments{
-\item{x}{\code{\link[=character]{character(1)}}\cr}
+\item{x}{\code{\link[=character]{character(1)}}\cr a table containing all columns of the
+ontology that shall be filter by the values in those columns.}
 
 \item{...}{combination of column name and value to filter that column by. The
 value to filter by can be provided as regular expression.}
