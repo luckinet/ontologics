@@ -11,6 +11,7 @@ new_mapping(
   description = NULL,
   match = "close",
   certainty = NULL,
+  type = "concept",
   ontology = NULL
 )
 }
@@ -31,13 +32,16 @@ the new concept mapping(s).}
 \item{match}{\code{\link[=character]{character(1)}}\cr the
 \href{https://www.w3.org/TR/skos-reference/#mapping}{skos mapping property}
 used to describe the link, possible values are \code{"close"},
-\code{"exact"}, \code{"broad"}, \code{"narrow"} and \code{"related"}.}
+\code{"exact"}, \code{"broad"} and \code{"narrow"}.}
 
 \item{certainty}{\code{\link[=integer]{integerish(1)}}\cr the certainty of the match.
 Possible values are between 1 and 4, with meaning \itemize{\item 1 =
 probably unreliable \item 2 = unclear, assigned according to a given
 definition \item 3 = clear, assigned according to a given definition \item
 4 = original, harmonised term (can't be assigned by a user)}.}
+
+\item{type}{\code{\link[=character]{character(1)}}\cr whether the new terms are mapped
+to a \code{"concept"}, or to a \code{"class"}.}
 
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
