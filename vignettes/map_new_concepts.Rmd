@@ -106,7 +106,7 @@ crops <- new_concept(new = c("wheat1", "wheat2"),
 get_concept(x = tibble(label = "Wheat"), tree = TRUE, ontology = crops) %>% 
   kable()
 # ... ok, then let's specify that class and re-run new_concept
-crops <- new_class(new = "cultivar", target = "crop", harmonised = TRUE,
+crops <- new_class(new = "cultivar", target = "crop", 
                    description = "type of plant that people have bred for desired traits", 
                    ontology = crops)
 

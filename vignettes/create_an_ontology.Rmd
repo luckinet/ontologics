@@ -62,9 +62,9 @@ Next, classes and their hierarchy need to be defined. Each concept is always a c
 ```{r}
 # currently it is merely possible to set only one class at a time
 lulc <- new_class(new = "landcover", target = NA, description = "A good definition of landcover", 
-                  harmonised = TRUE, ontology = lulc) %>%
+                  ontology = lulc) %>%
   new_class(new = "land-use", target = "landcover", description = "A good definition of land-use", 
-            harmonised = TRUE, ontology = .)
+            ontology = .)
 
 kable(lulc@classes$harmonised[,1:6])
 ```
