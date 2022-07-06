@@ -166,7 +166,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     filter(new != "") %>%
     mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
     select(id = newid, label = new, description, has_source) %>%
-    bind_rows(ontology@concepts$external)
+    bind_rows(theTable$external)
 
   toOut <- temp %>%
     left_join(theTable$external %>% select(new = label, newid = id), by = "new") %>%
