@@ -65,15 +65,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">new_class</span><span class="op">(</span></span>
-<span>  <span class="va">new</span>,</span>
-<span>  <span class="va">target</span>,</span>
-<span>  <span class="va">description</span>,</span>
-<span>  harmonised <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  source <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  match <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ontology <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">new_class</span><span class="op">(</span><span class="va">new</span>, <span class="va">target</span>, description <span class="op">=</span> <span class="cn">NULL</span>, ontology <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -92,26 +84,6 @@ shall be related.</p></dd>
 the new class.</p></dd>
 
 
-<dt>harmonised</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not the new class is
-a harmonised class or not. In case it is a harmonised class, the relation
-between <code>new</code> and <code>target</code> will be a SKOS:broader relation, so
-that the new class is nested into the target class. In case it is not a
-harmonised class but an external class, the relation between the two
-concepts is determined by the value provided to <code>match</code>.</p></dd>
-
-
-<dt>source</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> in case <code>harmonised =
-FALSE</code>, the new/external concepts requires a source description.</p></dd>
-
-
-<dt>match</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> in case <code>harmonised =
-  FALSE</code>, the new/external concepts requires a match-value describing the
-relation between <code>new</code> and <code>target</code>.</p></dd>
-
-
 <dt>ontology</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">ontology(1)</a></code><br> either a path where the ontology is
 stored, or an already loaded ontology.</p></dd>
@@ -124,7 +96,7 @@ stored, or an already loaded ontology.</p></dd>
 <span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_ontology.html">load_ontology</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu">new_class</span><span class="op">(</span>new <span class="op">=</span> <span class="st">"use type"</span>, target <span class="op">=</span> <span class="st">"class"</span>, description <span class="op">=</span> <span class="st">"something"</span>,</span></span>
-<span class="r-in"><span>                  harmonised <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                  ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

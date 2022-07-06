@@ -175,11 +175,11 @@
 <span><span class="co">#&gt;   .. .. ..$ has_narrower_match: chr NA</span></span>
 <span><span class="co">#&gt;   .. .. ..$ has_broader_match : chr NA</span></span>
 <span><span class="co">#&gt;   .. .. ..$ has_exact_match   : chr NA</span></span>
-<span><span class="co">#&gt;   .. ..$ external  : tibble [1 × 4] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   .. .. ..$ id         : chr NA</span></span>
-<span><span class="co">#&gt;   .. .. ..$ label      : chr NA</span></span>
-<span><span class="co">#&gt;   .. .. ..$ description: chr NA</span></span>
-<span><span class="co">#&gt;   .. .. ..$ has_source : chr NA</span></span>
+<span><span class="co">#&gt;   .. ..$ external  : tibble [0 × 4] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;   .. .. ..$ id         : chr(0) </span></span>
+<span><span class="co">#&gt;   .. .. ..$ label      : chr(0) </span></span>
+<span><span class="co">#&gt;   .. .. ..$ description: chr(0) </span></span>
+<span><span class="co">#&gt;   .. .. ..$ has_source : chr(0) </span></span>
 <span><span class="co">#&gt;   ..@ concepts:List of 2</span></span>
 <span><span class="co">#&gt;   .. ..$ harmonised: tibble [0 × 9] (S3: tbl_df/tbl/data.frame)</span></span>
 <span><span class="co">#&gt;   .. .. ..$ id                : chr(0) </span></span>
@@ -230,9 +230,9 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># currently it is merely possible to set only one class at a time</span></span>
 <span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>new <span class="op">=</span> <span class="st">"landcover"</span>, target <span class="op">=</span> <span class="cn">NA</span>, description <span class="op">=</span> <span class="st">"A good definition of landcover"</span>, </span>
-<span>                  harmonised <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>                  ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>new <span class="op">=</span> <span class="st">"land-use"</span>, target <span class="op">=</span> <span class="st">"landcover"</span>, description <span class="op">=</span> <span class="st">"A good definition of land-use"</span>, </span>
-<span>            harmonised <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">.</span><span class="op">)</span></span>
+<span>            ontology <span class="op">=</span> <span class="va">.</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">classes</span><span class="op">$</span><span class="va">harmonised</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
