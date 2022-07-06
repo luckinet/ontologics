@@ -3,10 +3,14 @@
 #' @param name [`character(1)`][character]\cr the path of the ontology.
 #' @param path [`character(1)`][character]\cr the path where the ontology shall
 #'   be stored.
-#' @param description [`character(1)`][character]\cr
-#' @param homepage [`character(1)`][character]\cr
-#' @param license [`character(1)`][character]\cr
-#' @param notes [`character(1)`][character]\cr
+#' @param description [`character(1)`][character]\cr a brief description of the
+#'   new ontology.
+#' @param homepage [`character(1)`][character]\cr the url to the homepage of the
+#'   new ontology.
+#' @param license [`character(1)`][character]\cr any string describing the
+#'   license under which this ontology can be (re)used.
+#' @param notes [`character(1)`][character]\cr any notes that might apply to
+#'   this ontology.
 #' @param code [`double(1)`][double]\cr format of a single code snippet that is
 #'   concatenated for nested levels.
 #' @examples
@@ -28,31 +32,48 @@ start_ontology <- function(name = NULL, path = NULL, code = ".xx", description =
   if(is.null(license)) license <- ""
   if(is.null(notes)) notes <- ""
 
-  theClasses <- tibble(level = code,
-                       class = NA_character_,
-                       broader = NA_character_,
-                       definition = "dummy class that contains the code definition.")
-  theSources <- tibble(sourceID = 1,
-                       sourceName = "harmonised",
+  theSources <- tibble(id = as.character(1),
+                       label = "harmonised",
                        description = description,
                        homepage = homepage,
                        license = license,
                        notes = notes)
-  theConcepts <- tibble(code = character(),
-                        broader = character(),
-                        sourceID = double())
-  theLabels <- tibble(code = character(),
-                      class = character(),
-                      label_en = character())
-  theMappings <- tibble(code = character(),
-                        external = character())
+
+  theClasses <- list(
+    harmonised = tibble(id = code,
+                        label = NA_character_,
+                        description = "dummy class that contains the code definition.",
+                        has_broader = NA_character_,
+                        has_close_match = NA_character_,
+                        has_narrower_match = NA_character_,
+                        has_broader_match = NA_character_,
+                        has_exact_match = NA_character_),
+    external = tibble(id = NA_character_,
+                      label = NA_character_,
+                      description = NA_character_,
+                      has_source = NA_character_)
+  )
+
+  theConcepts <- list(
+    harmonised = tibble(id = character(),
+                        label = character(),
+                        description = character(),
+                        class = character(),
+                        has_broader = character(),
+                        has_close_match = character(),
+                        has_narrower_match = character(),
+                        has_broader_match = character(),
+                        has_exact_match = character()),
+    external = tibble(id = character(),
+                      label = character(),
+                      description = character(),
+                      has_source = character())
+  )
 
   out <- new(Class = "onto",
-             classes = theClasses,
              sources = theSources,
-             concepts = theConcepts,
-             labels = theLabels,
-             mappings = theMappings)
+             classes = theClasses,
+             concepts = theConcepts)
 
   write_rds(out, paste0(path, "/", name, ".rds"))
   return(out)

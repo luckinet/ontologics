@@ -10,11 +10,11 @@ make_tree <- function(input, top){
   fin <- NULL
   outIDs <- top
   input <- input %>%
-    arrange(code)
+    arrange(id)
   while(is.null(fin)){
     childID <- input %>%
-      filter(broader %in% top) %>%
-      pull(code)
+      filter(has_broader %in% top) %>%
+      pull(id)
     if(length(childID) != 0){
       top <- childID
       outIDs <- c(outIDs, childID)
@@ -24,7 +24,7 @@ make_tree <- function(input, top){
   }
 
   temp <- input %>%
-    filter(code %in% outIDs)
+    filter(id %in% outIDs)
 
   return(temp)
 }

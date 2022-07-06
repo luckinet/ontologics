@@ -1,12 +1,17 @@
 #' Add a new valid source to an ontology
 #'
-#' @param name [`character(1)`][character]\cr
-#' @param description [`character(1)`][character]\cr
-#' @param homepage [`character(1)`][character]\cr
-#' @param license [`character(1)`][character]\cr
-#' @param notes [`character(1)`][character]\cr
-#' @param ontology [`ontology(1)`][list]\cr either a path where the
-#'   ontology is stored, or an already loaded ontology.
+#' @param name [`character(1)`][character]\cr the name of the new source (should
+#'   not contain empty spaces).
+#' @param description [`character(1)`][character]\cr a verbatim description of
+#'   the new source.
+#' @param homepage [`character(1)`][character]\cr the homepage of the new source
+#'   (this could be the basis of the concept URIs).
+#' @param license [`character(1)`][character]\cr the licenses under which the
+#'   new source is published.
+#' @param notes [`character(1)`][character]\cr any notes on the new source that
+#'   don't fit into any of the other meta-data fields here.
+#' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
+#'   stored, or an already loaded ontology.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
@@ -42,15 +47,16 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL,
     ontology <- load_ontology(path = ontoPath)
   }
 
-  if(name %in% ontology@sources$sourceName){
+  if(name %in% ontology@sources$label){
     warning("the source '", name, "' has already been registered.")
   }
 
-  if(length(ontology@sources$sourceID) == 0){
+  if(length(ontology@sources$id) == 0){
     newID <- 1
   } else {
-    newID <- max(ontology@sources$sourceID) + 1
+    newID <- max(as.numeric(ontology@sources$id)) + 1
   }
+  newID <- as.character(newID)
 
   if(str_detect(name, "_")){
     stop("please provide a name that doesn't contain '_' symbols.")
@@ -58,8 +64,8 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL,
     theName <- name
   }
 
-  newSource <- tibble(sourceID = newID,
-                      sourceName = name,
+  newSource <- tibble(id = newID,
+                      label = name,
                       description = description,
                       homepage = homepage,
                       license = license,
@@ -68,11 +74,9 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL,
   theSources <- bind_rows(ontology@sources, newSource)
 
   out <- new(Class = "onto",
-             classes = ontology@classes,
              sources = theSources,
-             concepts = ontology@concepts,
-             labels = ontology@labels,
-             mappings = ontology@mappings)
+             classes = ontology@classes,
+             concepts = ontology@concepts)
 
   if(!is.null(ontoPath)){
     write_rds(x = out, file = ontoPath)

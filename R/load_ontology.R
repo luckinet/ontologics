@@ -26,48 +26,8 @@ load_ontology <- function(path = NULL){
 
   } else {
 
-    # # ask user for the columns in 'temp' that are required to load the ontology
-    # if(is.data.frame(x = temp)){
-    #
-    # } else if(is.list(temp)){
-    #
-    # }
+    message("currently not supported")
 
-    # the default (for now) is a list with two tables ('attributes' and 'mappings')
-    theClasses <- temp$attributes %>%
-      rowwise() %>%
-      mutate(level = if_else(nchar(code) == 3, 1, 2)) %>%
-      group_by(class) %>%
-      distinct(level) %>%
-      ungroup() %>%
-      select(level, class)
-
-    theSources <- temp$attributes %>%
-      mutate(sourceID = seq_along(unique(source)),
-             sourceName = source,
-             description = NA_character_,
-             homepage = NA_character_,
-             license = NA_character_,
-             notes = "imported manually") %>%
-      distinct(sourceID, sourceName, description, homepage, license, notes)
-
-    theConcepts <- temp$mappings %>%
-      mutate(sourceID = 1) %>%
-      select(code, broader, sourceID)
-
-    theLabels <- temp$mappings %>%
-      select(code, class, label_en)
-
-    theMappings <- temp$mappings %>%
-      mutate(external = NA_character_) %>%
-      select(code, external)
-
-    out <- new(Class = "onto",
-               classes = theClasses,
-               sources = theSources,
-               concepts = theConcepts,
-               labels = theLabels,
-               mappings = theMappings)
   }
 
   return(out)

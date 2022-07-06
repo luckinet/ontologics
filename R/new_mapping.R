@@ -4,7 +4,7 @@
 #' @param new [`character(.)`][character]\cr the english label(s) of new
 #'   external concepts that shall be mapped to concepts that do already exist in
 #'   the ontology.
-#' @param concept [`data.frame(.)`][data.frame]\cr the english label(s) of
+#' @param target [`data.frame(.)`][data.frame]\cr the english label(s) of
 #'   already harmonised concepts to which the external concepts shall be mapped.
 #' @param match [`character(1)`][character]\cr the
 #'   \href{https://www.w3.org/TR/skos-reference/#mapping}{skos mapping property}
@@ -12,7 +12,8 @@
 #'   \code{"exact"}, \code{"broad"}, \code{"narrow"} and \code{"related"}.
 #' @param source [`character(1)`][character]\cr any character uniquely
 #'   identifying the source dataset of the new concept.
-#' @param mappings [`tibble()`][tibble]\cr not yet implemented.
+#' @param description [`character(.)`][character]\cr a verbatim description of
+#'   the new concept mapping(s).
 #' @param certainty [`integerish(1)`][integer]\cr the certainty of the match.
 #'   Possible values are between 1 and 4, with meaning \itemize{\item 1 =
 #'   probably unreliable \item 2 = unclear, assigned according to a given
@@ -28,7 +29,7 @@
 #'                               "Other bioenergy crops"),
 #'                       new = c("bioenergy plants", "Wood plantation for fuel",
 #'                               "Algae for bioenergy"),
-#'                       type = c("close", "broad", "broad"))
+#'                       type = c("close", "broader", "broader"))
 #'
 #' onto <- new_source(name = "externalDataset",
 #'                    description = "a vocabulary",
@@ -36,9 +37,9 @@
 #'                    license = "CC-BY-0",
 #'                    ontology = onto)
 #'
-#' onto <- get_concept(terms = mapping$old, ontology = onto) %>%
+#' onto <- get_concept(x = data.frame(label = mapping$old), ontology = onto) %>%
 #'   new_mapping(new = mapping$new,
-#'               concept = .,
+#'               target = .,
 #'               match = mapping$type,
 #'               source = "externalDataset",
 #'               certainty = 3,
@@ -50,20 +51,20 @@
 #'   assertChoice assertIntegerish assertFileExists assertNames
 #' @importFrom tibble tibble
 #' @importFrom dplyr left_join filter pull mutate bind_rows arrange if_else
-#'   bind_cols
-#' @importFrom tidyr unite
+#'   bind_cols full_join na_if
+#' @importFrom tidyr unite pivot_wider
 #' @importFrom stringr str_detect str_split
 #' @importFrom readr read_rds write_rds
 #' @importFrom methods new
 #' @export
 
-new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
-                        mappings = NULL, certainty = NULL, ontology = NULL){
+new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
+                        match = "close", certainty = NULL, ontology = NULL){
 
-  assertDataFrame(x = concept)
-  assertNames(x = names(concept), must.include = c("code", "label_en", "class"))
+  assertDataFrame(x = target)
+  assertNames(x = names(target), must.include = c("id", "label", "class"))
   assertCharacter(x = new)
-  assertNames(x = match, subset.of = c("close", "exact", "broad", "narrow", "related"))
+  assertNames(x = match, subset.of = c("close", "exact", "broader", "narrower", "related"))
   assertIntegerish(x = certainty, lower = 1, upper = 3)
 
   if(inherits(x = ontology, what = "onto")){
@@ -77,131 +78,116 @@ new_mapping <- function(new = NULL, concept, match = "close", source = NULL,
     ontology <- load_ontology(path = ontoPath)
   }
 
-  onto <- ontology@concepts %>%
-    left_join(ontology@labels, by = "code") %>%
-    left_join(ontology@sources %>% select(sourceID, sourceName), by = "sourceID") %>%
-    left_join(ontology@mappings, by = "code")
+  theConcepts <- ontology@concepts
 
-  testConcept <- concept %>%
-    select(code, label_en, class) %>%
-    left_join(onto, by = c("code", "label_en", "class"))
+  testConcept <- target %>%
+    select(id, label, class) %>%
+    mutate(avail = TRUE) %>%
+    left_join(theConcepts$harmonised, by = c("id", "label", "class"))
 
-  if(any(is.na(testConcept$sourceID))){
+  if(any(!testConcept$avail)){
     missingConcepts <- testConcept %>%
-      filter(is.na(sourceID)) %>%
-      pull(label_en)
+      filter(!avail) %>%
+      pull(label)
     stop("the concepts '", paste0(missingConcepts, collapse = ", "), "' don't exist yet as harmonised concepts, please first define them with 'new_concept()'.")
   }
 
-
-  if(length(match) != length(concept$code)){
+  if(length(match) != length(target$id)){
     if(length(match) == 1){
-      match <- rep(x = match, length.out = length(concept$code))
+      match <- rep(x = match, length.out = length(target$id))
     } else {
-      stop("the number of elements in 'match' is neither the same as in 'concept' nor 1.")
+      stop("the number of elements in 'match' is neither the same as in 'target' nor 1.")
     }
   }
 
-  if(length(certainty) != length(concept$code)){
+  if(length(certainty) != length(target$id)){
     if(length(certainty) == 1){
-      certainty <- rep(x = certainty, length.out = length(concept$code))
+      certainty <- rep(x = certainty, length.out = length(target$id))
     } else {
-      stop("the number of elements in 'certainty' is neither the same as in 'concept' nor 1.")
+      stop("the number of elements in 'certainty' is neither the same as in 'target' nor 1.")
     }
+  }
+
+  if(!is.null(description)){
+
+    if(length(description) != length(new)){
+      if(length(description) == 1){
+        description <- rep(x = description, length.out = length(new))
+      } else {
+        stop("the number of elements in 'description' is neither the same as in 'new' nor 1.")
+      }
+    }
+  } else {
+    description <- NA_character_
   }
 
   srcID <- ontology@sources %>%
-    filter(sourceName %in% source) %>%
-    pull(sourceID)
+    filter(label %in% source) %>%
+    pull(id)
 
   if(length(srcID) == 0){
     stop("please first define the source '", source, "' (see function new_source).")
   }
 
-
-  temp <- bind_cols(concept, tibble(new = new, match = match, certainty = certainty)) %>%
-    separate_rows(new, sep = "\\|")
-  concept <- temp %>%
-    select(code, broader, label_en, class, external, sourceName)
-  new <- temp %>%
-    pull(new)
-  match <- temp %>%
-    pull(match)
-  certainty <- temp %>%
-    pull(certainty)
-
-  prevID <- str_detect(string = onto$code, pattern = source)
+  prevID <- str_detect(string = theConcepts$external$id, pattern = source)
   if(!any(prevID)){
     prevID <- 0
   } else {
-    prevID <- str_split(onto$code[prevID], pattern = "[.]", simplify = TRUE)
+    prevID <- str_split(theConcepts$external$id[prevID], pattern = "_", simplify = TRUE)
     prevID <- as.numeric(prevID[, dim(prevID)[2]])
     prevID <- max(prevID, na.rm = TRUE)
     if(is.na(prevID)) prevID <- 0
   }
 
-  newConcept <- ontology@concepts
-  newLabels <- ontology@labels
-  newMappings <- ontology@mappings %>%
-    mutate(new_code = NA_character_)
-  iter <- 1
-  for(i in seq_along(concept$code)){
+  temp <- bind_cols(target, tibble(new = new, match = match, certainty = certainty,
+                                   description = description, has_source = srcID)) %>%
+    separate_rows(new, sep = " \\| ")
 
-    thisConcept <- concept[i,]
+  theConcepts$external <- temp %>%
+    distinct(new, description, has_source) %>%
+    filter(new != "") %>%
+    mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
+    select(id = newid, label = new, description, has_source) %>%
+    bind_rows(ontology@concepts$external)
 
-    # is the external concept new?
-    codeIncl <- ontology@concepts %>%
-      filter(sourceID %in% srcID)
-    srcIncl <- ontology@labels %>%
-      filter(code %in% codeIncl)
-    srcNew <- !new[i] %in% srcIncl
+  toOut <- temp %>%
+    left_join(theConcepts$external %>% select(new = label, newid = id), by = "new") %>%
+    mutate(newid = paste0(newid, ".", certainty),
+           match = paste0("new_", match, "_match")) %>%
+    group_by(id, label, match) %>%
+    summarise(newid = paste0(newid, collapse = " | ")) %>%
+    ungroup() %>%
+    pivot_wider(id_cols = c(id, label), names_from = match, values_from = newid) %>%
+    full_join(theConcepts$harmonised, by = c("id", "label"))
 
-    if(!srcNew){
-      next
-    }
-
-    thisMatch <- match[i]
-    thisCertainty <- certainty[i]
-
-    prop <- toupper(substr(thisMatch, 1, 1))
-    if(prop == "E") thisCertainty <- ""
-
-    newID <- paste0(source, ".", prop, thisCertainty, ".", prevID + iter)
-    if(str_sub(newID, 1, 1) != "."){
-      newID <- paste0(".", newID)
-    }
-    newMappings <- newMappings %>%
-      mutate(new_code = if_else(code %in% thisConcept$code,
-                                if_else(!is.na(new_code), paste0(new_code, ", ", newID), newID),
-                                if_else(!is.na(new_code), new_code, NA_character_))) %>%
-      bind_rows(tibble(code = newID, external = NA_character_, new_code = NA_character_))
-
-    iter <- iter + 1
-
-    newConcept <- tibble(code = newID, sourceID = srcID) %>%
-      bind_rows(newConcept)
-    newLabels <- tibble(code = newID, class = NA_character_, label_en = new[i]) %>%
-      bind_rows(newLabels)
-
+  if("new_close_match" %in% colnames(toOut)){
+    toOut <- toOut %>%
+      unite(col = "has_close_match", new_close_match, has_close_match, sep = " | ", na.rm = TRUE)
+  }
+  if("new_broader_match" %in% colnames(toOut)){
+    toOut <- toOut %>%
+      unite(col = "has_broader_match", new_broader_match, has_broader_match, sep = " | ", na.rm = TRUE)
+  }
+  if("new_narrower_match" %in% colnames(toOut)){
+    toOut <- toOut %>%
+      unite(col = "has_narrower_match", new_narrower_match, has_narrower_match, sep = " | ", na.rm = TRUE)
+  }
+  if("new_exact_match" %in% colnames(toOut)){
+    toOut <- toOut %>%
+      unite(col = "has_exact_match", new_exact_match, has_exact_match, sep = " | ", na.rm = TRUE)
   }
 
-  newConcept <- newConcept %>%
-    select(code, broader, sourceID) %>%
-    arrange(code)
-  newLabels <- newLabels %>%
-    arrange(code)
-  newMappings <- newMappings %>%
-    unite(col = new, external, new_code, sep = ", ", na.rm = TRUE) %>%
-    mutate(external = if_else(new == "", NA_character_, new)) %>%
-    select(-new) %>%
-    arrange(code)
+  toOut <- toOut %>%
+    na_if(y = "") %>%
+    select(id, label, description, class, has_broader, has_close_match, has_broader_match, has_narrower_match, has_exact_match) %>%
+    arrange(id)
+
+  theConcepts$harmonised <- toOut
 
   out <- new(Class = "onto",
-             classes = ontology@classes,
              sources = ontology@sources,
-             concepts = newConcept,
-             labels = newLabels,
-             mappings = newMappings)
+             classes = ontology@classes,
+             concepts = theConcepts)
 
   if(!is.null(ontoPath)){
     write_rds(x = out, file = ontoPath)

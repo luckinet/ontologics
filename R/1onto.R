@@ -2,18 +2,14 @@
 #'
 #'
 #'
-#' @slot classes [`data.frame(.)`][data.frame]\cr
 #' @slot sources [`data.frame(.)`][data.frame]\cr
+#' @slot classes [`data.frame(.)`][data.frame]\cr
 #' @slot concepts [`data.frame(.)`][data.frame]\cr
-#' @slot labels [`data.frame(.)`][data.frame]\cr
-#' @slot mappings [`character(1)`][character]\cr
 
 onto <- setClass(Class = "onto",
-                 slots = c(classes = "data.frame",
-                           sources = "data.frame",
-                           concepts = "data.frame",
-                           labels = "data.frame",
-                           mappings = "data.frame"
+                 slots = c(sources = "data.frame",
+                           classes = "list",
+                           concepts = "list"
                  )
 )
 
@@ -21,60 +17,79 @@ setValidity("onto", function(object){
 
   errors = character()
 
-  if(!.hasSlot(object = object, name = "classes")){
-    errors = c(errors, "the geom does not have a 'classes' slot.")
-  } else {
-    if(!is.data.frame(object@classes)){
-      errors = c(errors, "the slot 'classes' is not a data.frame.")
-    }
-    if(!all(c("level", "class") %in% names(object@classes))){
-      errors = c(errors, "the ontology must have a classes-table with the columns 'level' and 'class'.")
-    }
-  }
-
+  # sources
   if(!.hasSlot(object = object, name = "sources")){
-    errors = c(errors, "the geom does not have a 'sources' slot.")
+    errors = c(errors, "the ontology does not have a 'sources' slot.")
   } else {
     if(!is.data.frame(object@sources)){
       errors = c(errors, "the slot 'sources' is not a data.frame.")
     }
-    if(!all(c("sourceID", "sourceName", "description", "homepage", "license", "notes") %in% names(object@sources))){
-      errors = c(errors, "the ontology must have a sources-table with the columns 'sourceID', 'sourceName', 'description', 'homepage', 'license' and 'notes'.")
+    if(!all(c("id", "label", "description", "homepage", "license", "notes") %in% names(object@sources))){
+      errors = c(errors, "the ontology must have a sources-table with the columns 'id', 'label', 'description', 'homepage', 'license' and 'notes'.")
     }
   }
 
+
+  # classes
+  if(!.hasSlot(object = object, name = "classes")){
+    errors = c(errors, "the ontology does not have a 'classes' slot.")
+  } else {
+    if(!is.list(object@classes)){
+      errors = c(errors, "the slot 'classes' is not a list.")
+    }
+    if(!all(names(object@classes) %in% c("harmonised", "external"))){
+      errors = c(errors, "the ontology doesn't have the classes-tables 'harmonised' and/or 'external'.")
+    }
+    if(!is.data.frame(object@classes$harmonised)){
+      errors = c(errors, "the the harmonised classes are not in a table.")
+    }
+    if(!all(c("id", "label", "description", "has_broader", "has_close_match", "has_narrower_match", "has_broader_match", "has_exact_match") %in% names(object@classes$harmonised))){
+      errors = c(errors, "the ontology must have a table of harmonised classes with the columns 'id' and 'label', 'description', 'has_broader' and 'has_close_match', 'has_narrower_match'', 'has_broader_match' and 'has_exact_match'.")
+    }
+
+    if(!is.data.frame(object@classes$external)){
+      errors = c(errors, "the the external classes are not in a table.")
+    }
+    if(!all(c("id", "label", "description", "has_source") %in% names(object@classes$external))){
+      errors = c(errors, "the ontology must have a table of external classes with the columns 'id' and 'label', 'description', 'has_source'.")
+    }
+
+  }
+
+
+
+  # concepts
   if(!.hasSlot(object = object, name = "concepts")){
-    errors = c(errors, "the geom does not have a 'concepts' slot.")
+    errors = c(errors, "the ontology does not have a 'concepts' slot.")
   } else {
-    if(!is.data.frame(object@concepts)){
-      errors = c(errors, "the slot 'concepts' is not a data.frame.")
+    if(!is.list(object@concepts)){
+      errors = c(errors, "the slot 'concepts' is not a list.")
     }
-    if(!all(c("code", "broader", "sourceID") %in% names(object@concepts))){
-      errors = c(errors, "the ontology must have a concepts-table with the columns 'code', 'broader' and 'sourceID'.")
+    if(!all(names(object@concepts) %in% c("harmonised", "external"))){
+      errors = c(errors, "the ontology doesn't have the concepts-tables 'harmonised' and/or 'external'.")
     }
+    if(!is.data.frame(object@concepts$harmonised)){
+      errors = c(errors, "the the harmonised concepts are not in a table.")
+    }
+    if(!is.data.frame(object@concepts$harmonised)){
+      errors = c(errors, "the the harmonised concepts are not in a table.")
+    }
+    if(!all(c("id", "label", "description", "class", "has_broader", "has_close_match", "has_narrower_match", "has_broader_match", "has_exact_match") %in% names(object@concepts$harmonised))){
+      errors = c(errors, "the ontology must have a table of harmonised concepts with the columns 'id' and 'label', 'description',  'class', 'has_broader', 'has_close_match', 'has_narrower_match'', 'has_broader_match' and 'has_exact_match'.")
+    }
+
+    if(!is.data.frame(object@concepts$external)){
+      errors = c(errors, "the the external concepts are not in a table.")
+    }
+    if(!is.data.frame(object@concepts$external)){
+      errors = c(errors, "the the external concepts are not in a table.")
+    }
+    if(!all(c("id", "label", "description", "has_source") %in% names(object@concepts$external))){
+      errors = c(errors, "the ontology must have a table of external concepts with the columns 'id' and 'label', 'description' and 'has_source'.")
+    }
+
   }
 
-  if(!.hasSlot(object = object, name = "labels")){
-    errors = c(errors, "the geom does not have a 'labels' slot.")
-  } else {
-    if(!is.data.frame(object@labels)){
-      errors = c(errors, "the slot 'labels' is not a data.frame.")
-    }
-    if(!all(c("code", "class", "label_en") %in% names(object@labels))){
-      errors = c(errors, "the ontology must have a labels-table with the columns 'code', 'class' and 'label_en'.")
-    }
-  }
-
-  if(!.hasSlot(object = object, name = "mappings")){
-    errors = c(errors, "the geom does not have a 'mappings' slot.")
-  } else {
-    if(!is.data.frame(object@mappings)){
-      errors = c(errors, "the slot 'mappings' is not a data.frame.")
-    }
-    if(!all(c("code", "external") %in% names(object@mappings))){
-      errors = c(errors, "the ontology must have a mappings-table with the columns 'code' and 'external'.")
-    }
-  }
 
   if(length(errors) == 0){
     return(TRUE)

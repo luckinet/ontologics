@@ -4,16 +4,38 @@
 \alias{new_class}
 \title{Add a new valid class to an ontology}
 \usage{
-new_class(class, broader, definition, ontology = NULL)
+new_class(
+  new,
+  target,
+  description,
+  harmonised = FALSE,
+  source = NULL,
+  match = NULL,
+  ontology = NULL
+)
 }
 \arguments{
-\item{class}{\code{\link[=character]{character(1)}}\cr the new class label.}
+\item{new}{\code{\link[=character]{character(1)}}\cr the new class label.}
 
-\item{broader}{\code{\link[=character]{character(1)}}\cr the broader class into which
-the new class is nested.}
+\item{target}{\code{\link[=character]{character(1)}}\cr the class to which the new class
+shall be related.}
 
-\item{definition}{\code{\link[=character]{character(1)}}\cr a definition of the new
-class.}
+\item{description}{\code{\link[=character]{character(1)}}\cr a verbatim description of
+the new class.}
+
+\item{harmonised}{\code{\link[=logical]{logical(1)}}\cr whether or not the new class is
+a harmonised class or not. In case it is a harmonised class, the relation
+between \code{new} and \code{target} will be a SKOS:broader relation, so
+that the new class is nested into the target class. In case it is not a
+harmonised class but an external class, the relation between the two
+concepts is determined by the value provided to \code{match}.}
+
+\item{source}{\code{\link[=character]{character(1)}}\cr in case \code{harmonised =
+FALSE}, the new/external concepts requires a source description.}
+
+\item{match}{\code{\link[=character]{character(1)}}\cr in case \code{harmonised =
+  FALSE}, the new/external concepts requires a match-value describing the
+relation between \code{new} and \code{target}.}
 
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
@@ -25,7 +47,7 @@ Add a new valid class to an ontology
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 onto <- load_ontology(path = ontoDir)
 
-onto <- new_class(class = "use type", broader = "class",
-                  definition = "something", ontology = onto)
+onto <- new_class(new = "use type", target = "class", description = "something",
+                  harmonised = TRUE, ontology = onto)
 
 }
