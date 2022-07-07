@@ -161,46 +161,54 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
                                    description = description, has_source = srcID)) %>%
     separate_rows(new, sep = " \\| ")
 
-  theTable$external <- temp %>%
+  extMps <- temp %>%
     distinct(new, description, has_source) %>%
     filter(new != "") %>%
     mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
     select(id = newid, label = new, description, has_source) %>%
-    bind_rows(theTable$external)
+    bind_rows(ontology@concepts$external) %>%
+    filter(!label %in% theTable$external$label & !has_source %in% theTable$external$has_source)
+  theTable$external <- extMps %>%
+    bind_rows(theTable$external, .)
 
-  toOut <- temp %>%
-    left_join(theTable$external %>% select(new = label, newid = id), by = "new") %>%
-    mutate(newid = paste0(newid, ".", certainty),
-           match = paste0("new_", match, "_match")) %>%
-    group_by(id, label, match) %>%
-    summarise(newid = paste0(newid, collapse = " | ")) %>%
-    ungroup() %>%
-    pivot_wider(id_cols = c(id, label), names_from = match, values_from = newid) %>%
-    full_join(theTable$harmonised, by = c("id", "label"))
+  if(dim(extMps)[1] != 0){
 
-  if("new_close_match" %in% colnames(toOut)){
-    toOut <- toOut %>%
-      unite(col = "has_close_match", new_close_match, has_close_match, sep = " | ", na.rm = TRUE)
-  }
-  if("new_broader_match" %in% colnames(toOut)){
-    toOut <- toOut %>%
-      unite(col = "has_broader_match", new_broader_match, has_broader_match, sep = " | ", na.rm = TRUE)
-  }
-  if("new_narrower_match" %in% colnames(toOut)){
-    toOut <- toOut %>%
-      unite(col = "has_narrower_match", new_narrower_match, has_narrower_match, sep = " | ", na.rm = TRUE)
-  }
-  if("new_exact_match" %in% colnames(toOut)){
-    toOut <- toOut %>%
-      unite(col = "has_exact_match", new_exact_match, has_exact_match, sep = " | ", na.rm = TRUE)
-  }
+    toOut <- temp %>%
+      left_join(theTable$external %>% select(new = label, newid = id), by = "new") %>%
+      mutate(newid = if_else(!is.na(newid), paste0(newid, ".", certainty), NA_character_),
+             match = paste0("new_", match, "_match")) %>%
+      group_by(id, label, match) %>%
+      summarise(newid = paste0(newid, collapse = " | ")) %>%
+      ungroup() %>%
+      mutate(newid = na_if(newid, "NA")) %>%
+      pivot_wider(id_cols = c(id, label), names_from = match, values_from = newid) %>%
+      full_join(theTable$harmonised, by = c("id", "label"))
 
-  toOut <- toOut %>%
-    na_if(y = "") %>%
-    select(all_of(targetCols), description, has_broader, has_close_match, has_broader_match, has_narrower_match, has_exact_match) %>%
-    arrange(id)
+    if("new_close_match" %in% colnames(toOut)){
+      toOut <- toOut %>%
+        unite(col = "has_close_match", new_close_match, has_close_match, sep = " | ", na.rm = TRUE)
+    }
+    if("new_broader_match" %in% colnames(toOut)){
+      toOut <- toOut %>%
+        unite(col = "has_broader_match", new_broader_match, has_broader_match, sep = " | ", na.rm = TRUE)
+    }
+    if("new_narrower_match" %in% colnames(toOut)){
+      toOut <- toOut %>%
+        unite(col = "has_narrower_match", new_narrower_match, has_narrower_match, sep = " | ", na.rm = TRUE)
+    }
+    if("new_exact_match" %in% colnames(toOut)){
+      toOut <- toOut %>%
+        unite(col = "has_exact_match", new_exact_match, has_exact_match, sep = " | ", na.rm = TRUE)
+    }
 
-  theTable$harmonised <- toOut
+    toOut <- toOut %>%
+      na_if(y = "") %>%
+      select(all_of(targetCols), description, has_broader, has_close_match, has_broader_match, has_narrower_match, has_exact_match) %>%
+      arrange(id)
+
+    theTable$harmonised <- toOut
+
+  }
 
   if(type == "concept"){
     out <- new(Class = "onto",
