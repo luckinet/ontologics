@@ -34,7 +34,7 @@ In RDF every information is resembled as a sentence like structure called triple
 luckinet:.08.02 skos:prefLabel "Naturally Regenerating Forest" .
 ```
 
-Every subject and predicate in an RDF triple have to be resources (that means they are represented by an IRI); whilst object can be either a resource or a literal value (as in the example above). The definition of the IRI `skos:prefLabel` (<http://www.w3.org/2004/02/skos/core#prefLabel>) is given by the triple:
+In this case `luckinet:.08.02` is the subject, `skos:prefLabel` is the predicate and `"Naturally Regenerating Forest"` is the object. Every subject and predicate in an RDF triple have to be resources (that means they are represented by an IRI); whilst object can be either a resource or a literal value (as in the example above). The definition of the IRI `skos:prefLabel` (<http://www.w3.org/2004/02/skos/core#prefLabel>) is given by the triple:
 
 ```
 skos:prefLabel skos:definition "The preferred lexical label for a resource, in a given language." .
@@ -64,7 +64,7 @@ RDF is based on the open world assumption: in the above case that means that not
 
 ## RDS 2 RDF
 
-If we take a look at the tabular pattern of a Data.Frame that contains all concepts/classes in the ontology, we see that the first column holds the concept-ID and in the other columns state facts about this ID:
+Internally, the ontology is stored in an RDS objects that holds five tables (see [ontology database description](ontology_database_description.md)). If we take a look at subsets of the two particular tables *harmonised concepts* and *harmonised classes* from the ontology, we see that the first column holds an ID and in the other columns state facts about this ID:
 
 
 __Concept table:__
@@ -85,7 +85,7 @@ RDF Triples for both tables can be generated according to the following scheme:
 <Column[ID].at(index).value> <Column[...].columnName> <Column[...].at(index).value> .
 ```
 
-Converting both tables to a single RDF-Turtle-pseudocode leads to:
+In a particular row, the ID always represents the subject, the column names represent the predicates and the according values of these columns the objects. That means, for a table with five columns (including an ID column), potentially four triples can be constructed; one per non-ID-column that holds a value for this row. Converting both tables to a single RDF-Turtle-pseudocode leads to:
 
 ```
 .08 label "Forests" ;
@@ -111,7 +111,7 @@ Of course, in reality things are a little more complicated. Looking at the pseud
 
 SKOS is shorthand for [Simple Knowledge Organization System](https://www.w3.org/TR/skos-primer/). It is a lightweight RDF vocabulary that can be used to express knowledge organisation systems (KOS) as RDF and thus make them interoperable with the Semantic Web. Popular KOS, such as [FAO Agrovoc](https://agrovoc.uniroma2.it/agrovoc/agrovoc/en/) or the [UNESCO Thesaurus](https://vocabularies.unesco.org/browser/thesaurus/en/) are expressed with SKOS.
 
-We'll now try to give a short introduction to the parts of SKOS that we use in this package; please also visit the [SKOS reference page](https://www.w3.org/TR/skos-reference/). It is assumed that the [ontology_database_description](ontology_database_description.md) document was read. From the SKOS vocabulary, we mainly use the [semantic relations](https://www.w3.org/TR/skos-reference/#semantic-relations) and the [mapping properties](https://www.w3.org/TR/skos-reference/#mapping). 
+We'll now try to give a short introduction to the parts of SKOS that we use in this package; please also visit the [SKOS reference page](https://www.w3.org/TR/skos-reference/). It is assumed that the [ontology database description](ontology_database_description.md) document was read. From the SKOS vocabulary, we mainly use the [semantic relations](https://www.w3.org/TR/skos-reference/#semantic-relations) and the [mapping properties](https://www.w3.org/TR/skos-reference/#mapping). 
 
 The SKOS semantic relations are intended to be used to built links between concepts of the KOS that is expressed. For this package, that means that they are only permitted between harmonised concepts. The semantic relations that are required here are `skos:broader` and `skos:narrower`. The Triple `ontology:concept_A skos:broader ontology:concept_B` states that concept A has the broader concept concept B. Both relations are inverse to each other. That means that if `ontology:concept_A skos:broader ontology:concept_B` then `ontology:concept_B skos:narrower ontology:concept_A`. For this very reason, we only describe one of both relations in the ontologies tables; `skos:broader`. In this package the relation is indicated with `has_broader` in the tables *harmonised classes* and *harmonised concepts*.  
 
