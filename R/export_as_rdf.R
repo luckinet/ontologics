@@ -102,9 +102,9 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
             )
         }
     }
-    
-    # currently both internal and external classes have no actual IDs 
-    # in the id row. For now I rewrite the id column with urlencoded 
+
+    # currently both internal and external classes have no actual IDs
+    # in the id row. For now I rewrite the id column with urlencoded
     # contents of the labels column.
     # TODO: adjust this when there are real IDs
     harmonised_classes <- ontology@classes$harmonised
@@ -322,6 +322,6 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
         }
     }
 
-    rdflib::rdf_serialize(rdf, filename, namespace = NULLmespaces, format = format)
+    rdflib::rdf_serialize(rdf, filename, namespace = namespaces, format = format)
     rdflib::rdf_free(rdf)
 }
