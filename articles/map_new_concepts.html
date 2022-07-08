@@ -120,14 +120,16 @@
 <table class="table">
 <thead><tr class="header">
 <th align="left">id</th>
-<th align="left">has_broader</th>
 <th align="left">label</th>
 <th align="left">class</th>
+<th align="left">description</th>
+<th align="left">has_broader</th>
 </tr></thead>
 <tbody><tr class="odd">
 <td align="left">NA</td>
-<td align="left">NA</td>
 <td align="left">Avocado</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr></tbody>
 </table>
@@ -138,72 +140,87 @@
 <table class="table">
 <thead><tr class="header">
 <th align="left">id</th>
-<th align="left">has_broader</th>
 <th align="left">label</th>
 <th align="left">class</th>
+<th align="left">description</th>
+<th align="left">has_broader</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">.02.09</td>
-<td align="left">.02</td>
 <td align="left">Wheat</td>
 <td align="left">class</td>
+<td align="left">NA</td>
+<td align="left">.02</td>
 </tr>
 <tr class="even">
 <td align="left">.10</td>
-<td align="left">NA</td>
 <td align="left">NUTS</td>
 <td align="left">group</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
 </tr>
 </tbody>
 </table>
 <p>… and see that ‘Wheat’ is a <em>class</em> and not a <em>crop</em> and ‘NUTS’ doesn’t have any <em>broader</em> concept. We should probably check the hierarchical structure of the ontology for these two concepts as well. For ‘NUTS’ we can ask directly for the respective <em>code</em> and for ‘Wheat’ we would ask for the <em>broader</em> code. We see already here that the code has the same length, so ‘NUTS’ and whatever the parent of ‘Wheat’ are should be at the same hierarchical level.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">newConcepts</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">newConcepts</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">id</th>
-<th align="left">has_broader</th>
 <th align="left">label</th>
+<th align="left">description</th>
 <th align="left">class</th>
+<th align="left">has_broader</th>
+<th align="left">has_close_match</th>
 </tr></thead>
 <tbody><tr class="odd">
 <td align="left">.02.09</td>
-<td align="left">.02</td>
 <td align="left">Wheat</td>
+<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.02</td>
+<td align="left">NA</td>
 </tr></tbody>
 </table>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">newConcepts</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">newConcepts</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">id</th>
-<th align="left">has_broader</th>
 <th align="left">label</th>
+<th align="left">description</th>
 <th align="left">class</th>
+<th align="left">has_broader</th>
+<th align="left">has_close_match</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">.10</td>
-<td align="left">NA</td>
 <td align="left">NUTS</td>
+<td align="left">NA</td>
 <td align="left">group</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.10.01</td>
-<td align="left">.10</td>
 <td align="left">Treenuts</td>
+<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.10</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">.10.02</td>
-<td align="left">.10</td>
 <td align="left">Other nuts</td>
+<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.10</td>
+<td align="left">NA</td>
 </tr>
 </tbody>
 </table>
@@ -242,39 +259,49 @@
 <span><span class="co">#&gt; this with 'new_class()' and re-run 'new_concept()' with these concepts and the</span></span>
 <span><span class="co">#&gt; new class.</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">id</th>
-<th align="left">has_broader</th>
 <th align="left">label</th>
+<th align="left">description</th>
 <th align="left">class</th>
+<th align="left">has_broader</th>
+<th align="left">has_close_match</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">.02.09</td>
-<td align="left">.02</td>
 <td align="left">Wheat</td>
+<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.02</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.02.09.01</td>
-<td align="left">.02.09</td>
 <td align="left">wheat</td>
+<td align="left">NA</td>
 <td align="left">crop</td>
+<td align="left">.02.09</td>
+<td align="left">externalDataset_1.3</td>
 </tr>
 <tr class="odd">
 <td align="left">.02.09.01.01</td>
-<td align="left">.02.09.01</td>
 <td align="left">wheat1</td>
+<td align="left">NA</td>
 <td align="left">undefined</td>
+<td align="left">.02.09.01</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">.02.09.01.02</td>
-<td align="left">.02.09.01</td>
 <td align="left">wheat2</td>
+<td align="left">NA</td>
 <td align="left">undefined</td>
+<td align="left">.02.09.01</td>
+<td align="left">NA</td>
 </tr>
 </tbody>
 </table>
@@ -290,7 +317,7 @@
 <span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span></code></pre></div>
 <p>Now we can check whether the updated ontology is as we’d expect, for example by looking at the tree of the respective items again. We should expect that the new harmonised concepts now appear in the ontology and that they have some link to an external concept defined.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, mappings <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -338,7 +365,7 @@
 </table>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"NUTS"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, mappings <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"NUTS"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -356,7 +383,7 @@
 <td align="left">NA</td>
 <td align="left">group</td>
 <td align="left">NA</td>
-<td align="left">externalDataset_2.3</td>
+<td align="left">externalDataset_3.3</td>
 </tr>
 <tr class="even">
 <td align="left">.10.01</td>
@@ -378,7 +405,7 @@
 </table>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FRUIT"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, mappings <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FRUIT"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -452,7 +479,7 @@
 <td align="left">NA</td>
 <td align="left">crop</td>
 <td align="left">.06.06</td>
-<td align="left">externalDataset_3.3</td>
+<td align="left">externalDataset_2.3</td>
 </tr>
 <tr class="odd">
 <td align="left">.06.07</td>
