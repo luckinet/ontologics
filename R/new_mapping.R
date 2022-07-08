@@ -157,8 +157,10 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     if(is.na(prevID)) prevID <- 0
   }
 
-  temp <- bind_cols(target, tibble(new = new, match = match, certainty = certainty,
-                                   description = description, has_source = srcID)) %>%
+  temp <- target %>%
+    select(id, label, class) %>%
+    bind_cols(tibble(new = new, match = match, certainty = certainty,
+                     description = description, has_source = srcID)) %>%
     separate_rows(new, sep = " \\| ")
 
   extMps <- temp %>%

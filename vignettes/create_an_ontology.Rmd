@@ -84,7 +84,7 @@ lulc <- new_concept(new = lc,
                     class = "landcover", 
                     ontology = lulc)
 
-kable(lulc@concepts$harmonised[,1:6])
+kable(lulc@concepts$harmonised[,1:5])
 ```
 
 An ontology is different from a vocabulary in that concepts that are contained in an ontology are related semantically to one another. For example, concepts can be nested into other concepts. Hence, let's create also a second level of concepts that depend on the first level.
@@ -106,7 +106,7 @@ lulc <- new_concept(new = lu$concept,
                     class = "land-use",
                     ontology =  lulc)
 
-kable(lulc@concepts$harmonised[,1:6])
+kable(lulc@concepts$harmonised[,1:5])
 ```
 
 Here we see that `get_concept()` was used to extract those broader concepts, into which the new level is nested. This is to ensure that a valid concept is provided, i.e., one that has already been included into the ontology.
