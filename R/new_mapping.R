@@ -167,7 +167,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
     select(id = newid, label = new, description, has_source) %>%
     bind_rows(ontology@concepts$external) %>%
-    filter(!label %in% theTable$external$label & !has_source %in% theTable$external$has_source)
+    filter(!(label %in% theTable$external$label & has_source %in% theTable$external$has_source))
   theTable$external <- extMps %>%
     bind_rows(theTable$external, .)
 
