@@ -10,7 +10,7 @@ get_concept(
   regex = FALSE,
   tree = FALSE,
   missing = FALSE,
-  mappings = FALSE,
+  mappings = "none",
   ontology = NULL
 )
 }
@@ -31,8 +31,10 @@ ontology tree starting from the given search terms.}
 \item{missing}{\code{\link[=logical]{logical(1)}}\cr whether or not to give only those
 values that are currently missing from the ontology.}
 
-\item{mappings}{\code{\link[=logical]{logical(1)}}\cr whether or not to give the
-concepts including mappings to external concepts.}
+\item{mappings}{\code{\link[=character]{character(1)}}\cr the type of mappings within
+which to search for the concepts, possible values are \code{"none"},
+\code{"all"}, \code{"close"}, \code{"broader"}, \code{"narrower"},
+\code{"exact"} or any combination thereof.}
 
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
