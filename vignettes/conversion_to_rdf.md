@@ -1,4 +1,18 @@
 
+# Usage
+
+To export the ontology as RDF just call `export_as_rdf()`. The ontology and the filename have to be specified. The format is optional and defaults to RDF-Turtle. Available formats are `rdfxml`, `nquads`, `ntriples`, `turtle` or `jsonld`.
+
+```
+ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
+onto <- load_ontology(path = ontoDir)
+
+export_as_rdf(ontology = onto, filename = onto.ttl, format = "turtle")
+```
+
+
+
+
 # Conversion Rational
 
 Conversion to an RDF (Resource Description Framework) serialization is integrated to render the built ontologies interoperable with the Semantic Web. This document gives a short introduction to the RDF concepts we need for the conversion. For a more comprehensive, but still somewhat entertaining introduction, the article [RDF, the semantic web, Jordan, Jordan and Jordan](http://eprints.gla.ac.uk/101484/) is recommended.
