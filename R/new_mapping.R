@@ -158,7 +158,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
   }
 
   temp <- target %>%
-    select(id, label, class) %>%
+    select(all_of(targetCols)) %>%
     bind_cols(tibble(new = new, match = match, certainty = certainty,
                      description = description, has_source = srcID)) %>%
     separate_rows(new, sep = " \\| ")
