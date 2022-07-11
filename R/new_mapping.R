@@ -158,7 +158,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
   }
 
   temp <- target %>%
-    select(id, label, class) %>%
+    select(all_of(targetCols)) %>%
     bind_cols(tibble(new = new, match = match, certainty = certainty,
                      description = description, has_source = srcID)) %>%
     separate_rows(new, sep = " \\| ")
@@ -168,7 +168,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     filter(new != "") %>%
     mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
     select(id = newid, label = new, description, has_source) %>%
-    bind_rows(ontology@concepts$external) %>%
+    bind_rows(theTable$external) %>%
     filter(!(label %in% theTable$external$label & has_source %in% theTable$external$has_source))
   theTable$external <- extMps %>%
     bind_rows(theTable$external, .)
