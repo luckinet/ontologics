@@ -34,7 +34,8 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    tidyselect
+    tidyselect,
+    rdflib
 Suggests: 
     knitr,
     rmarkdown
