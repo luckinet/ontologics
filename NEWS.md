@@ -1,3 +1,9 @@
+# ontologics 0.4.2
+
+# ontologics 0.4.1
+
+- allow it that also classes are handled with the `new_mapping()` function, which also means that `new_class()` can now only set harmonised classes.
+
 # ontologics 0.4.0
 
 - adapt the onto-class structure according to issue https://github.com/luckinet/ontologics/issues/6; this entails that concepts and classes are summarised into their respective slot, with sub-tables "harmonised" and "external", featuring specific columns.

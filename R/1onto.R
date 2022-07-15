@@ -57,7 +57,6 @@ setValidity("onto", function(object){
   }
 
 
-
   # concepts
   if(!.hasSlot(object = object, name = "concepts")){
     errors = c(errors, "the ontology does not have a 'concepts' slot.")

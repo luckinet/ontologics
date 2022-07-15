@@ -11,33 +11,36 @@ new_mapping(
   description = NULL,
   match = "close",
   certainty = NULL,
+  type = "concept",
   ontology = NULL
 )
 }
 \arguments{
-\item{new}{\code{\link[=character]{character(.)}}\cr the english label(s) of new
-external concepts that shall be mapped to concepts that do already exist in
-the ontology.}
+\item{new}{\code{\link[=character]{character(.)}}\cr the english external label(s) that
+shall be mapped to labels that do already exist in the ontology.}
 
-\item{target}{\code{\link[=data.frame]{data.frame(.)}}\cr the english label(s) of
-already harmonised concepts to which the external concepts shall be mapped.}
+\item{target}{\code{\link[=data.frame]{data.frame(.)}}\cr the already harmonised english
+label(s) to which the external labels shall be mapped.}
 
 \item{source}{\code{\link[=character]{character(1)}}\cr any character uniquely
-identifying the source dataset of the new concept.}
+identifying the source dataset of the new label.}
 
 \item{description}{\code{\link[=character]{character(.)}}\cr a verbatim description of
-the new concept mapping(s).}
+the new label.}
 
 \item{match}{\code{\link[=character]{character(1)}}\cr the
 \href{https://www.w3.org/TR/skos-reference/#mapping}{skos mapping property}
 used to describe the link, possible values are \code{"close"},
-\code{"exact"}, \code{"broad"}, \code{"narrow"} and \code{"related"}.}
+\code{"exact"}, \code{"broad"} and \code{"narrow"}.}
 
 \item{certainty}{\code{\link[=integer]{integerish(1)}}\cr the certainty of the match.
 Possible values are between 1 and 4, with meaning \itemize{\item 1 =
 probably unreliable \item 2 = unclear, assigned according to a given
 definition \item 3 = clear, assigned according to a given definition \item
 4 = original, harmonised term (can't be assigned by a user)}.}
+
+\item{type}{\code{\link[=character]{character(1)}}\cr whether the new labels are mapped
+to a \code{"concept"}, or to a \code{"class"}.}
 
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
@@ -47,7 +50,8 @@ No return value, called for the side effect of adding new mappings to
 an ontology.
 }
 \description{
-Extend an ontology by creating mappings to external vocabularies.
+Extend an ontology by creating mappings between classes and concepts of
+external vocabularies and the harmonised classes and concepts.
 }
 \examples{
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")

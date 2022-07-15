@@ -48,10 +48,10 @@ start_ontology <- function(name = NULL, path = NULL, code = ".xx", description =
                         has_narrower_match = NA_character_,
                         has_broader_match = NA_character_,
                         has_exact_match = NA_character_),
-    external = tibble(id = NA_character_,
-                      label = NA_character_,
-                      description = NA_character_,
-                      has_source = NA_character_)
+    external = tibble(id = character(),
+                      label = character(),
+                      description = character(),
+                      has_source = character())
   )
 
   theConcepts <- list(

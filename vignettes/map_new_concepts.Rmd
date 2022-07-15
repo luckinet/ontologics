@@ -56,10 +56,10 @@ get_concept(x = newConcepts[1:2,], ontology = crops) %>%
 ... and see that 'Wheat' is a *class* and not a *crop* and 'NUTS' doesn't have any *broader* concept. We should probably check the hierarchical structure of the ontology for these two concepts as well. For 'NUTS' we can ask directly for the respective *code* and for 'Wheat' we would ask for the *broader* code. We see already here that the code has the same length, so 'NUTS' and whatever the parent of 'Wheat' are should be at the same hierarchical level.
 
 ```{r get_concept tree}
-get_concept(x = newConcepts[1,], tree = TRUE, ontology = crops) %>% 
+get_concept(x = newConcepts[1,], tree = TRUE, ontology = crops)[,1:6] %>% 
   kable()
 
-get_concept(x = newConcepts[2,], tree = TRUE, ontology = crops) %>% 
+get_concept(x = newConcepts[2,], tree = TRUE, ontology = crops)[,1:6] %>% 
   kable()
 ```
 
@@ -103,10 +103,10 @@ crops <- new_concept(new = c("wheat1", "wheat2"),
                      class = NA_character_,
                      ontology = crops)
 
-get_concept(x = tibble(label = "Wheat"), tree = TRUE, ontology = crops) %>% 
+get_concept(x = tibble(label = "Wheat"), tree = TRUE, ontology = crops)[,1:6] %>% 
   kable()
 # ... ok, then let's specify that class and re-run new_concept
-crops <- new_class(new = "cultivar", target = "crop", harmonised = TRUE,
+crops <- new_class(new = "cultivar", target = "crop", 
                    description = "type of plant that people have bred for desired traits", 
                    ontology = crops)
 
@@ -119,12 +119,12 @@ crops <- new_concept(new = c("wheat1", "wheat2"),
 Now we can check whether the updated ontology is as we'd expect, for example by looking at the tree of the respective items again. We should expect that the new harmonised concepts now appear in the ontology and that they have some link to an external concept defined.
 
 ```{r new ontology}
-get_concept(x = tibble(label = "Wheat"), tree = TRUE, mappings = TRUE, ontology = crops)[,1:6] %>% 
+get_concept(x = tibble(label = "Wheat"), tree = TRUE, ontology = crops)[,1:6] %>% 
   kable()
 
-get_concept(x = tibble(label = "NUTS"), tree = TRUE, mappings = TRUE, ontology = crops)[,1:6] %>% 
+get_concept(x = tibble(label = "NUTS"), tree = TRUE, ontology = crops)[,1:6] %>% 
   kable()
 
-get_concept(x = tibble(label = "FRUIT"), tree = TRUE, mappings = TRUE, ontology = crops)[,1:6] %>% 
+get_concept(x = tibble(label = "FRUIT"), tree = TRUE, ontology = crops)[,1:6] %>% 
   kable()
 ```

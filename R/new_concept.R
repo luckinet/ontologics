@@ -44,7 +44,7 @@
 #'               ontology = onto)
 #'
 #' # define that class ...
-#' onto <- new_class(new = "use type", target = "class", harmonised = TRUE,
+#' onto <- new_class(new = "use type", target = "class",
 #'                   description = "the way a crop is used", ontology = onto)
 #'
 #' # ... and set the concepts again
@@ -183,7 +183,9 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
     arrange(id)
 
   # assign nested and broader IDs into the temporary object
-  temp <- bind_cols(broader, tibble(new = new, newClass = class, description = description)) %>%
+  temp <- broader %>%
+    select(id, label, class) %>%
+    bind_cols(tibble(new = new, newClass = class, description = description)) %>%
     left_join(nestedIDs, by = c("id", "class")) %>%
     left_join(broaderIDs, by = c("id", "class")) %>%
     unite(col = topID, topID, top2D, sep = "", na.rm = TRUE)

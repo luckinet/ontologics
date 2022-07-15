@@ -1,3 +1,7 @@
+# 08.07.2022
+
+- much more development and thus no immediate re-submission. Now it's a new version, so we restart the submission process soon.
+
 # 21.06.2022
 
 - including fixes that the examples don't try to write into the package directory anymore. This also implements a new feature which makes this version 0.3.0.

@@ -1,6 +1,7 @@
 #' Get a concept in an ontology
 #'
-#' @param x [`character(1)`][character]\cr
+#' @param x [`character(1)`][character]\cr a table containing all columns of the
+#'   ontology that shall be filter by the values in those columns.
 #' @param ... combination of column name and value to filter that column by. The
 #'   value to filter by can be provided as regular expression.
 #' @param regex [`logical(1)`][logical]\cr whether or not the value in
@@ -10,8 +11,10 @@
 #'   ontology tree starting from the given search terms.
 #' @param missing [`logical(1)`][logical]\cr whether or not to give only those
 #'   values that are currently missing from the ontology.
-#' @param mappings [`logical(1)`][logical]\cr whether or not to give the
-#'   concepts including mappings to external concepts.
+#' @param mappings [`character(1)`][character]\cr the type of mappings within
+#'   which to search for the concepts, possible values are \code{"none"},
+#'   \code{"all"}, \code{"close"}, \code{"broader"}, \code{"narrower"},
+#'   \code{"exact"} or any combination thereof.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
 #'   stored, or an already loaded ontology.
 #' @examples
@@ -37,7 +40,7 @@
 #' @importFrom tibble as_tibble
 #' @importFrom readr read_rds
 #' @importFrom tidyselect everything
-#' @importFrom tidyr separate_rows
+#' @importFrom tidyr separate_rows separate pivot_longer pivot_wider
 #' @importFrom rlang quos eval_tidy := sym as_name
 #' @importFrom dplyr filter pull select rename inner_join
 #' @importFrom purrr map map_dfc
@@ -47,17 +50,23 @@
 #' @export
 
 get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
-                        missing = FALSE, mappings = FALSE, ontology = NULL){
-
-  # documentation for x is missing
+                        missing = FALSE, mappings = "none", ontology = NULL){
 
   assertDataFrame(x = x, null.ok = FALSE)
   assertLogical(x = regex, len = 1, any.missing = FALSE)
   assertLogical(x = tree, len = 1, any.missing = FALSE)
   assertLogical(x = missing, len = 1, any.missing = FALSE)
-  assertLogical(x = mappings, len = 1, any.missing = FALSE)
+  assertSubset(x = mappings, choices = c("all", "none", "close", "broader", "narrower", "exact"))
   if(regex & missing){
     stop("you can only search for missing items with 'regex = FALSE'.")
+  }
+  if("none" %in% mappings){
+    mappings <- NULL
+  } else {
+    if("all" %in% mappings){
+      mappings <- c("close", "broader", "narrower", "exact")
+    }
+    mappings <- paste0("has_", mappings, "_match")
   }
 
   if(!inherits(x = ontology, what = "onto")){
@@ -100,24 +109,64 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
 
   } else {
 
-    assertNames(x = names(x), subset.of = c("id", "has_broader", "source_id", "class", "label", "source_label", "external_id"))
+    assertNames(x = names(x), subset.of = c("id", "has_broader", "source_id", "class", "label", "source_label", "external_label"))
 
+    # get the already harmonised concepts
     toOut <- x %>%
       left_join(theConcepts$harmonised, by = colnames(x))
 
-    toMatch <- x %>%
-      left_join(theConcepts$external, by = colnames(x)) %>%
-      filter(!is.na(id))
+    if(!is.null(mappings)){
 
-    if(dim(toMatch)[1] != 0){
-      toOut <- theConcepts$harmonised %>%
-        filter(str_detect(has_close_match, paste0(toMatch$id, collapse = "|"))) %>%
-        separate_rows(has_close_match, sep = ", ") %>%
-        rename(extid = has_close_match) %>%
-        left_join(toMatch %>% select(extid = id, external_id = label), by = "extid") %>%
-        filter(!is.na(external_id)) %>%
-        select(-extid) %>%
-        bind_rows(toOut, .)
+      # and replace external IDs with the labels
+      toOut <- toOut%>%
+        pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
+        separate_rows(extid, sep = " \\| ") %>%
+        separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
+        left_join(theConcepts$external %>% select(extid = id, external_label = label), by = "extid") %>%
+        group_by(label, class, id, description, has_broader, match) %>%
+        summarise(external_label = paste0(external_label, collapse = " | ")) %>%
+        ungroup() %>%
+        mutate(external_label = na_if(external_label, "NA")) %>%
+        pivot_wider(id_cols = c(label, class, id, description, has_broader), names_from = match, values_from = external_label)
+
+
+
+      toOutCompl <- toOut %>%
+        filter(!is.na(id))
+
+      matchCols <- colnames(x)[colnames(x) %in% colnames(theConcepts$external)]
+      toMatch <- x %>%
+        left_join(theConcepts$external, matchCols) %>%
+        filter(!is.na(id)) %>%
+        filter(!label %in% toOutCompl$label)
+
+      if(dim(toMatch)[1] != 0){
+        temp <- theConcepts$harmonised %>%
+          pivot_longer(cols = mappings, names_to = "match", values_to = "extid") %>%
+          filter(!is.na(extid)) %>%
+          separate_rows(extid, sep = " \\| ") %>%
+          separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
+          left_join(toMatch %>% select(extid = id, external_label = label), by = "extid") %>%
+          filter(!is.na(external_label))
+
+        toOut <- toOut %>%
+          filter(!label %in% temp$external_label)
+
+        temp <- temp %>%
+          group_by(id, label, class, description, has_broader, match) %>%
+          summarise(external_label = paste0(external_label, collapse = " | ")) %>%
+          ungroup() %>%
+          pivot_wider(id_cols = c(id, label, class, description, has_broader), names_from = match, values_from = external_label)
+
+        toOut <- toOut %>%
+          bind_rows(temp) %>%
+          arrange(id)
+      }
+
+    } else {
+      toOut <- toOut %>%
+        select(id, label, class, description, has_broader) %>%
+        arrange(id)
     }
 
     for(i in seq_along(attrib)){
@@ -131,7 +180,7 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
 
   if(missing){
 
-    temp <- toOut %>%
+    out <- toOut %>%
       filter(is.na(id))
 
   } else {
@@ -142,20 +191,13 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
         pull(id) %>%
         unique()
 
-      temp <- make_tree(theConcepts$harmonised, topID)
+      out <- make_tree(theConcepts$harmonised, topID)
 
     } else {
-      temp <- toOut %>%
+      out <- toOut %>%
         filter(!is.na(id))
     }
 
-  }
-
-  if(mappings){
-    out <- temp
-  } else {
-    out <- temp %>%
-      select(id, has_broader, label, class)
   }
 
   return(out)
