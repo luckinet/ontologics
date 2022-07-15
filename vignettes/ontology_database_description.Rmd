@@ -1,0 +1,105 @@
+---
+title: "Ontology database description"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ontology_database_description}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Database
+
+> This is an informative document. Manipulation of the contents of the tables should always be performed with the functions of the package.
+
+The Database of the package is stored in a list that holds the five tables `sources`, `classes$internal`, `classes$external`, `concepts$internal` and `concepts$external`. The name of the list is defined when loading or starting a new ontology (see: [create_an_ontology](create_an_ontology.html): `crops <- load_ontology()` or `lulc <- start_ontology()`). The tables are accessed with `@`, e.g., `crops@sources` or `crops@concepts$harmonised`. For any references below we assume, the name of the ontology is `ontology`.
+
+## Sources (ontology@sources)
+
+Each row in the sources table represents a source of one or more concepts and/or classes. A source is typically some form of a knowledge organization system (KOS); e.g., a vocabulary. A source record features the six properties:
+
+__id__ (*generated*): Unique identifier of this source record. Built by counting upwards, starting with `1`.
+
+__label__ (*mandatory*): A speaking label for the source.
+
+__description__ (*optional*): A description of the source.
+
+__homepage__ (*mandatory*): Homepage of the source. Ideally, this is some Website that hosts the terms that are described in the source-KOS. It can also be a link to a PDF or similar. It is also possible to enter the ISBN (or another identifier) of a book or an other real world document. If everything is correct, the values that are inserted in the homepage should also be unique, i.e. be primary keys.
+
+__license__ (*mandatory*): Licensing information of the source-KOS.
+
+__notes__ (*optional*): Further notes about the source.
+
+The first row of the sources table refers the ontology itself as a source. Every harmonised concept and class is considered to belong to this source.
+
+## External Classes (ontology@classes$external)
+
+A record in this table identifies an external class. External denotes that the definition, label, etc. of this class was initially done somewhere else, i.e. not in this ontology. An external class record features five properties:
+
+__id__ (*generated*): __NOT IMPLEMENTED YET__. Unique identifier of this external class record. The ID is generated automatically by the software. The generation logic concatenates the source label of this concept with a counter. The concatenation string is `:class_` (<source_label>:class_<class_nb_for_this_source>, e.g., *wikidata:class_1*).
+
+__label__ (*optional*): The label of the external class as it is defined by the source.
+
+__description__ (*optional*): The description of the external class as it is defined by the source.
+
+__has_source__ (*mandatory*): Foreign key to the according source ID. Has to be a value that is present in ontology@sources$id.
+
+__url__ (*optional*): __NOT IMPLEMENTED YET__. If existing: The URL to the place on the web where the class is defined.
+
+## Harmonised Classes (ontology@classes$harmonised)
+
+A harmonised class record describes a harmonised class. Harmonised indicates that the label and definition of this class are used by this ontology. A harmonised class record features eight properties:
+
+__id__ (*generated*): __NOT IMPLEMENTED YET__. Unique identifier of this harmonised class record. The ID is generated automatically by the software.
+
+The ID consists of multiple 3-digit codes that begin with prefixed a dot, e.g. `.004.002.007`. The number of the codes indicates the hierarchical level of the class - third level in the example - where the first level is the broadest. The ID is read from right to left. The example ID means that the according class is the 7th class that was defined in the 3rd hierarchical level, it has a narrower meaning than 2nd the class that was defined in the 2nd hierarchical level, which in turn has a narrower meaning than the 4th class that was defined in the 1st (the broadest) hierarchical level.
+
+__label__ (*mandatory*): The label of the harmonised class.
+
+__description__ (*optional*): The description of the harmonised class. It is strongly recommended to provide a description.
+
+__has_broader__ (*optional*): Relates this harmonised class to another harmonised class that conveys a broader meaning. As an example, with this relation, a class *land-use* could be related to a class *landcover*, which has a semantically broader meaning. Values are foreign keys to IDs in this table (ontology@classes$harmonised$id).
+
+__has_exact_match__ (*optional*): Identifies any number of external classes as classes that have exactly the same meaning (they can be used interchangeably in any context). Since, the ID generation logic for external classes is not implemented yet, values are strings of concatenated foreign keys to labels in the external classes table (ontology$classes$external$label). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3, e.g., *land-usage.3*. The number indicates the certainty of the match, where 3 means *most certain*. An exact match entry for the harmonised class *land-use* could therefore be *landuse.3 | use-of-land.2 | land-usage.3*. (__IN THE FUTURE__: values are strings of concatenated foreign keys to IDs in the external classes table (ontology$classes$external$id). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3, e.g., *wikidata:class_1.3*. The number indicates the certainty of the match, where 3 means *most certain*. An exact match entry for the harmonised class *land-use* could therefore be *wikidata:class_1.3 | wikidata:class_46.2 | agrovoc:class_42.3*. )
+
+__has_close_match__ (*optional*): Identifies any number of external classes as classes that have a similar meaning (they can be used interchangeably in some contexts). Since, the ID generation logic for external classes is not implemented yet, values are strings of concatenated foreign keys to labels in the external classes table (ontology$classes$external$label). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3 (see has_exact_match). (__IN THE FUTURE__: values are strings of concatenated foreign keys to IDs in the external classes table (ontology$classes$external$id). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3 (see has_exact_match). )
+
+__has_narrow_match__ (*optional*): Identifies any number of external classes as classes that have a narrower meaning. Since, the ID generation logic for external classes is not implemented yet, values are strings of concatenated foreign keys to labels in the external classes table (ontology$classes$external$label). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3 (see has_exact_match). (__IN THE FUTURE__: values are strings of concatenated foreign keys to IDs in the external classes table (ontology$classes$external$id). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3 (see has_exact_match). )
+
+__has_broad_match__ (*optional*): Identifies any number of external classes as classes that have a broader meaning. Since, the ID generation logic for external classes is not implemented yet, values are strings of concatenated foreign keys to labels in the external classes table (ontology$classes$external$label). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3 (see has_exact_match). (__IN THE FUTURE__: values are strings of concatenated foreign keys to IDs in the external classes table (ontology$classes$external$id). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3 (see has_exact_match). )
+
+## External Concepts (ontology@concepts$external)
+
+A record in this table identifies an external concept. External denotes that the definition, label, etc. of this concept was initially done somewhere else, i.e. not in this ontology. An external concept record features five properties:
+
+__id__ (*generated*): Unique identifier of this external concept record. The ID is generated automatically by the software. The generation logic concatenates the source label of this concept with a counter (<source_label>_<concept_nb_for_this_source>).
+
+__label__ (*optional*): The label of the external concept as it is defined by the source.
+
+__description__ (*optional*): The description of the external concept as it is defined by the source.
+
+__has_source__ (*mandatory*): Foreign key to the according source ID.
+
+__url__ (*optional*): __NOT IMPLEMENTED YET__. If existing: The URL to the place on the web where the concept is defined.
+
+## Harmonised Concepts (ontology@concepts$harmonised)
+
+A harmonised concept record describes a harmonised concept. Harmonised indicates that label and definition of this class are used by this ontology. Each harmonised concept has to be assigned to harmonised class. A harmonised concept record features nine properties:
+
+__id__ (*generated*): Unique identifier of this harmonised concept record. The ID is generated automatically by the software. The generation logic take the hierarchical level of the concept (as constructed by has broader relations) into account.
+
+The ID consists of multiple 3-digit codes that begin with prefixed a dot, e.g. `.004.002.007`. The number of the codes indicates the hierarchical level of the concept - third level in the example - where the first level is the broadest. The ID is read from right to left. The example ID means that the according concept is the 7th concept that was defined in the 3rd hierarchical level, it has a narrower meaning than 2nd the concept that was defined in the 2nd hierarchical level, which in turn has a narrower meaning than the 4th concept that was defined in the 1st (the broadest) hierarchical level.
+
+__label__ (*mandatory*): The label of the harmonised concept.
+
+__class__ (*mandatory*): Assigns the harmonised concept to a specific class. Each concept can only be assigned to one specific class. As an example: The concept *permanent grazing* could be a concept of the class *land-use* or *permanent cropland* could be a concept of the class *landcover*. The values are foreign keys to labels in the harmonised classes table (ontology@classes$harmonised$label), since the ID-generation logic for the harmonised classes is not implemented yet. (__IN THE FUTURE:__ The values are foreign keys to IDs in the harmonised classes table (ontology@classes$harmonised$id). )
+
+__description__ (*optional*): The description of the harmonised concept. It is strongly recommended to provide a description.
+
+__has_broader__ (*optional*): Relates this harmonised concept to another harmonised concept that conveys a broader meaning. As an example, with this relation, a concept *permanent grazing* could be related to a concept *permanent cropland*, which has a semantically broader meaning. Values are foreign keys to IDs in this table (ontology@concepts$harmonised$id).
+
+__has_exact_match__ (*optional*): Identifies an external concept as a concept that has exactly the same meaning (they can be used interchangeably in any context). Values are strings of concatenated foreign keys to IDs in the external concepts table (ontology$concepts$external$id). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3, e.g., *wikidata_1.3*. The number indicates the certainty of the match, where 3 means *most certain*. An exact match entry for the harmonised concept *permanent grazing* could therefore be *wikidata_1.3 | wikidata_24.2 | agrovoc_32.3*. )
+
+__has_close_match__ (*optional*): Identifies an external concept as a concept that has a similar meaning (they can be used interchangeably in some contexts). Values are strings of concatenated foreign keys to IDs in the external concepts table (ontology$concepts$external$id). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3.
+__has_narrow_match__ (*optional*): Identifies an external concept as a concept that has a narrower meaning. Values are strings of concatenated foreign keys to IDs in the external concepts table (ontology$concepts$external$id). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3.
+
+__has_broad_match__ (*optional*): Identifies an external concept as a concept that has a broader meaning. Values are strings of concatenated foreign keys to IDs in the external concepts table (ontology$concepts$external$id). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3.
