@@ -127,4 +127,8 @@ The SKOS mapping properties are similar to the semantic relations, but they are 
 Finally, SKOS provides the property `skos:inScheme` that denotes that a concept is part of some KOS. In this package the table _sources_ administers these KOS' (`skos:Scheme`s). Each concept and class in this package is assigned to a certain scheme listed in the *sources* table. For external concepts and classes the column `has_source` indicates the scheme. Harmonised concepts and classes are part of the harmonised scheme, which is typically described in the first row of the *sources* table.
 
 <!-- TODO: -->
-<!-- ### structure of exported SKOS -->
+### structure of exported SKOS
+
+In the resulting document, both the harmonised classes and concepts are explicitly instantiated as SKOS-Concepts. The harmonised classes are additionally explicitly instantiated as RDF-Classes. Every harmonised concept is instatiated as an object of its according harmonised class. External Concepts and classes are not explicitly instatiated as anything, although the use of the SKOS mapping propertis allows to infer that they are instances of SKOS-Concept. 
+
+Harmonised concepts relate to other harmonized concepts via the SKOS semantic relation `skos:broader`. Harmonised classes relate to other harmonized classes via the SKOS semantic relation `skos:broader`. Harmonised Concepts relate to external concepts via the SKOS mapping properties. Harmonised Classes relate to external Classes via the SKOS mapping relations.
