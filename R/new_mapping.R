@@ -204,12 +204,6 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
       mutate(newid = if_else(!is.na(newid), paste0(newid, ".", certainty), NA_character_),
              match = paste0("has_", match, "_match")) %>%
       select(-certainty, -has_source, -new)# %>%
-      # group_by(id, label, match) %>%
-      # summarise(newid = paste0(newid, collapse = " | ")) %>%
-      # ungroup() %>%
-      # mutate(newid = na_if(newid, "NA")) %>%
-      # pivot_wider(id_cols = c(id, label), names_from = match, values_from = newid) %>%
-      # full_join(theTable$harmonised, by = c("id", "label"))
 
     toOut <- theTable$harmonised %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
@@ -225,31 +219,6 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
       ungroup() %>%
       mutate(newid = na_if(newid, "")) %>%
       pivot_wider(id_cols = c(all_of(targetCols), description, has_broader), names_from = match, values_from = newid)
-
-    # if("new_close_match" %in% colnames(toOut)){
-    #   toOut <- toOut %>%
-    #     rowwise() %>%
-    #     mutate(has_close_match = paste0(unique(na.omit(c(has_close_match, new_close_match))), collapse = " | ")) %>%
-    #     select(-new_close_match)
-    # }
-    # if("new_broader_match" %in% colnames(toOut)){
-    #   toOut <- toOut %>%
-    #     rowwise() %>%
-    #     mutate(has_broader_match = paste0(unique(na.omit(c(has_broader_match, new_broader_match))), collapse = " | ")) %>%
-    #     select(-new_broader_match)
-    # }
-    # if("new_narrower_match" %in% colnames(toOut)){
-    #   toOut <- toOut %>%
-    #     rowwise() %>%
-    #     mutate(has_narrower_match = paste0(unique(na.omit(c(has_narrower_match, new_narrower_match))), collapse = " | ")) %>%
-    #     select(-new_narrower_match)
-    # }
-    # if("new_exact_match" %in% colnames(toOut)){
-    #   toOut <- toOut %>%
-    #     rowwise() %>%
-    #     mutate(has_exact_match = paste0(unique(na.omit(c(has_exact_match, new_exact_match))), collapse = " | ")) %>%
-    #     select(-new_exact_match)
-    # }
 
     toOut <- toOut %>%
       na_if(y = "") %>%
