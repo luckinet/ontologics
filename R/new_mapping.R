@@ -21,6 +21,8 @@
 #'   4 = original, harmonised term (can't be assigned by a user)}.
 #' @param type [`character(1)`][character]\cr whether the new labels are mapped
 #'   to a \code{"concept"}, or to a \code{"class"}.
+#' @param matchDir [`character(1)`][character]\cr the directory where to store
+#'   source-specific matching tables.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
 #'   stored, or an already loaded ontology.
 #' @examples
@@ -56,19 +58,20 @@
 #'   bind_cols full_join na_if
 #' @importFrom tidyr unite pivot_wider
 #' @importFrom tidyselect all_of
-#' @importFrom stringr str_detect str_split
+#' @importFrom stringr str_detect str_split str_replace
 #' @importFrom readr read_rds write_rds
 #' @importFrom methods new
+#' @importFrom stats na.omit
 #' @export
 
 new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
-                        match = "close", certainty = NULL, type = "concept",
-                        ontology = NULL){
+                        match = NULL, certainty = NULL, type = "concept",
+                        ontology = NULL, matchDir = NULL){
 
-  assertDataFrame(x = target)
-  assertCharacter(x = new)
-  assertNames(x = match, subset.of = c("close", "exact", "broader", "narrower"))
-  assertIntegerish(x = certainty, lower = 1, upper = 3)
+  assertCharacter(x = new, any.missing = FALSE)
+  assertDataFrame(x = target, nrows = length(new))
+  assertCharacter(x = description, null.ok = TRUE)
+  assertIntegerish(x = certainty, lower = 1, upper = 4)
   assertChoice(x = type, choices = c("concept", "class"))
 
   if(inherits(x = ontology, what = "onto")){
@@ -82,6 +85,30 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     ontology <- load_ontology(path = ontoPath)
   }
 
+  if(!is.null(description)){
+
+    if(length(description) != length(new)){
+      if(length(description) == 1){
+        description <- rep(x = description, length.out = length(new))
+      } else {
+        stop("the number of elements in 'description' is neither the same as in 'new' nor 1.")
+      }
+    }
+  } else {
+    description <- NA_character_
+  }
+
+  if(!is.null(match)){
+    if(length(match) != length(new)){
+      if(length(match) == 1){
+        match <- rep(x = match, length.out = length(new))
+      } else {
+        stop("the number of elements in 'match' is neither the same as in 'target' nor 1.")
+      }
+    }
+  }
+
+  # prepare some variables
   if(type == "concept"){
     typeNames <- "concepts"
     typeName <- "concept"
@@ -95,48 +122,6 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     target <- suppressWarnings(target %>%
       left_join(theTable$harmonised) %>%
       select(id, label))
-  }
-  assertNames(x = names(target), must.include = targetCols)
-
-  testTable <- target %>%
-    select(all_of(targetCols)) %>%
-    mutate(avail = TRUE) %>%
-    left_join(theTable$harmonised, by = targetCols)
-
-  if(any(!testTable$avail)){
-    missingItems <- testTable %>%
-      filter(!avail) %>%
-      pull(label)
-    stop("the ", typeNames," '", paste0(missingItems, collapse = ", "), "' don't exist yet as harmonised ", typeNames,", please first define them with 'new_", typeName,"()'.")
-  }
-
-  if(length(match) != length(target$label)){
-    if(length(match) == 1){
-      match <- rep(x = match, length.out = length(target$label))
-    } else {
-      stop("the number of elements in 'match' is neither the same as in 'target' nor 1.")
-    }
-  }
-
-  if(length(certainty) != length(target$label)){
-    if(length(certainty) == 1){
-      certainty <- rep(x = certainty, length.out = length(target$label))
-    } else {
-      stop("the number of elements in 'certainty' is neither the same as in 'target' nor 1.")
-    }
-  }
-
-  if(!is.null(description)){
-
-    if(length(description) != length(new)){
-      if(length(description) == 1){
-        description <- rep(x = description, length.out = length(new))
-      } else {
-        stop("the number of elements in 'description' is neither the same as in 'new' nor 1.")
-      }
-    }
-  } else {
-    description <- NA_character_
   }
 
   srcID <- ontology@sources %>%
@@ -157,19 +142,55 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     if(is.na(prevID)) prevID <- 0
   }
 
-  temp <- target %>%
-    select(all_of(targetCols)) %>%
-    bind_cols(tibble(new = new, match = match, certainty = certainty,
-                     description = description, has_source = srcID)) %>%
-    separate_rows(new, sep = " \\| ")
+  # in case target doesn't contain labels, call the function edit_matches, to
+  # assign the new terms to the already existing labels in the ontology
+  if(!"label" %in% colnames(target)){
+    assertNames(x = colnames(target), must.include = "class")
+
+    related <- edit_matches(concepts = tibble(label = new), classes = target$class, source = source,
+                            ontology = ontology, matchDir = matchDir)
+
+    temp <- related %>%
+      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), names_to = "match", values_to = "new") %>%
+      filter(!is.na(new)) %>%
+      mutate(certainty = certainty,
+             has_source = srcID,
+             match = str_replace(string = match, pattern = "has_", replacement = ""),
+             match = str_replace(string = match, pattern = "_match", replacement = "")) %>%
+      separate_rows(new, sep = " \\| ") %>%
+      select(-has_broader)
+
+  } else {
+    assertNames(x = names(target), must.include = targetCols)
+    assertSubset(x = match, choices = c("close", "exact", "broader", "narrower"))
+
+    testTable <- target %>%
+      select(all_of(targetCols)) %>%
+      mutate(avail = TRUE) %>%
+      left_join(theTable$harmonised, by = targetCols)
+
+    if(any(!testTable$avail)){
+      missingItems <- testTable %>%
+        filter(!avail) %>%
+        pull(label)
+      stop("the ", typeNames," '", paste0(missingItems, collapse = ", "), "' don't exist yet as harmonised ", typeNames,", please first define them with 'new_", typeName,"()'.")
+    }
+
+    temp <- target %>%
+      select(all_of(targetCols)) %>%
+      bind_cols(tibble(new = new, match = match, certainty = certainty,
+                       description = description, has_source = srcID)) %>%
+      separate_rows(new, sep = " \\| ")
+
+  }
 
   extMps <- temp %>%
     distinct(new, description, has_source) %>%
     filter(new != "") %>%
+    filter(!(new %in% theTable$external$label & has_source %in% theTable$external$has_source)) %>%
     mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
-    select(id = newid, label = new, description, has_source) %>%
-    bind_rows(theTable$external) %>%
-    filter(!(label %in% theTable$external$label & has_source %in% theTable$external$has_source))
+    select(id = newid, label = new, description, has_source)
+
   theTable$external <- extMps %>%
     bind_rows(theTable$external, .)
 
@@ -188,19 +209,27 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
 
     if("new_close_match" %in% colnames(toOut)){
       toOut <- toOut %>%
-        unite(col = "has_close_match", new_close_match, has_close_match, sep = " | ", na.rm = TRUE)
+        rowwise() %>%
+        mutate(has_close_match = paste0(unique(na.omit(c(has_close_match, new_close_match))), collapse = " | ")) %>%
+        select(-new_close_match)
     }
     if("new_broader_match" %in% colnames(toOut)){
       toOut <- toOut %>%
-        unite(col = "has_broader_match", new_broader_match, has_broader_match, sep = " | ", na.rm = TRUE)
+        rowwise() %>%
+        mutate(has_broader_match = paste0(unique(na.omit(c(has_broader_match, new_broader_match))), collapse = " | ")) %>%
+        select(-new_broader_match)
     }
     if("new_narrower_match" %in% colnames(toOut)){
       toOut <- toOut %>%
-        unite(col = "has_narrower_match", new_narrower_match, has_narrower_match, sep = " | ", na.rm = TRUE)
+        rowwise() %>%
+        mutate(has_narrower_match = paste0(unique(na.omit(c(has_narrower_match, new_narrower_match))), collapse = " | ")) %>%
+        select(-new_narrower_match)
     }
     if("new_exact_match" %in% colnames(toOut)){
       toOut <- toOut %>%
-        unite(col = "has_exact_match", new_exact_match, has_exact_match, sep = " | ", na.rm = TRUE)
+        rowwise() %>%
+        mutate(has_exact_match = paste0(unique(na.omit(c(has_exact_match, new_exact_match))), collapse = " | ")) %>%
+        select(-new_exact_match)
     }
 
     toOut <- toOut %>%
@@ -223,7 +252,6 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
                classes = theTable,
                concepts = ontology@concepts)
   }
-
 
   if(!is.null(ontoPath)){
     write_rds(x = out, file = ontoPath)
