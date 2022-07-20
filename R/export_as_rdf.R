@@ -3,21 +3,20 @@
 #' @param ontology [`ontology(1)`][list]\cr an already loaded
 #' or created ontology object.
 #' @param filename [`character(1)`][character]\cr the filename of
-#' the exported ontology.
-#' @param format [`character(1)`][character]\cr the format of
-#' the exported ontology. Has to be one of "rdfxml", "nquads",
-#' "ntriples", "turtle" or "jsonld". Defaults to "turtle".
+#' the exported ontology. The format of the exported ontology is
+#' guessed by the extension of the filename. The guessing is performed
+#' by the rdflib package. Valid extensions are ".rdf" for "rdfxml",
+#' ".nt" for "ntriples", ".ttl" for "turtle" or ".json" for "jsonld".
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
 #'
-#' export_as_rdf(ontology = onto, filename = onto.ttl, format = "turtle")
-export_as_rdf <- function(ontology, filename, format = "turtle") {
+#' export_as_rdf(ontology = onto, filename = onto.ttl)
+export_as_rdf <- function(ontology, filename) {
     checkmate::assertCharacter(x = filename, len = 1, any.missing = FALSE)
-    checkmate::assertCharacter(x = format, len = 1, any.missing = FALSE)
 
     make_resource <- function(prefix, id) {
-        return(paste0(prefix, URLencode(id, reserved = TRUE)))
+        return(URLencode(paste0(prefix, id), reserved = FALSE))
     }
 
     mapping_relations <- c(
@@ -40,6 +39,7 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
 
 
     rdf <- rdflib::rdf()
+    # rdf <- rdflib::rdf_parse("./assets/skos.rdf", format = "rdfxml")
 
     # TODO: use labels of ontology$sources as shorthands for prefixes
     # build namespaces for rdf doc
@@ -54,24 +54,28 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
         rdfs = "http://www.w3.org/2000/01/rdf-schema#",
         owl = "http://www.w3.org/2002/07/owl#",
         xsd = "http://www.w3.org/2001/XMLSchema#",
-        dct = "http://purl.org/dc/terms/",
-        lucki = "https://www.luckinet.org/terms#"
+        dct = "http://purl.org/dc/terms/"
+        # isothes = "http://purl.org/iso25964/skos-thes#"
     )
 
 
     # convert sources table
     for (i in seq_len(nrow(prefixes))) {
-        rdf %>% rdflib::rdf_add(
-            subject = make_resource(prefixes[i, "homepage"], ""),
-            predicate = make_resource(namespaces["rdf"], "type"),
-            object = make_resource(namespaces["skos"], "ConceptScheme")
-        )
+        # # only define harmonised source explicitly as SKOS ConceptScheme
+        if (i == 1) {
+            rdf %>% rdflib::rdf_add(
+                subject = make_resource(prefixes[i, "homepage"], ""),
+                predicate = make_resource(namespaces["rdf"], "type"),
+                object = make_resource(namespaces["skos"], "ConceptScheme")
+            )
+        }
+
         # ignore if Obj == NULL or ""
         if (!is.na(dplyr::na_if(prefixes[i, "label"], ""))) {
             rdf %>% rdflib::rdf_add(
                 subject = make_resource(prefixes[i, "homepage"], ""),
                 predicate = make_resource(namespaces["skos"], "prefLabel"),
-                object = prefixes[i, "label"],
+                object = paste0(prefixes[i, "label"], "@en"),
                 objectType = "literal"
             )
         }
@@ -80,7 +84,7 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
             rdf %>% rdflib::rdf_add(
                 subject = make_resource(prefixes[i, "homepage"], ""),
                 predicate = make_resource(namespaces["skos"], "definition"),
-                object = prefixes[i, "description"],
+                object = paste0(prefixes[i, "description"], "@en"),
                 objectType = "literal"
             )
         }
@@ -89,7 +93,7 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
             rdf %>% rdflib::rdf_add(
                 subject = make_resource(prefixes[i, "homepage"], ""),
                 predicate = make_resource(namespaces["skos"], "note"),
-                object = prefixes[i, "notes"],
+                object = paste0(prefixes[i, "notes"], "@en"),
                 objectType = "literal"
             )
         }
@@ -119,17 +123,17 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
     # convert classes$harmonised table
     for (i in seq_len(nrow(harmonised_classes))) {
         prefix <- dplyr::pull(prefixes[prefixes["label"] == "harmonised", "homepage"])
-        sub <- make_resource(prefix, harmonised_classes[i, "id"])
+        sub <- make_resource(prefix, paste0("collection-", harmonised_classes[i, "id"]))
         rdf %>% rdflib::rdf_add(
             subject = sub,
             predicate = make_resource(namespaces["rdf"], "type"),
-            object = make_resource(namespaces["skos"], "Concept")
+            object = make_resource(namespaces["skos"], "Collection")
         )
-        rdf %>% rdflib::rdf_add(
-            subject = sub,
-            predicate = make_resource(namespaces["rdf"], "type"),
-            object = make_resource(namespaces["rdfs"], "Class")
-        )
+        # rdf %>% rdflib::rdf_add(
+        #     subject = sub,
+        #     predicate = make_resource(namespaces["rdf"], "type"),
+        #     object = make_resource(namespaces["isothes"], "ConceptGroup")
+        # )
         rdf %>% rdflib::rdf_add(
             subject = sub,
             predicate = make_resource(namespaces["skos"], "inScheme"),
@@ -140,7 +144,7 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
             rdf %>% rdflib::rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "prefLabel"),
-                object = harmonised_classes[i, "label"],
+                object = paste0(harmonised_classes[i, "label"], "@en"),
                 objectType = "literal"
             )
         }
@@ -148,64 +152,23 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
             rdf %>% rdflib::rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "definition"),
-                object = harmonised_classes[i, "description"],
+                object = paste0(harmonised_classes[i, "description"], "@en"),
                 objectType = "literal"
             )
-        }
-        # semantic relation (skos:broader)
-        if (!is.na(dplyr::na_if(harmonised_classes[i, "has_broader"], ""))) {
-            rdf %>% rdflib::rdf_add(
-                subject = sub,
-                predicate = make_resource(namespaces["skos"], "broader"),
-                object = make_resource(prefix, URLencode(harmonised_classes[i, "has_broader"], FALSE)),
-                objectType = "uri"
-            )
-        }
-        # skos mapping relations
-        for (mapping_relation in names(mapping_relations)) {
-            if (!is.na(dplyr::na_if(harmonised_classes[i, mapping_relations[mapping_relation]], ""))) {
-                mappings_certainty <- stringr::str_split(dplyr::pull(ontology@classes$harmonised[i, mapping_relations[mapping_relation]]), pattern = " [|] ")
-                for (mapping in mappings_certainty[[1]]) {
-                    matched_class_id <- URLencode(stringr::str_split(mapping, pattern = "[.]")[[1]][1], FALSE)
-                    matched_class_prefix <- dplyr::pull(prefixes[prefixes["id"] == dplyr::pull(external_classes[external_classes["id"] == matched_class_id, "has_source"]), "homepage"])
-                    matched_class <- make_resource(matched_class_prefix, matched_class_id)
-                    rdf %>% rdflib::rdf_add(
-                        subject = sub,
-                        predicate = make_resource(namespaces["skos"], mapping_relation),
-                        object = matched_class,
-                        objectType = "uri"
-                    )
-                }
-            }
         }
     }
 
     # convert classes$external table
     for (i in seq_len(nrow(external_classes))) {
         prefix <- dplyr::pull(prefixes[prefixes["id"] == dplyr::pull(external_classes[i, "has_source"]), "homepage"])
-        sub <- make_resource(prefix, external_classes[i, "id"])
-        # we don't explicitly type external resources as skos:Concept
-        # rdf %>% rdflib::rdf_add(
-        #     subject = sub,
-        #     predicate = make_resource(namespaces["rdf"], "type"),
-        #     object = make_resource(namespaces["skos"], "Concept")
-        # )
-        rdf %>% rdflib::rdf_add(
-            subject = sub,
-            predicate = make_resource(namespaces["rdf"], "type"),
-            object = make_resource(namespaces["rdfs"], "Class")
-        )
-        rdf %>% rdflib::rdf_add(
-            subject = sub,
-            predicate = make_resource(namespaces["skos"], "inScheme"),
-            object = make_resource(prefix, "")
-        )
+        # currently the external id is listen as label
+        sub <- make_resource(prefix, external_classes[i, "label"])
         # ignore if Obj == NULL or ""
         if (!is.na(dplyr::na_if(external_classes[i, "label"], ""))) {
             rdf %>% rdflib::rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "prefLabel"),
-                object = external_classes[i, "label"],
+                object = paste0(external_classes[i, "label"], "@en"),
                 objectType = "literal"
             )
         }
@@ -213,7 +176,7 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
             rdf %>% rdflib::rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "definition"),
-                object = external_classes[i, "description"],
+                object = paste0(external_classes[i, "description"], "@en"),
                 objectType = "literal"
             )
         }
@@ -222,7 +185,7 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
     # convert concepts$harmonised table
     for (i in seq_len(nrow(ontology@concepts$harmonised))) {
         prefix <- dplyr::pull(prefixes[prefixes["label"] == "harmonised", "homepage"])
-        sub <- make_resource(prefix, ontology@concepts$harmonised[i, "id"])
+        sub <- make_resource(prefix, paste0("concept-", ontology@concepts$harmonised[i, "id"]))
         rdf %>% rdflib::rdf_add(
             subject = sub,
             predicate = make_resource(namespaces["rdf"], "type"),
@@ -238,7 +201,7 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
             rdf %>% rdflib::rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "prefLabel"),
-                object = ontology@concepts$harmonised[i, "label"],
+                object = paste0(ontology@concepts$harmonised[i, "label"], "@en"),
                 objectType = "literal"
             )
         }
@@ -246,24 +209,46 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
             rdf %>% rdflib::rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "definition"),
-                object = ontology@concepts$harmonised[i, "description"],
+                object = paste0(ontology@concepts$harmonised[i, "description"], "@en"),
                 objectType = "literal"
             )
         }
         if (!is.na(dplyr::na_if(ontology@concepts$harmonised[i, "class"], ""))) {
             rdf %>% rdflib::rdf_add(
-                subject = sub,
-                predicate = make_resource(namespaces["rdf"], "type"),
-                object = make_resource(prefix, URLencode(ontology@concepts$harmonised[i, "class"], FALSE)),
+                subject = make_resource(prefix, paste0("collection-", URLencode(ontology@concepts$harmonised[i, "class"], FALSE))),
+                predicate = make_resource(namespaces["skos"], "member"),
+                object = sub,
                 objectType = "uri"
             )
         }
-        # semantic relation (skos:broader)
+        # semantic relations (skos:broader and skos:narrower)
         if (!is.na(dplyr::na_if(ontology@concepts$harmonised[i, "has_broader"], ""))) {
+            broader <- paste0("concept-", ontology@concepts$harmonised[i, "has_broader"])
             rdf %>% rdflib::rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "broader"),
-                object = make_resource(prefix, ontology@concepts$harmonised[i, "has_broader"]),
+                object = make_resource(prefix, broader),
+                objectType = "uri"
+            )
+            rdf %>% rdflib::rdf_add(
+                subject = make_resource(prefix, broader),
+                predicate = make_resource(namespaces["skos"], "narrower"),
+                object = sub,
+                objectType = "uri"
+            )
+        }
+        # if has_broader == empty -> concept is top-concept of harmonised scheme
+        else {
+            rdf %>% rdflib::rdf_add(
+                subject = sub,
+                predicate = make_resource(namespaces["skos"], "topConceptOf"),
+                object = make_resource(prefix, ""),
+                objectType = "uri"
+            )
+            rdf %>% rdflib::rdf_add(
+                subject = make_resource(prefix, ""),
+                predicate = make_resource(namespaces["skos"], "hasTopConcept"),
+                object = sub,
                 objectType = "uri"
             )
         }
@@ -276,7 +261,8 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
                     # not possible to assign a certainty to a match in SKOS
                     # match_certainty <- stringr::str_split(mapping, pattern = "[.]")[[1]][2]
                     matched_concept_prefix <- dplyr::pull(prefixes[prefixes["id"] == dplyr::pull(ontology@concepts$external[ontology@concepts$external["id"] == matched_concept_id, "has_source"]), "homepage"])
-                    matched_concept <- make_resource(matched_concept_prefix, matched_concept_id)
+                    matched_concept_external_id <- dplyr::pull(ontology@concepts$external[ontology@concepts$external["id"] == matched_concept_id, "label"])
+                    matched_concept <- make_resource(matched_concept_prefix, matched_concept_external_id)
                     rdf %>% rdflib::rdf_add(
                         subject = sub,
                         predicate = make_resource(namespaces["skos"], mapping_relation),
@@ -291,7 +277,8 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
     # convert concepts$external table
     for (i in seq_len(nrow(ontology@concepts$external))) {
         prefix <- dplyr::pull(prefixes[prefixes["id"] == dplyr::pull(ontology@concepts$external[i, "has_source"]), "homepage"])
-        sub <- make_resource(prefix, URLencode(ontology@concepts$external[i, "id"]))
+        # currently the external id is listen as label
+        sub <- make_resource(prefix, ontology@concepts$external[i, "label"])
         # we don't explicitly type external resources as skos:Concept
         # rdf %>% rdflib::rdf_add(
         #     subject = sub,
@@ -308,7 +295,7 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
             rdf %>% rdflib::rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "prefLabel"),
-                object = ontology@concepts$external[i, "label"],
+                object = paste0(ontology@concepts$external[i, "label"], "@en"),
                 objectType = "literal"
             )
         }
@@ -316,12 +303,15 @@ export_as_rdf <- function(ontology, filename, format = "turtle") {
             rdf %>% rdflib::rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "definition"),
-                object = ontology@concepts$external[i, "description"],
+                object = paste0(ontology@concepts$external[i, "description"], "@en"),
                 objectType = "literal"
             )
         }
     }
 
-    rdflib::rdf_serialize(rdf, filename, namespace = namespaces, format = format)
+    rdflib::rdf_serialize(rdf, filename, namespace = namespaces)
     rdflib::rdf_free(rdf)
+    rdfstring <- readr::read_file(filename)
+    rdfstring <- stringr::str_replace_all(rdfstring, "@en\"", "\"@en")
+    readr::write_file(rdfstring, filename)
 }

@@ -4,5 +4,4 @@
 .Ruserdata
 inst/doc
 docs
-ex.R
-ex.ttl
+dev-assets

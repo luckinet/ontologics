@@ -27,7 +27,7 @@ Conversion to an RDF (Resource Description Framework) serialization is integrate
 
 The IDs that are used in an RDF database have to be IRIs (IRIs are a superset of URIs, which are in turn a superset of URLs). Typically, the structure of URLs is used. In this package, we generate the RDF-IDs of the concepts in the ontology by concatenating a _prefix_ (the string you defined as `homepage`, when you created the ontology) with internal package IDs. The homepage of the example ontology we created in [create an ontology](create_an_ontology.html) is `https://www.luckinet.org`. The internal ID of the concept with the label `Naturally Regenerating Forest` in this ontology is `.08.02`. The resulting IRI-ID for this concept is <https://www.luckinet.org/.08.02>. As you see, `/` was used as concatenation symbol. Another option would be `#`. If the `homepage` string ends on `/` or `#`, this symbol is used for concatenation, otherwise `/` is appended as default.
 
-The IRI-IDs (IRIs from here) do not have to resolve to an actual resource on the Web, but it is recommended . If not possible, at least the prefix should resemble an actual Web page, as it is the case for the example.
+The so-built IRI-IDs do not have to resolve to an actual resource on the Web, but it is highly recommended. If not possible, at least the prefix should resemble an actual Web page, as it is the case for the example.
 <!-- (see [publishing an ontology](publishing_an_ontology.html)) -->
 
 ## RDF

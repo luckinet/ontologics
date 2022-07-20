@@ -23,7 +23,7 @@ __label__ (*mandatory*): A speaking label for the source.
 
 __description__ (*optional*): A description of the source.
 
-__homepage__ (*mandatory*): Homepage of the source. Ideally, this is some Website that hosts the terms that are described in the source-KOS. It can also be a link to a PDF or similar. It is also possible to enter the ISBN (or another identifier) of a book or an other real world document. If everything is correct, the values that are inserted in the homepage should also be unique, i.e. be primary keys.
+__homepage__ (*mandatory*): Homepage of the source. Ideally, this is some Website that hosts the terms that are described in the source-KOS. It can also be a link to a PDF or similar. It is also possible to enter the ISBN (or another identifier) of a book or an other real world document. If everything is correct, the values that are inserted in the homepage should also be primary keys.
 
 __license__ (*mandatory*): Licensing information of the source-KOS.
 
