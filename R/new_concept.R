@@ -69,13 +69,7 @@
 new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
                         ontology = NULL){
 
-  if(is.null(new)){
-    return("no new concepts to harmonise.")
-  }
-  newChar <- testCharacter(x = new, ignore.case = FALSE)
-  if(!newChar){
-    new <- as.character(new)
-  }
+  assertCharacter(x = new, any.missing = FALSE)
   assertDataFrame(x = broader, null.ok = TRUE)
   assertCharacter(x = description, null.ok = TRUE)
   assertCharacter(x = class, null.ok = TRUE)
