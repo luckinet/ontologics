@@ -9,7 +9,8 @@ edit_matches(
   classes = NULL,
   source = NULL,
   ontology = NULL,
-  matchDir = NULL
+  matchDir = NULL,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ stored, or an already loaded ontology.}
 
 \item{matchDir}{\code{\link[=character]{character(1)}}\cr the directory where to store
 source-specific matching tables.}
+
+\item{verbose}{\code{\link[=logical]{logical(1)}}\cr whether or not to give detailed
+information on the process of this function.}
 }
 \description{
 Edit matches manually in a csv-table
