@@ -9,10 +9,11 @@ new_mapping(
   target,
   source = NULL,
   description = NULL,
-  match = "close",
+  match = NULL,
   certainty = NULL,
   type = "concept",
-  ontology = NULL
+  ontology = NULL,
+  matchDir = NULL
 )
 }
 \arguments{
@@ -44,6 +45,9 @@ to a \code{"concept"}, or to a \code{"class"}.}
 
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
+
+\item{matchDir}{\code{\link[=character]{character(1)}}\cr the directory where to store
+source-specific matching tables.}
 }
 \value{
 No return value, called for the side effect of adding new mappings to
