@@ -10,6 +10,8 @@
 #'   stored, or an already loaded ontology.
 #' @param matchDir [`character(1)`][character]\cr the directory where to store
 #'   source-specific matching tables.
+#' @param verbose [`logical(1)`][logical]\cr whether or not to give detailed
+#'   information on the process of this function.
 #' @importFrom checkmate assertDataFrame assertNames assertCharacter
 #'   assertFileExists testFileExists
 #' @importFrom utils tail head
@@ -22,7 +24,7 @@
 #' @export
 
 edit_matches <- function(concepts, classes = NULL, source = NULL,
-                         ontology = NULL, matchDir = NULL){
+                         ontology = NULL, matchDir = NULL, verbose = FALSE){
 
   assertDataFrame(x = concepts, min.cols = 1)
   assertNames(x = names(concepts), must.include = c("label"))
@@ -86,8 +88,8 @@ edit_matches <- function(concepts, classes = NULL, source = NULL,
   if(dim(missingConcepts)[1] != 0){
 
     relate <- ontology@concepts$harmonised %>%
-      select(id, label, class) %>%
-      left_join(inclConcepts, by = c("id", "label", "class")) %>%
+      select(id, label, class, has_broader) %>%
+      left_join(inclConcepts, by = c("id", "label", "class", "has_broader")) %>%
       filter(!is.na(class)) %>%
       filter(class %in% classes)
 
@@ -123,7 +125,9 @@ edit_matches <- function(concepts, classes = NULL, source = NULL,
 
   out <- prevMatches %>%
     bind_rows(related) %>%
-    pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), names_to = "match", values_to = "new_label") %>%
+    pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
+                 names_to = "match", values_to = "new_label") %>%
+    separate_rows(new_label, sep = " \\| ") %>%
     distinct() %>%
     group_by(id, has_broader, label, class, description, match) %>%
     summarise(new_label = paste0(new_label, collapse = " | "), .groups = "keep") %>%

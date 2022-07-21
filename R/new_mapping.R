@@ -23,6 +23,8 @@
 #'   to a \code{"concept"}, or to a \code{"class"}.
 #' @param matchDir [`character(1)`][character]\cr the directory where to store
 #'   source-specific matching tables.
+#' @param verbose [`logical(1)`][logical]\cr whether or not to give detailed
+#'   information on the process of this function.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
 #'   stored, or an already loaded ontology.
 #' @examples
@@ -55,7 +57,7 @@
 #'   assertChoice assertIntegerish assertFileExists assertNames
 #' @importFrom tibble tibble
 #' @importFrom dplyr left_join filter pull mutate bind_rows arrange if_else
-#'   bind_cols full_join na_if
+#'   bind_cols full_join na_if across
 #' @importFrom tidyr unite pivot_wider
 #' @importFrom tidyselect all_of
 #' @importFrom stringr str_detect str_split str_replace
@@ -66,7 +68,7 @@
 
 new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
                         match = NULL, certainty = NULL, type = "concept",
-                        ontology = NULL, matchDir = NULL){
+                        ontology = NULL, matchDir = NULL, verbose = FALSE){
 
   assertCharacter(x = new, any.missing = FALSE)
   assertDataFrame(x = target, nrows = length(new))
@@ -112,16 +114,16 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
   if(type == "concept"){
     typeNames <- "concepts"
     typeName <- "concept"
-    targetCols <- c("id", "label", "class")
+    targetCols <- c("id", "label", "class", "has_broader")
     theTable <- ontology@concepts
   } else if(type == "class"){
     typeNames <- "classes"
     typeName <- "class"
-    targetCols <- c("id", "label")
+    targetCols <- c("id", "label", "has_broader")
     theTable <- ontology@classes
     target <- suppressWarnings(target %>%
-      left_join(theTable$harmonised) %>%
-      select(id, label))
+      left_join(theTable$harmonised, by = c("id", "label", "description", "has_broader", "has_close_match", "has_narrower_match", "has_broader_match", "has_exact_match")) %>%
+      select(id, label, has_broader))
   }
 
   srcID <- ontology@sources %>%
@@ -148,17 +150,17 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     assertNames(x = colnames(target), must.include = "class")
 
     related <- edit_matches(concepts = tibble(label = new), classes = target$class, source = source,
-                            ontology = ontology, matchDir = matchDir)
+                            ontology = ontology, matchDir = matchDir, verbose = verbose)
 
     temp <- related %>%
-      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), names_to = "match", values_to = "new") %>%
+      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
+                   names_to = "match", values_to = "new") %>%
       filter(!is.na(new)) %>%
       mutate(certainty = certainty,
              has_source = srcID,
              match = str_replace(string = match, pattern = "has_", replacement = ""),
              match = str_replace(string = match, pattern = "_match", replacement = "")) %>%
-      separate_rows(new, sep = " \\| ") %>%
-      select(-has_broader)
+      separate_rows(new, sep = " \\| ")
 
   } else {
     assertNames(x = names(target), must.include = targetCols)
@@ -197,44 +199,30 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
   if(dim(extMps)[1] != 0){
 
     toOut <- temp %>%
-      left_join(theTable$external %>% select(new = label, newid = id), by = "new") %>%
+      left_join(theTable$external %>% filter(has_source == srcID) %>% select(new = label, newid = id), by = "new") %>%
+      filter(!is.na(newid)) %>%
       mutate(newid = if_else(!is.na(newid), paste0(newid, ".", certainty), NA_character_),
-             match = paste0("new_", match, "_match")) %>%
-      group_by(id, label, match) %>%
-      summarise(newid = paste0(newid, collapse = " | ")) %>%
-      ungroup() %>%
-      mutate(newid = na_if(newid, "NA")) %>%
-      pivot_wider(id_cols = c(id, label), names_from = match, values_from = newid) %>%
-      full_join(theTable$harmonised, by = c("id", "label"))
+             match = paste0("has_", match, "_match")) %>%
+      select(-certainty, -has_source, -new)# %>%
 
-    if("new_close_match" %in% colnames(toOut)){
-      toOut <- toOut %>%
-        rowwise() %>%
-        mutate(has_close_match = paste0(unique(na.omit(c(has_close_match, new_close_match))), collapse = " | ")) %>%
-        select(-new_close_match)
-    }
-    if("new_broader_match" %in% colnames(toOut)){
-      toOut <- toOut %>%
-        rowwise() %>%
-        mutate(has_broader_match = paste0(unique(na.omit(c(has_broader_match, new_broader_match))), collapse = " | ")) %>%
-        select(-new_broader_match)
-    }
-    if("new_narrower_match" %in% colnames(toOut)){
-      toOut <- toOut %>%
-        rowwise() %>%
-        mutate(has_narrower_match = paste0(unique(na.omit(c(has_narrower_match, new_narrower_match))), collapse = " | ")) %>%
-        select(-new_narrower_match)
-    }
-    if("new_exact_match" %in% colnames(toOut)){
-      toOut <- toOut %>%
-        rowwise() %>%
-        mutate(has_exact_match = paste0(unique(na.omit(c(has_exact_match, new_exact_match))), collapse = " | ")) %>%
-        select(-new_exact_match)
-    }
+    toOut <- theTable$harmonised %>%
+      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
+                   names_to = "match", values_to = "newid") %>%
+      separate_rows(newid, sep = " \\| ") %>%
+      # select(-has_broader) %>%
+      full_join(toOut, by = c(all_of(targetCols), "description", "match", "newid")) %>%
+      distinct()
+
+    toOut <- toOut %>%
+      group_by(across(all_of(targetCols)), description, has_broader, match) %>%
+      summarise(newid = paste0(na.omit(newid), collapse = " | ")) %>%
+      ungroup() %>%
+      mutate(newid = na_if(newid, "")) %>%
+      pivot_wider(id_cols = c(all_of(targetCols), description, has_broader), names_from = match, values_from = newid)
 
     toOut <- toOut %>%
       na_if(y = "") %>%
-      select(all_of(targetCols), description, has_broader, has_close_match, has_broader_match, has_narrower_match, has_exact_match) %>%
+      select(all_of(targetCols), description, has_close_match, has_broader_match, has_narrower_match, has_exact_match) %>%
       arrange(id)
 
     theTable$harmonised <- toOut
