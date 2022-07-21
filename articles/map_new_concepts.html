@@ -115,23 +115,39 @@
 <span><span class="va">newConcepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Wheat"</span>, <span class="st">"NUTS"</span>, <span class="st">"Avocado"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The new concepts are from different conceptual levels, both ‘Wheat’ and ‘Avocado’ are the crop itself, while ‘NUTS’ is an aggregate of various crops (such as walnut, hazelnut, etc). Let’s first find out whether these concepts are in fact new concepts because they are missing from the ontology.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">missingConcepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">newConcepts</span>, missing <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">missingConcepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">newConcepts</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
 <span><span class="fu">kable</span><span class="op">(</span><span class="va">missingConcepts</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">id</th>
 <th align="left">label</th>
 <th align="left">class</th>
-<th align="left">description</th>
+<th align="left">id</th>
 <th align="left">has_broader</th>
+<th align="left">description</th>
 </tr></thead>
-<tbody><tr class="odd">
+<tbody>
+<tr class="odd">
+<td align="left">Wheat</td>
+<td align="left">class</td>
+<td align="left">.02.09</td>
+<td align="left">.02</td>
 <td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">NUTS</td>
+<td align="left">group</td>
+<td align="left">.10</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
 <td align="left">Avocado</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-</tr></tbody>
+<td align="left">NA</td>
+</tr>
+</tbody>
 </table>
 <p>This tells us that that both ‘NUTS’ and ‘Wheat’ don’t seem to be missing from the ontology. We try to extract these concepts…</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -139,24 +155,24 @@
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">id</th>
 <th align="left">label</th>
 <th align="left">class</th>
-<th align="left">description</th>
+<th align="left">id</th>
 <th align="left">has_broader</th>
+<th align="left">description</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">.02.09</td>
 <td align="left">Wheat</td>
 <td align="left">class</td>
-<td align="left">NA</td>
+<td align="left">.02.09</td>
 <td align="left">.02</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left">.10</td>
 <td align="left">NUTS</td>
 <td align="left">group</td>
+<td align="left">.10</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
@@ -168,19 +184,19 @@
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">id</th>
 <th align="left">label</th>
-<th align="left">description</th>
 <th align="left">class</th>
+<th align="left">id</th>
 <th align="left">has_broader</th>
+<th align="left">description</th>
 <th align="left">has_close_match</th>
 </tr></thead>
 <tbody><tr class="odd">
-<td align="left">.02.09</td>
 <td align="left">Wheat</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.02.09</td>
 <td align="left">.02</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr></tbody>
 </table>
@@ -190,36 +206,36 @@
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">id</th>
 <th align="left">label</th>
-<th align="left">description</th>
 <th align="left">class</th>
+<th align="left">id</th>
 <th align="left">has_broader</th>
+<th align="left">description</th>
 <th align="left">has_close_match</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">.10</td>
 <td align="left">NUTS</td>
-<td align="left">NA</td>
 <td align="left">group</td>
+<td align="left">.10</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left">.10.01</td>
 <td align="left">Treenuts</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.10.01</td>
 <td align="left">.10</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">.10.02</td>
 <td align="left">Other nuts</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.10.02</td>
 <td align="left">.10</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 </tbody>
@@ -263,44 +279,44 @@
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">id</th>
 <th align="left">label</th>
-<th align="left">description</th>
 <th align="left">class</th>
+<th align="left">id</th>
 <th align="left">has_broader</th>
+<th align="left">description</th>
 <th align="left">has_close_match</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">.02.09</td>
 <td align="left">Wheat</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.02.09</td>
 <td align="left">.02</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left">.02.09.01</td>
 <td align="left">wheat</td>
-<td align="left">NA</td>
 <td align="left">crop</td>
+<td align="left">.02.09.01</td>
 <td align="left">.02.09</td>
+<td align="left">NA</td>
 <td align="left">externalDataset_1.3</td>
 </tr>
 <tr class="odd">
-<td align="left">.02.09.01.01</td>
 <td align="left">wheat1</td>
-<td align="left">NA</td>
 <td align="left">undefined</td>
+<td align="left">.02.09.01.01</td>
 <td align="left">.02.09.01</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left">.02.09.01.02</td>
 <td align="left">wheat2</td>
-<td align="left">NA</td>
 <td align="left">undefined</td>
+<td align="left">.02.09.01.02</td>
 <td align="left">.02.09.01</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 </tbody>
@@ -321,44 +337,44 @@
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">id</th>
 <th align="left">label</th>
-<th align="left">description</th>
 <th align="left">class</th>
+<th align="left">id</th>
 <th align="left">has_broader</th>
+<th align="left">description</th>
 <th align="left">has_close_match</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">.02.09</td>
 <td align="left">Wheat</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.02.09</td>
 <td align="left">.02</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left">.02.09.01</td>
 <td align="left">wheat</td>
-<td align="left">NA</td>
 <td align="left">crop</td>
+<td align="left">.02.09.01</td>
 <td align="left">.02.09</td>
+<td align="left">NA</td>
 <td align="left">externalDataset_1.3</td>
 </tr>
 <tr class="odd">
-<td align="left">.02.09.01.01</td>
 <td align="left">wheat1</td>
-<td align="left">NA</td>
 <td align="left">cultivar</td>
+<td align="left">.02.09.01.01</td>
 <td align="left">.02.09.01</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left">.02.09.01.02</td>
 <td align="left">wheat2</td>
-<td align="left">NA</td>
 <td align="left">cultivar</td>
+<td align="left">.02.09.01.02</td>
 <td align="left">.02.09.01</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 </tbody>
@@ -369,36 +385,36 @@
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">id</th>
 <th align="left">label</th>
-<th align="left">description</th>
 <th align="left">class</th>
+<th align="left">id</th>
 <th align="left">has_broader</th>
+<th align="left">description</th>
 <th align="left">has_close_match</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">.10</td>
 <td align="left">NUTS</td>
-<td align="left">NA</td>
 <td align="left">group</td>
+<td align="left">.10</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">externalDataset_3.3</td>
 </tr>
 <tr class="even">
-<td align="left">.10.01</td>
 <td align="left">Treenuts</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.10.01</td>
 <td align="left">.10</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">.10.02</td>
 <td align="left">Other nuts</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.10.02</td>
 <td align="left">.10</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 </tbody>
@@ -409,84 +425,84 @@
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">id</th>
 <th align="left">label</th>
-<th align="left">description</th>
 <th align="left">class</th>
+<th align="left">id</th>
 <th align="left">has_broader</th>
+<th align="left">description</th>
 <th align="left">has_close_match</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">.06</td>
 <td align="left">FRUIT</td>
-<td align="left">NA</td>
 <td align="left">group</td>
+<td align="left">.06</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left">.06.01</td>
 <td align="left">Berries</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.06.01</td>
 <td align="left">.06</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">.06.02</td>
 <td align="left">Citrus Fruit</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.06.02</td>
 <td align="left">.06</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left">.06.03</td>
 <td align="left">Grapes</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.06.03</td>
 <td align="left">.06</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">.06.04</td>
 <td align="left">Pome Fruit</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.06.04</td>
 <td align="left">.06</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left">.06.05</td>
 <td align="left">Stone Fruit</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.06.05</td>
 <td align="left">.06</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">.06.06</td>
 <td align="left">Tropical and subtropical Fruit</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.06.06</td>
 <td align="left">.06</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left">.06.06.01</td>
 <td align="left">avocado</td>
-<td align="left">NA</td>
 <td align="left">crop</td>
+<td align="left">.06.06.01</td>
 <td align="left">.06.06</td>
+<td align="left">NA</td>
 <td align="left">externalDataset_2.3</td>
 </tr>
 <tr class="odd">
-<td align="left">.06.07</td>
 <td align="left">Other fruit</td>
-<td align="left">NA</td>
 <td align="left">class</td>
+<td align="left">.06.07</td>
 <td align="left">.06</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 </tbody>
@@ -508,7 +524,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

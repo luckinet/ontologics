@@ -72,10 +72,12 @@ external vocabularies and the harmonised classes and concepts.</p>
 <span>  <span class="va">target</span>,</span>
 <span>  source <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  match <span class="op">=</span> <span class="st">"close"</span>,</span>
+<span>  match <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"concept"</span>,</span>
-<span>  ontology <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  ontology <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  matchDir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -126,6 +128,16 @@ to a <code>"concept"</code>, or to a <code>"class"</code>.</p></dd>
 <dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">ontology(1)</a></code><br> either a path where the ontology is
 stored, or an already loaded ontology.</p></dd>
 
+
+<dt>matchDir</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the directory where to store
+source-specific matching tables.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not to give detailed
+information on the process of this function.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -174,7 +186,7 @@ an ontology.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
