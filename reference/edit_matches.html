@@ -67,7 +67,7 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">edit_matches</span><span class="op">(</span></span>
 <span>  <span class="va">concepts</span>,</span>
-<span>  classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  attributes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  source <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ontology <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  matchDir <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -82,9 +82,10 @@
 be manually matched.</p></dd>
 
 
-<dt>classes</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the classes of harmonised
-concepts within which to match the concepts manually.</p></dd>
+<dt>attributes</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the attributes of new
+concepts that help to match new and target concepts concepts manually (must
+contain at least the column 'class').</p></dd>
 
 
 <dt>source</dt>
