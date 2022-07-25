@@ -84,8 +84,6 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   }
 
   missingConcepts <- temp %>%
-    select(-description) %>%
-    bind_cols(attributes) %>%
     filter(is.na(id))
   inclConcepts <- temp %>%
     filter(!is.na(id))
@@ -100,6 +98,8 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       filter(class %in% filterClasses)
 
     sortIn <- missingConcepts %>%
+      select(-colnames(attributes)[which(colnames(attributes) %in% colnames(missingConcepts))]) %>%
+      left_join(concepts %>% bind_cols(attributes), by = "label") %>%
       mutate(sort_in = label,
         label = NA_character_,
         class = NA_character_) %>%
@@ -141,6 +141,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     mutate(new_label = na_if(x = new_label, y = "NA")) %>%
     pivot_wider(id_cols = c(label, class, id, has_broader, description), names_from = match, values_from = new_label) %>%
     distinct() %>%
+    filter(!is.na(has_broader_match) | !is.na(has_close_match) | !is.na(has_narrower_match) | !is.na(has_exact_match)) %>%
     arrange(id)
 
   write_csv(x = out, file = paste0(matchDir, sourceFile), append = FALSE, na = "")
