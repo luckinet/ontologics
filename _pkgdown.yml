@@ -31,6 +31,7 @@ reference:
   - title: helpers
     contents:
       - make_tree
+      - edit_matches
 
 navbar:
   left:
