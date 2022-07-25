@@ -70,7 +70,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
                         match = NULL, certainty = NULL, type = "concept",
                         ontology = NULL, matchDir = NULL, verbose = FALSE){
 
-  assertCharacter(x = new, any.missing = FALSE)
+  assertCharacter(x = new, all.missing = FALSE)
   assertDataFrame(x = target, nrows = length(new))
   assertCharacter(x = description, null.ok = TRUE)
   assertIntegerish(x = certainty, lower = 1, upper = 4)
@@ -149,7 +149,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
   if(!"label" %in% colnames(target)){
     assertNames(x = colnames(target), must.include = "class")
 
-    related <- edit_matches(concepts = tibble(label = new), classes = target$class, source = source,
+    related <- edit_matches(concepts = tibble(label = new), attributes = target, source = source,
                             ontology = ontology, matchDir = matchDir, verbose = verbose)
 
     temp <- related %>%
