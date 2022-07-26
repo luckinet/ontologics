@@ -16,7 +16,7 @@
 #' @importFrom checkmate assertDataFrame assertNames assertCharacter
 #'   assertFileExists testFileExists
 #' @importFrom utils tail head
-#' @importFrom stringr str_split
+#' @importFrom stringr str_split str_detect
 #' @importFrom readr read_csv write_csv cols
 #' @importFrom dplyr filter rename full_join mutate if_else select left_join
 #'   bind_rows distinct arrange
@@ -52,14 +52,27 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   } else {
     prevMatches <- NULL
   }
-  filterClasses <- attributes$class
+
+  filterClasses <- ontology@classes$harmonised %>%
+    filter(label %in% attributes$class)
+  while(!any(is.na(filterClasses$has_broader))){
+    filterClasses <- ontology@classes$harmonised %>%
+      filter(label %in% filterClasses$label | label %in% filterClasses$has_broader)
+  }
+  filterClasses <- filterClasses %>%
+    pull(label) %>%
+    unique()
   attributes <- attributes %>%
     select(-class)
 
   temp <- get_concept(x = concepts %>% bind_cols(attributes), na.rm = FALSE, ontology = ontology, mappings = "all") %>%
-    unite(col = "new_close_match", label, has_close_match, sep = " | ", na.rm = TRUE, remove = FALSE) %>%
-    mutate(has_close_match = if_else(!is.na(id), new_close_match, has_close_match)) %>%
-    select(-new_close_match)
+    unite(col = "has_close_match", label, has_close_match, sep = " | ", na.rm = TRUE, remove = FALSE) %>%
+    separate_rows(has_close_match, sep = " \\| ") %>%
+    distinct() %>%
+    group_by(label, class, id, has_broader, description, has_broader_match, has_exact_match, has_narrower_match) %>%
+    summarise(has_close_match = paste0(has_close_match, collapse = " | ")) %>%
+    ungroup() %>%
+    mutate(has_close_match = if_else(is.na(id), NA_character_, has_close_match))
 
   # determine those concepts, that are not yet defined in the ontology
   if(!is.null(prevMatches)){
