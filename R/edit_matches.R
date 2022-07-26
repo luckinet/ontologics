@@ -56,31 +56,46 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   attributes <- attributes %>%
     select(-class)
 
+  temp <- get_concept(x = concepts %>% bind_cols(attributes), na.rm = FALSE, ontology = ontology, mappings = "all") %>%
+    unite(col = "new_close_match", label, has_close_match, sep = " | ", na.rm = TRUE, remove = FALSE) %>%
+    mutate(has_close_match = if_else(!is.na(id), new_close_match, has_close_match)) %>%
+    select(-new_close_match)
+
   # determine those concepts, that are not yet defined in the ontology
   if(!is.null(prevMatches)){
 
-    temp <- prevMatches %>%
-      filter(class %in% filterClasses) %>%
-      rename(harmLab = label) %>%
-      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
-                   names_to = "match", values_to = "label") %>%
-      separate_rows(label, sep = " \\| ") %>%
-      full_join(concepts, by = "label") %>%
-      mutate(harmLab = if_else(is.na(match), label, harmLab),
-             label = if_else(is.na(match), NA_character_, label),
-             match = if_else(is.na(match), "sort_in", match)) %>%
-      pivot_wider(id_cols = c(harmLab, class, id, has_broader, description), names_from = match,
-                  values_from = label, values_fn = ~paste0(.x, collapse = " | ")) %>%
-      na_if(y = "NA") %>%
-      rename(label = harmLab)
+    temp <- temp %>%
+      rename(prev_broader_match = has_broader_match,
+             prev_close_match = has_close_match,
+             prev_exact_match = has_exact_match,
+             prev_narrower_match = has_narrower_match) %>%
+      full_join(prevMatches, by = c("label", "class", "id", "has_broader", "description")) %>%
+      unite(col = "has_broader_match", prev_broader_match, has_broader_match, sep = " | ", na.rm = TRUE) %>%
+      unite(col = "has_close_match", prev_close_match, has_close_match, sep = " | ", na.rm = TRUE) %>%
+      unite(col = "has_exact_match", prev_exact_match, has_exact_match, sep = " | ", na.rm = TRUE) %>%
+      unite(col = "has_narrower_match", prev_narrower_match, has_narrower_match, sep = " | ", na.rm = TRUE) %>%
+      na_if(y = "")
 
-    if("sort_in" %in% colnames(temp)){
-      temp <- temp %>%
-        select(-sort_in)
-    }
+    # temp <- prevMatches %>%
+    #   filter(class %in% filterClasses) %>%
+    #   rename(harmLab = label) %>%
+    #   pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
+    #                names_to = "match", values_to = "label") %>%
+    #   separate_rows(label, sep = " \\| ") %>%
+    #   full_join(concepts, by = "label") %>%
+    #   mutate(harmLab = if_else(is.na(match), label, harmLab),
+    #          label = if_else(is.na(match), NA_character_, label),
+    #          match = if_else(is.na(match), "sort_in", match)) %>%
+    #   pivot_wider(id_cols = c(harmLab, class, id, has_broader, description), names_from = match,
+    #               values_from = label, values_fn = ~paste0(.x, collapse = " | ")) %>%
+    #   na_if(y = "NA") %>%
+    #   rename(label = harmLab)
+    #
+    # if("sort_in" %in% colnames(temp)){
+    #   temp <- temp %>%
+    #     select(-sort_in)
+    # }
 
-  } else {
-    temp <- get_concept(x = concepts, na.rm = FALSE, ontology = ontology, mappings = "all")
   }
 
   missingConcepts <- temp %>%
