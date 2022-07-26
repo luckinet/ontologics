@@ -122,8 +122,8 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     targetCols <- c("id", "label", "has_broader")
     theTable <- ontology@classes
     target <- suppressWarnings(target %>%
-      left_join(theTable$harmonised, by = c("id", "label", "description", "has_broader", "has_close_match", "has_narrower_match", "has_broader_match", "has_exact_match")) %>%
-      select(id, label, has_broader))
+                                 left_join(theTable$harmonised, by = colnames(target)) %>%
+                                 select(id, label, has_broader))
   }
 
   srcID <- ontology@sources %>%
@@ -192,7 +192,10 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     filter(!(new %in% theTable$external$label & has_source %in% theTable$external$has_source)) %>%
     mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
     select(id = newid, label = new, description, has_source)
-  extMps$description <- description[which(new %in% temp$new)]
+
+  if(!is.na(description)){
+    extMps$description <- description[which(new %in% temp$new)]
+  }
 
   theTable$external <- extMps %>%
     bind_rows(theTable$external, .)
