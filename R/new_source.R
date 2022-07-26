@@ -48,7 +48,8 @@ new_source <- function(name = NULL, description = NULL, homepage = NULL,
   }
 
   if(name %in% ontology@sources$label){
-    stop("the source '", name, "' has already been registered.", call. = FALSE)
+    warning("the source '", name, "' has already been registered.", call. = FALSE)
+    return(NULL)
   }
 
   if(length(ontology@sources$id) == 0){

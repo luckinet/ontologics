@@ -70,7 +70,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
                         match = NULL, certainty = NULL, type = "concept",
                         ontology = NULL, matchDir = NULL, verbose = FALSE){
 
-  assertCharacter(x = new, any.missing = FALSE)
+  assertCharacter(x = new, all.missing = FALSE)
   assertDataFrame(x = target, nrows = length(new))
   assertCharacter(x = description, null.ok = TRUE)
   assertIntegerish(x = certainty, lower = 1, upper = 4)
@@ -149,7 +149,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
   if(!"label" %in% colnames(target)){
     assertNames(x = colnames(target), must.include = "class")
 
-    related <- edit_matches(concepts = tibble(label = new), classes = target$class, source = source,
+    related <- edit_matches(concepts = tibble(label = new), attributes = target, source = source,
                             ontology = ontology, matchDir = matchDir, verbose = verbose)
 
     temp <- related %>%
@@ -192,6 +192,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     filter(!(new %in% theTable$external$label & has_source %in% theTable$external$has_source)) %>%
     mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
     select(id = newid, label = new, description, has_source)
+  extMps$description <- description[which(new %in% temp$new)]
 
   theTable$external <- extMps %>%
     bind_rows(theTable$external, .)
@@ -209,7 +210,6 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
                    names_to = "match", values_to = "newid") %>%
       separate_rows(newid, sep = " \\| ") %>%
-      # select(-has_broader) %>%
       full_join(toOut, by = c(all_of(targetCols), "description", "match", "newid")) %>%
       distinct()
 

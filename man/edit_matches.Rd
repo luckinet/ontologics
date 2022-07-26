@@ -6,7 +6,7 @@
 \usage{
 edit_matches(
   concepts,
-  classes = NULL,
+  attributes = NULL,
   source = NULL,
   ontology = NULL,
   matchDir = NULL,
@@ -17,8 +17,9 @@ edit_matches(
 \item{concepts}{\code{\link[=data.frame]{data.frame(.)}}\cr the new concepts that shall
 be manually matched.}
 
-\item{classes}{\code{\link[=character]{character(1)}}\cr the classes of harmonised
-concepts within which to match the concepts manually.}
+\item{attributes}{\code{\link[=character]{character(1)}}\cr the attributes of new
+concepts that help to match new and target concepts concepts manually (must
+contain at least the column 'class').}
 
 \item{source}{\code{\link[=character]{character(1)}}\cr any character uniquely
 identifying the source dataset of the new concepts.}

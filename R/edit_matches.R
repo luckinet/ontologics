@@ -2,8 +2,9 @@
 #'
 #' @param concepts [`data.frame(.)`][data.frame]\cr the new concepts that shall
 #'   be manually matched.
-#' @param classes [`character(1)`][character]\cr the classes of harmonised
-#'   concepts within which to match the concepts manually.
+#' @param attributes [`character(1)`][character]\cr the attributes of new
+#'   concepts that help to match new and target concepts concepts manually (must
+#'   contain at least the column 'class').
 #' @param source [`character(1)`][character]\cr any character uniquely
 #'   identifying the source dataset of the new concepts.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
@@ -23,12 +24,12 @@
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @export
 
-edit_matches <- function(concepts, classes = NULL, source = NULL,
+edit_matches <- function(concepts, attributes = NULL, source = NULL,
                          ontology = NULL, matchDir = NULL, verbose = FALSE){
 
   assertDataFrame(x = concepts, min.cols = 1)
   assertNames(x = names(concepts), must.include = c("label"))
-  assertCharacter(x = classes, len = nrow(concepts))
+  assertDataFrame(x = attributes, nrows = nrow(concepts))
   assertCharacter(x = source, len = 1, any.missing = FALSE)
 
   intPaths <- getOption(x = "adb_path")
@@ -51,12 +52,15 @@ edit_matches <- function(concepts, classes = NULL, source = NULL,
   } else {
     prevMatches <- NULL
   }
+  filterClasses <- attributes$class
+  attributes <- attributes %>%
+    select(-class)
 
   # determine those concepts, that are not yet defined in the ontology
   if(!is.null(prevMatches)){
 
     temp <- prevMatches %>%
-      filter(class %in% classes) %>%
+      filter(class %in% filterClasses) %>%
       rename(harmLab = label) %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
                    names_to = "match", values_to = "label") %>%
@@ -91,13 +95,15 @@ edit_matches <- function(concepts, classes = NULL, source = NULL,
       select(id, label, class, has_broader) %>%
       left_join(inclConcepts, by = c("id", "label", "class", "has_broader")) %>%
       filter(!is.na(class)) %>%
-      filter(class %in% classes)
+      filter(class %in% filterClasses)
 
     sortIn <- missingConcepts %>%
+      select(-colnames(attributes)[which(colnames(attributes) %in% colnames(missingConcepts))]) %>%
+      left_join(concepts %>% bind_cols(attributes), by = "label") %>%
       mutate(sort_in = label,
         label = NA_character_,
         class = NA_character_) %>%
-      select(sort_in, id, has_broader, label, class, everything())
+      select(sort_in, names(attributes), id, has_broader, label, class, everything())
 
     # put together the object that shall be edited by the user ...
     sortIn %>%
@@ -135,6 +141,7 @@ edit_matches <- function(concepts, classes = NULL, source = NULL,
     mutate(new_label = na_if(x = new_label, y = "NA")) %>%
     pivot_wider(id_cols = c(label, class, id, has_broader, description), names_from = match, values_from = new_label) %>%
     distinct() %>%
+    filter(!is.na(has_broader_match) | !is.na(has_close_match) | !is.na(has_narrower_match) | !is.na(has_exact_match)) %>%
     arrange(id)
 
   write_csv(x = out, file = paste0(matchDir, sourceFile), append = FALSE, na = "")
