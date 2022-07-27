@@ -1,5 +1,7 @@
 # ontologics 0.4.2
 
+- various fixes of convenience and to make ontologics work smoothly together with `arealDB`
+
 # ontologics 0.4.1
 
 - allow it that also classes are handled with the `new_mapping()` function, which also means that `new_class()` can now only set harmonised classes.
