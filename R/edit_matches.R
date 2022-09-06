@@ -65,14 +65,19 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   attributes <- attributes %>%
     select(-class)
 
-  temp <- get_concept(x = concepts %>% bind_cols(attributes), na.rm = FALSE, ontology = ontology, mappings = "all") %>%
+  allAttribs <- concepts %>%
+    bind_cols(attributes)
+  selectedCols <- which(colnames(allAttribs) %in% c("id", "has_broader", "source_id", "class", "label", "source_label", "external_label"))
+
+  temp <- get_concept(x = allAttribs[,selectedCols], na.rm = FALSE, ontology = ontology, mappings = "all") %>%
     unite(col = "has_close_match", label, has_close_match, sep = " | ", na.rm = TRUE, remove = FALSE) %>%
     separate_rows(has_close_match, sep = " \\| ") %>%
     distinct() %>%
     group_by(label, class, id, has_broader, description, has_broader_match, has_exact_match, has_narrower_match) %>%
     summarise(has_close_match = paste0(has_close_match, collapse = " | ")) %>%
     ungroup() %>%
-    mutate(has_close_match = if_else(is.na(id), NA_character_, has_close_match))
+    mutate(has_close_match = if_else(is.na(id), NA_character_, has_close_match)) %>%
+    left_join(allAttribs)
 
   # determine those concepts, that are not yet defined in the ontology
   if(!is.null(prevMatches)){

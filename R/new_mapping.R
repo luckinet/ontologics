@@ -75,6 +75,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
   assertCharacter(x = description, null.ok = TRUE)
   assertIntegerish(x = certainty, lower = 1, upper = 4)
   assertChoice(x = type, choices = c("concept", "class"))
+  assertLogical(x = verbose, len = 1)
 
   if(inherits(x = ontology, what = "onto")){
     ontoPath <- NULL
@@ -193,7 +194,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
     select(id = newid, label = new, description, has_source)
 
-  if(!is.na(description)){
+  if(!all(is.na(description))){
     extMps$description <- description[which(new %in% temp$new)]
   }
 
