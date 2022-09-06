@@ -36,7 +36,7 @@ license under which this ontology can be (re)used.}
 this ontology.}
 }
 \value{
-it returns the new, emtpy ontology and also stores that within the
+it returns the new, empty ontology and also stores that within the
 directory specified in \code{path}.
 }
 \description{
