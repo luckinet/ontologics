@@ -8,5 +8,5 @@ globalVariables(c("id", "label_en", "new_id", "has_broader", "external",
                   "new_broader_match", "avail", "has_source", "label", "newid",
                   "external_label", "harmLab", "sort_in", "verbose", "new_label",
                   "prev_broader_match", "prev_close_match", "prev_exact_match",
-                  "prev_narrower_match"
+                  "prev_narrower_match", "children"
                   ))

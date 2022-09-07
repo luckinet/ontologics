@@ -184,12 +184,19 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
     left_join(broaderIDs, by = c("id", "class")) %>%
     unite(col = topID, topID, top2D, sep = "", na.rm = TRUE)
 
+  # get the maximum child ID that may have been defined already
+  oldChildConcepts <- theConcepts$harmonised %>%
+    group_by(has_broader) %>%
+    summarise(children = n())
+
   # build the new ID
   temp <- temp %>%
+    left_join(oldChildConcepts, by = c("topID" = "has_broader")) %>%
+    mutate(children = if_else(is.na(children), 0L, children)) %>%
     group_by(id) %>%
     mutate(nextID = if_else(!is.na(nestedID),
-                            paste0(topID, seperator, formatC(as.numeric(tail(str_split(nestedID, if_else(seperator == ".", "[.]", seperator))[[1]], 1)) + row_number(), flag = "0", width = digits)),
-                            paste0(topID, seperator, formatC(row_number(), flag = "0", width = digits))),
+                            paste0(topID, seperator, formatC(as.numeric(tail(str_split(nestedID, if_else(seperator == ".", "[.]", seperator))[[1]], 1)) + row_number() + children, flag = "0", width = digits)),
+                            paste0(topID, seperator, formatC(row_number() + children, flag = "0", width = digits))),
            nextID = as.character(nextID),
            has_close_match = NA_character_,
            has_narrower_match = NA_character_,
