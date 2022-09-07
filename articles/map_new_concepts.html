@@ -149,37 +149,8 @@
 </tr>
 </tbody>
 </table>
-<p>This tells us that that both ‘NUTS’ and ‘Wheat’ don’t seem to be missing from the ontology. We try to extract these concepts…</p>
+<p>This tells us that that both ‘NUTS’ and ‘Wheat’ don’t seem to be missing from the ontology. Moreover, we see that ‘Wheat’ is a <em>class</em> and not a <em>crop</em> and ‘NUTS’ doesn’t have any <em>broader</em> concept. We should probably check the hierarchical structure of the ontology for these two concepts as well. For ‘NUTS’ we can ask directly for the respective <em>code</em> and for ‘Wheat’ we would ask for the <em>broader</em> code. We see already here that the code has the same length, so ‘NUTS’ and whatever the parent of ‘Wheat’ are should be at the same hierarchical level.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">newConcepts</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,<span class="op">]</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">label</th>
-<th align="left">class</th>
-<th align="left">id</th>
-<th align="left">has_broader</th>
-<th align="left">description</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">Wheat</td>
-<td align="left">class</td>
-<td align="left">.02.09</td>
-<td align="left">.02</td>
-<td align="left">NA</td>
-</tr>
-<tr class="even">
-<td align="left">NUTS</td>
-<td align="left">group</td>
-<td align="left">.10</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-</tr>
-</tbody>
-</table>
-<p>… and see that ‘Wheat’ is a <em>class</em> and not a <em>crop</em> and ‘NUTS’ doesn’t have any <em>broader</em> concept. We should probably check the hierarchical structure of the ontology for these two concepts as well. For ‘NUTS’ we can ask directly for the respective <em>code</em> and for ‘Wheat’ we would ask for the <em>broader</em> code. We see already here that the code has the same length, so ‘NUTS’ and whatever the parent of ‘Wheat’ are should be at the same hierarchical level.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">newConcepts</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -200,7 +171,7 @@
 <td align="left">NA</td>
 </tr></tbody>
 </table>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">newConcepts</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -242,7 +213,7 @@
 </table>
 <p>It seems that ‘NUTS’ is not missing from the ontology, and has two child concepts. ‘Wheat’ is also not missing, but is defined as the wrong concept of type <em>class</em>, hence the crop ‘Wheat’ is in fact missing. ‘Avocado’ is also missing and has to be specified as new harmonised concept together with ‘Wheat’.</p>
 <p>By studying the ontology (as above), we can identify the semantic relation between the new concepts and the already harmonised concepts, in other words, into which already existing concepts the new harmonised concepts shall be nested. For the new harmonised concepts, we chose the lower capital letter words to show the difference between those and the external concepts.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">broaderConcepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Wheat"</span>, <span class="st">"Tropical and subtropical Fruit"</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>                               ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
 <span></span>
@@ -251,7 +222,7 @@
 <span>                     class <span class="op">=</span> <span class="st">"crop"</span>,</span>
 <span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span></code></pre></div>
 <p>Eventually, all new concepts can be mapped to already harmonised concepts. Even though ‘NUTS’ already exists, this also applies to this new concept, because the already existing concept ‘NUTS’ doesn’t necessarily have to be the same as the new concept ‘NUTS’ (<em>note: yes, this is a deliberate example, to make this exact point!</em>). This all depends on the respective definitions. When setting a new mapping, the type and the certainty of the match have to be defined. For ‘wheat’ this is a <em>close</em> match, because the concepts are very related. for ‘NUTS’ this is, after checking the theoretical definitions also a <em>close</em> match. ‘Avocado’ is nested into ‘Tropical Fruit’ and thus has the match type <em>broad</em> (because Tropical Fruit is broader than Avocado).</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">toMap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wheat"</span>, <span class="st">"NUTS"</span>, <span class="st">"avocado"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
 <span></span>
@@ -262,7 +233,7 @@
 <span>                     certainty <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span></code></pre></div>
 <p>It may be, moreover, that we want to (or have to) add new concepts, that do not have a class defined yet. This can be the case when we have to nest new concepts, our of a range of concepts that do have a valid class, into concepts that are already at the lowest possible hierarchical level. These concepts are, when specified with <code>class = NA</code>, <code>class = c(bla, blubb, NA)</code>, or <code>class = NULL</code>, assigned the actual class <code>undefined</code> and you are informed about how to proceed.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">broaderConcepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wheat"</span>, <span class="st">"wheat"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                               ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
 <span></span>
@@ -321,7 +292,7 @@
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># ... ok, then let's specify that class and re-run new_concept</span></span>
 <span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>new <span class="op">=</span> <span class="st">"cultivar"</span>, target <span class="op">=</span> <span class="st">"crop"</span>, </span>
 <span>                   description <span class="op">=</span> <span class="st">"type of plant that people have bred for desired traits"</span>, </span>
@@ -332,7 +303,7 @@
 <span>                     class <span class="op">=</span> <span class="st">"cultivar"</span>,</span>
 <span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span></code></pre></div>
 <p>Now we can check whether the updated ontology is as we’d expect, for example by looking at the tree of the respective items again. We should expect that the new harmonised concepts now appear in the ontology and that they have some link to an external concept defined.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -364,7 +335,7 @@
 <tr class="odd">
 <td align="left">wheat1</td>
 <td align="left">cultivar</td>
-<td align="left">.02.09.01.01</td>
+<td align="left">.02.09.01.03</td>
 <td align="left">.02.09.01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
@@ -372,14 +343,14 @@
 <tr class="even">
 <td align="left">wheat2</td>
 <td align="left">cultivar</td>
-<td align="left">.02.09.01.02</td>
+<td align="left">.02.09.01.04</td>
 <td align="left">.02.09.01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"NUTS"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -419,7 +390,7 @@
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FRUIT"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
