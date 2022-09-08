@@ -67,10 +67,12 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">start_ontology</span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  code <span class="op">=</span> <span class="st">".xx"</span>,</span>
 <span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  homepage <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  url <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  license <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  notes <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -80,6 +82,10 @@
     <h2>Arguments</h2>
     <dl><dt>name</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the path of the ontology.</p></dd>
+
+
+<dt>version</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the version of the ontology.</p></dd>
 
 
 <dt>path</dt>
@@ -100,6 +106,11 @@ new ontology.</p></dd>
 <dt>homepage</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the url to the homepage of the
 new ontology.</p></dd>
+
+
+<dt>url</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the url basis to construct URIs for
+all concepts.</p></dd>
 
 
 <dt>license</dt>

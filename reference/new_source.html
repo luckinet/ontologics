@@ -66,20 +66,34 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">new_source</span><span class="op">(</span></span>
+<span>  ontology <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  homepage <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  url <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  license <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  notes <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ontology <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  notes <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>name</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the name of the new source (should
+    <dl><dt>ontology</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">ontology(1)</a></code><br> either a path where the ontology is
+stored, or an already loaded ontology into which the new source should be
+included.</p></dd>
+
+
+<dt>name</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the name of the new source (must
 not contain empty spaces).</p></dd>
+
+
+<dt>version</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the version of the new source
+(any value is allowed, but should be a value that follows
+<a href="https://semver.org/" class="external-link">semantic versioning</a>).</p></dd>
 
 
 <dt>description</dt>
@@ -88,8 +102,16 @@ the new source.</p></dd>
 
 
 <dt>homepage</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the homepage of the new source
-(this could be the basis of the concept URIs).</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the homepage of the new
+source, typically the place where additional information or meta-data could
+be retrieved in a non-formalised way.</p></dd>
+
+
+<dt>url</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the specific uniform resource
+locator of the concepts. This is a web address all concepts of the new
+source have in common and which is thus the basis to construct the concept
+specific URI.</p></dd>
 
 
 <dt>license</dt>
@@ -101,12 +123,19 @@ new source is published.</p></dd>
 <dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> any notes on the new source that
 don't fit into any of the other meta-data fields here.</p></dd>
 
-
-<dt>ontology</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">ontology(1)</a></code><br> either a path where the ontology is
-stored, or an already loaded ontology.</p></dd>
-
 </dl></div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Fundamentally, there are two types of sources that can be defined
+with this function.</p><ul><li><p><em>linked open data</em>: where the
+concepts that occur in another vocabulary or ontology and which are
+themselves part of linked datasets (and hence have a valid URI) are
+associated as related concepts to the harmonised concepts.</p></li>
+</ul><p>In the latter
+case, each mapped concept should be provided by its ID and the source needs
+to have a URL that allows in combination with the concept IDs to construct
+the URI under which the mapped concepts are stored in the semantic web.</p>
+    </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
@@ -114,6 +143,7 @@ stored, or an already loaded ontology.</p></dd>
 <span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_ontology.html">load_ontology</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu">new_source</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"externalDataset"</span>,</span></span>
+<span class="r-in"><span>                   version <span class="op">=</span> <span class="st">"0.0.1"</span>,</span></span>
 <span class="r-in"><span>                   description <span class="op">=</span> <span class="st">"a vocabulary"</span>,</span></span>
 <span class="r-in"><span>                   homepage <span class="op">=</span> <span class="st">"https://www.something.net"</span>,</span></span>
 <span class="r-in"><span>                   license <span class="op">=</span> <span class="st">"CC-BY-0"</span>,</span></span>
