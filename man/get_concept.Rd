@@ -9,7 +9,7 @@ get_concept(
   ...,
   regex = FALSE,
   tree = FALSE,
-  missing = FALSE,
+  na.rm = FALSE,
   mappings = "none",
   ontology = NULL
 )
@@ -28,8 +28,8 @@ returned.}
 \item{tree}{\code{\link[=logical]{logical(1)}}\cr whether or not to output the whole
 ontology tree starting from the given search terms.}
 
-\item{missing}{\code{\link[=logical]{logical(1)}}\cr whether or not to give only those
-values that are currently missing from the ontology.}
+\item{na.rm}{\code{\link[=logical]{logical(1)}}\cr whether or not missing concepts are
+omitted or not.}
 
 \item{mappings}{\code{\link[=character]{character(1)}}\cr the type of mappings within
 which to search for the concepts, possible values are \code{"none"},

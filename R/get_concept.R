@@ -9,8 +9,8 @@
 #'   returned.
 #' @param tree [`logical(1)`][logical]\cr whether or not to output the whole
 #'   ontology tree starting from the given search terms.
-#' @param missing [`logical(1)`][logical]\cr whether or not to give only those
-#'   values that are currently missing from the ontology.
+#' @param na.rm [`logical(1)`][logical]\cr whether or not missing concepts are
+#'   omitted or not.
 #' @param mappings [`character(1)`][character]\cr the type of mappings within
 #'   which to search for the concepts, possible values are \code{"none"},
 #'   \code{"all"}, \code{"close"}, \code{"broader"}, \code{"narrower"},
@@ -50,16 +50,14 @@
 #' @export
 
 get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
-                        missing = FALSE, mappings = "none", ontology = NULL){
+                        na.rm = FALSE, mappings = "none", ontology = NULL){
 
   assertDataFrame(x = x, null.ok = FALSE)
   assertLogical(x = regex, len = 1, any.missing = FALSE)
   assertLogical(x = tree, len = 1, any.missing = FALSE)
-  assertLogical(x = missing, len = 1, any.missing = FALSE)
+  assertLogical(x = na.rm, len = 1, any.missing = FALSE)
   assertSubset(x = mappings, choices = c("all", "none", "close", "broader", "narrower", "exact"))
-  if(regex & missing){
-    stop("you can only search for missing items with 'regex = FALSE'.")
-  }
+
   if("none" %in% mappings){
     mappings <- NULL
   } else {
@@ -129,8 +127,6 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
         mutate(external_label = na_if(external_label, "NA")) %>%
         pivot_wider(id_cols = c(label, class, id, description, has_broader), names_from = match, values_from = external_label)
 
-
-
       toOutCompl <- toOut %>%
         filter(!is.na(id))
 
@@ -178,12 +174,12 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
 
   }
 
-  if(missing){
+  # if(missing){
 
-    out <- toOut %>%
-      filter(is.na(id))
+    # out <- toOut %>%
+      # filter(is.na(id))
 
-  } else {
+  # } else {
 
     if(tree){
 
@@ -194,11 +190,19 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
       out <- make_tree(theConcepts$harmonised, topID)
 
     } else {
-      out <- toOut %>%
-        filter(!is.na(id))
+
+      if(na.rm){
+        out <- toOut %>%
+          filter(!is.na(id))
+      } else {
+        out <- toOut
+      }
     }
 
-  }
+  out <- out %>%
+    select(label, class, id, has_broader, description, everything())
+
+  # }
 
   return(out)
 

@@ -1,5 +1,7 @@
 # ontologics 0.4.2
 
+- various fixes of convenience and to make ontologics work smoothly together with `arealDB`
+
 # ontologics 0.4.1
 
 - allow it that also classes are handled with the `new_mapping()` function, which also means that `new_class()` can now only set harmonised classes.
@@ -8,12 +10,12 @@
 
 - adapt the onto-class structure according to issue https://github.com/luckinet/ontologics/issues/6; this entails that concepts and classes are summarised into their respective slot, with sub-tables "harmonised" and "external", featuring specific columns.
 - change all functions to support this new structure
-- this changes the behaviour of the function `new_concept()` insofar that this only creates harmonised concepts (so no source needs to be provided here anymore) and of the funciton `new_mapping()` insofar that this now creates external concepts and their mapping to harmonised concepts (and thus writes into the sub-table "external" and into the "mapping-columns" of the sub-table "harmonised")
+- this changes the behaviour of the function `new_concept()` insofar that this only creates harmonised concepts (so no source needs to be provided here anymore) and of the function `new_mapping()` insofar that this now creates external concepts and their mapping to harmonised concepts (and thus writes into the sub-table "external" and into the "mapping-columns" of the sub-table "harmonised")
 
 # ontologics 0.3.2
 
 - adapt column names according to issue https://github.com/luckinet/ontologics/issues/5
-- revise how to extract concents via `get_concept()`. Now you have to provide a table that contains the column name on which to subset and the values in that column that should be filtered from the ontology.
+- revise how to extract concepts via `get_concept()`. Now you have to provide a table that contains the column name on which to subset and the values in that column that should be filtered from the ontology.
 
 # ontologics 0.3.1
 
