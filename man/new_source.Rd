@@ -5,41 +5,67 @@
 \title{Add a new valid source to an ontology}
 \usage{
 new_source(
+  ontology = NULL,
   name = NULL,
+  version = NULL,
   description = NULL,
   homepage = NULL,
+  url = NULL,
   license = NULL,
-  notes = NULL,
-  ontology = NULL
+  notes = NULL
 )
 }
 \arguments{
-\item{name}{\code{\link[=character]{character(1)}}\cr the name of the new source (should
+\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
+stored, or an already loaded ontology into which the new source should be
+included.}
+
+\item{name}{\code{\link[=character]{character(1)}}\cr the name of the new source (must
 not contain empty spaces).}
+
+\item{version}{\code{\link[=character]{character(1)}}\cr the version of the new source
+(any value is allowed, but should be a value that follows
+\href{https://semver.org/}{semantic versioning}).}
 
 \item{description}{\code{\link[=character]{character(1)}}\cr a verbatim description of
 the new source.}
 
-\item{homepage}{\code{\link[=character]{character(1)}}\cr the homepage of the new source
-(this could be the basis of the concept URIs).}
+\item{homepage}{\code{\link[=character]{character(1)}}\cr the homepage of the new
+source, typically the place where additional information or meta-data could
+be retrieved in a non-formalised way.}
+
+\item{url}{\code{\link[=character]{character(1)}}\cr the specific uniform resource
+locator of the concepts. This is a web address all concepts of the new
+source have in common and which is thus the basis to construct the concept
+specific URI.}
 
 \item{license}{\code{\link[=character]{character(1)}}\cr the licenses under which the
 new source is published.}
 
 \item{notes}{\code{\link[=character]{character(1)}}\cr any notes on the new source that
 don't fit into any of the other meta-data fields here.}
-
-\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
-stored, or an already loaded ontology.}
 }
 \description{
 Add a new valid source to an ontology
+}
+\details{
+Fundamentally, there are two types of sources that can be defined
+with this function. \itemize{\item \emph{attribute collections}: where a
+collection of terms or concepts are associated as a descriptive attribute
+to the harmonised concepts, and \item \emph{linked open data}: where the
+concepts that occur in another vocabulary or ontology and which are
+themselves part of linked datasets (and hence have a valid URI) are
+associated as related concepts to the harmonised concepts.} In the latter
+case, each mapped concept should be provided by its ID and the source needs
+to have a URL that allows in combination with the concept IDs to construct
+the URI under which the mapped concepts are stored in the semantic web.
 }
 \examples{
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 onto <- load_ontology(path = ontoDir)
 
 onto <- new_source(name = "externalDataset",
+                   version = "0.0.1",
                    description = "a vocabulary",
                    homepage = "https://www.something.net",
                    license = "CC-BY-0",

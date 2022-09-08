@@ -6,16 +6,20 @@
 \usage{
 start_ontology(
   name = NULL,
+  version = NULL,
   path = NULL,
   code = ".xx",
   description = NULL,
   homepage = NULL,
+  url = NULL,
   license = NULL,
   notes = NULL
 )
 }
 \arguments{
 \item{name}{\code{\link[=character]{character(1)}}\cr the path of the ontology.}
+
+\item{version}{\code{\link[=character]{character(1)}}\cr the version of the ontology.}
 
 \item{path}{\code{\link[=character]{character(1)}}\cr the path where the ontology shall
 be stored.}
@@ -28,6 +32,9 @@ new ontology.}
 
 \item{homepage}{\code{\link[=character]{character(1)}}\cr the url to the homepage of the
 new ontology.}
+
+\item{url}{\code{\link[=character]{character(1)}}\cr the url basis to construct URIs for
+all concepts.}
 
 \item{license}{\code{\link[=character]{character(1)}}\cr any string describing the
 license under which this ontology can be (re)used.}

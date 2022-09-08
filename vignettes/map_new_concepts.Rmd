@@ -30,6 +30,7 @@ crops <- load_ontology(path = system.file("extdata", "crops.rds", package = "ont
 
 # where we have to set the external dataset as new source
 crops <- new_source(name = "externalDataset",
+                    version = "0.0.1",
                     description = "a vocabulary",
                     homepage = "https://www.something.net",
                     license = "CC-BY-4.0",
