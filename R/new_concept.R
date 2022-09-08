@@ -32,13 +32,15 @@
 #'   ontology = onto
 #' )
 #'
-#' onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) %>%
-#'   new_concept(
-#'     new = concepts$new,
-#'     broader = .,
-#'     class = "crop",
-#'     ontology = onto
-#'   )
+#' onto <- new_concept(
+#'   new = concepts$new,
+#'   broader = get_concept(
+#'               x = data.frame(label = concepts$old),
+#'               ontology = onto
+#'             ),
+#'   class = "crop",
+#'   ontology = onto
+#' )
 #'
 #' # add concepts where the nesting is clear, but not the new class
 #' concepts <- data.frame(
@@ -46,12 +48,14 @@
 #'   new = c("food", "bio-energy")
 #' )
 #'
-#' onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) %>%
-#'   new_concept(
-#'     new = concepts$new,
-#'     broader = .,
-#'     ontology = onto
-#'   )
+#' onto <- new_concept(
+#'   new = concepts$new,
+#'   broader = get_concept(
+#'               x = data.frame(label = concepts$old),
+#'               ontology = onto
+#'             ),
+#'   ontology = onto
+#' )
 #'
 #' # define that class ...
 #' onto <- new_class(
@@ -60,13 +64,15 @@
 #' )
 #'
 #' # ... and set the concepts again
-#' onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) %>%
-#'   new_concept(
-#'     new = concepts$new,
-#'     broader = .,
-#'     class = "use type",
-#'     ontology = onto
-#'   )
+#' onto <- new_concept(
+#'   new = concepts$new,
+#'   broader = get_concept(
+#'               x = data.frame(label = concepts$old),
+#'               ontology = onto
+#'             ),
+#'   class = "use type",
+#'   ontology = onto
+#' )
 #'
 #' @return returns invisibly a table of the new harmonised concepts that were
 #'   added to the ontology, or a message that nothing new was added.
