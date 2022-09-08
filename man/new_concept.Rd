@@ -68,7 +68,7 @@ onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) \%>\%
               ontology = onto)
 
 # define that class ...
-onto <- new_class(new = "use type", target = "class", harmonised = TRUE,
+onto <- new_class(new = "use type", target = "class",
                   description = "the way a crop is used", ontology = onto)
 
 # ... and set the concepts again

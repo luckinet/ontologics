@@ -19,40 +19,54 @@
 #' onto <- load_ontology(path = ontoDir)
 #'
 #' # add fully known concepts
-#' concepts <- data.frame(old = c("Bioenergy woody", "Bioenergy herbaceous"),
-#'                        new = c("acacia", "miscanthus"))
+#' concepts <- data.frame(
+#'   old = c("Bioenergy woody", "Bioenergy herbaceous"),
+#'   new = c("acacia", "miscanthus")
+#' )
 #'
-#' onto <- new_source(name = "externalDataset",
-#'                    description = "a vocabulary",
-#'                    homepage = "https://www.something.net",
-#'                    license = "CC-BY-0",
-#'                    ontology = onto)
+#' onto <- new_source(
+#'   name = "externalDataset",
+#'   description = "a vocabulary",
+#'   homepage = "https://www.something.net",
+#'   license = "CC-BY-0",
+#'   ontology = onto
+#' )
 #'
 #' onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) %>%
-#'   new_concept(new = concepts$new,
-#'               broader = .,
-#'               class = "crop",
-#'               ontology = onto)
+#'   new_concept(
+#'     new = concepts$new,
+#'     broader = .,
+#'     class = "crop",
+#'     ontology = onto
+#'   )
 #'
 #' # add concepts where the nesting is clear, but not the new class
-#' concepts <- data.frame(old = c("Barley", "Barley"),
-#'                        new = c("food", "bio-energy"))
+#' concepts <- data.frame(
+#'   old = c("Barley", "Barley"),
+#'   new = c("food", "bio-energy")
+#' )
 #'
 #' onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) %>%
-#'   new_concept(new = concepts$new,
-#'               broader = .,
-#'               ontology = onto)
+#'   new_concept(
+#'     new = concepts$new,
+#'     broader = .,
+#'     ontology = onto
+#'   )
 #'
 #' # define that class ...
-#' onto <- new_class(new = "use type", target = "class", harmonised = TRUE,
-#'                   description = "the way a crop is used", ontology = onto)
+#' onto <- new_class(
+#'   new = "use type", target = "class",
+#'   description = "the way a crop is used", ontology = onto
+#' )
 #'
 #' # ... and set the concepts again
 #' onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) %>%
-#'   new_concept(new = concepts$new,
-#'               broader = .,
-#'               class = "use type",
-#'               ontology = onto)
+#'   new_concept(
+#'     new = concepts$new,
+#'     broader = .,
+#'     class = "use type",
+#'     ontology = onto
+#'   )
 #'
 #' @return returns invisibly a table of the new harmonised concepts that were
 #'   added to the ontology, or a message that nothing new was added.
@@ -69,18 +83,12 @@
 new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
                         ontology = NULL){
 
-  if(is.null(new)){
-    return("no new concepts to harmonise.")
-  }
-  newChar <- testCharacter(x = new, ignore.case = FALSE)
-  if(!newChar){
-    new <- as.character(new)
-  }
+  assertCharacter(x = new, any.missing = FALSE)
   assertDataFrame(x = broader, null.ok = TRUE)
   assertCharacter(x = description, null.ok = TRUE)
   assertCharacter(x = class, null.ok = TRUE)
 
-  if(inherits(x = ontology, what = "onto")){
+  if (inherits(x = ontology, what = "onto")) {
     ontoPath <- NULL
   } else {
     assertFileExists(x = ontology, access = "rw", extension = "rds")
@@ -93,45 +101,38 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
 
   theConcepts <- ontology@concepts
 
-  if(!is.null(class)){
-
-    if(any(is.na(class))){
-
+  if (!is.null(class)) {
+    if (any(is.na(class))) {
       missing <- new[is.na(class)]
       class[is.na(class)] <- "undefined"
 
-      if(length(missing) > 4){
+      if (length(missing) > 4) {
         missString <- paste0(c(missing[1:3], "...", tail(missing, 1)), collapse = ", ")
       } else {
         missString <- paste0(missing, collapse = ", ")
       }
 
       warning("some new concepts (", missString, ") don't have a class; please define this with 'new_class()' and re-run 'new_concept()' with these concepts and the new class.", call. = FALSE)
-
     } else {
-
-      if(!any(ontology@classes$harmonised$label %in% class)){
+      if (!any(ontology@classes$harmonised$label %in% class)) {
         missingClasses <- unique(class[!class %in% ontology@classes$harmonised$label])
         stop("the class(es) '", paste0(missingClasses, collapse = ", "), "' don't exist yet, please first define them with 'new_class()'.")
       }
-
     }
 
-    if(length(class) != length(new)){
-      if(length(class) == 1){
+    if (length(class) != length(new)) {
+      if (length(class) == 1) {
         class <- rep(x = class, length.out = length(new))
       } else {
         stop("the number of elements in 'class' is neither the same as in 'new' nor 1.")
       }
     }
-
   } else {
     warning("all new concepts don't have a class; please define this with 'new_class()' and re-run 'new_concept()' with these concepts and the new class.", call. = FALSE)
     class <- rep("undefined", length(new))
   }
 
-  if(!is.null(broader)){
-
+  if (!is.null(broader)) {
     assertNames(x = names(broader), must.include = c("id", "label", "class"))
 
     testConcept <- broader %>%
@@ -139,7 +140,7 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
       mutate(avail = TRUE) %>%
       left_join(theConcepts$harmonised, by = c("id", "label", "class"))
 
-    if(any(!testConcept$avail)){
+    if (any(!testConcept$avail)) {
       missingConcepts <- testConcept %>%
         filter(!avail) %>%
         pull(label)
@@ -149,10 +150,9 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
     broader <- tibble(id = rep(NA_character_, length(new)), label = rep(NA_character_, length(new)), class = rep(NA_character_, length(new)))
   }
 
-  if(!is.null(description)){
-
-    if(length(description) != length(new)){
-      if(length(description) == 1){
+  if (!is.null(description)) {
+    if (length(description) != length(new)) {
+      if (length(description) == 1) {
         description <- rep(x = description, length.out = length(new))
       } else {
         stop("the number of elements in 'description' is neither the same as in 'new' nor 1.")
@@ -183,17 +183,26 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
     arrange(id)
 
   # assign nested and broader IDs into the temporary object
-  temp <- bind_cols(broader, tibble(new = new, newClass = class, description = description)) %>%
+  temp <- broader %>%
+    select(id, label, class) %>%
+    bind_cols(tibble(new = new, newClass = class, description = description)) %>%
     left_join(nestedIDs, by = c("id", "class")) %>%
     left_join(broaderIDs, by = c("id", "class")) %>%
     unite(col = topID, topID, top2D, sep = "", na.rm = TRUE)
 
+  # get the maximum child ID that may have been defined already
+  oldChildConcepts <- theConcepts$harmonised %>%
+    group_by(has_broader) %>%
+    summarise(children = n())
+
   # build the new ID
   temp <- temp %>%
+    left_join(oldChildConcepts, by = c("topID" = "has_broader")) %>%
+    mutate(children = if_else(is.na(children), 0L, children)) %>%
     group_by(id) %>%
     mutate(nextID = if_else(!is.na(nestedID),
-                            paste0(topID, seperator, formatC(as.numeric(tail(str_split(nestedID, if_else(seperator == ".", "[.]", seperator))[[1]], 1)) + row_number(), flag = "0", width = digits)),
-                            paste0(topID, seperator, formatC(row_number(), flag = "0", width = digits))),
+                            paste0(topID, seperator, formatC(as.numeric(tail(str_split(nestedID, if_else(seperator == ".", "[.]", seperator))[[1]], 1)) + row_number() + children, flag = "0", width = digits)),
+                            paste0(topID, seperator, formatC(row_number() + children, flag = "0", width = digits))),
            nextID = as.character(nextID),
            has_close_match = NA_character_,
            has_narrower_match = NA_character_,
@@ -202,12 +211,14 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
     ungroup()
 
   temp <- temp %>%
-    select(id = nextID,
-           label = new,
-           description,
-           class = newClass,
-           has_broader = id,
-           has_close_match, has_narrower_match, has_broader_match, has_exact_match) %>%
+    select(
+      id = nextID,
+      label = new,
+      description,
+      class = newClass,
+      has_broader = id,
+      has_close_match, has_narrower_match, has_broader_match, has_exact_match
+    ) %>%
     bind_rows(theConcepts$harmonised) %>%
     arrange(id)
 
@@ -228,15 +239,16 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
     filter(!undefined) %>%
     arrange(id)
 
-  out <- new(Class = "onto",
-             sources = ontology@sources,
-             classes = ontology@classes,
-             concepts = theConcepts)
+  out <- new(
+    Class = "onto",
+    sources = ontology@sources,
+    classes = ontology@classes,
+    concepts = theConcepts
+  )
 
-  if(!is.null(ontoPath)){
+  if (!is.null(ontoPath)) {
     write_rds(x = out, file = ontoPath)
   }
 
   return(out)
-
 }

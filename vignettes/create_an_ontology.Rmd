@@ -43,7 +43,7 @@ lulc <- start_ontology(name = "land_surface_properties",
                        path = tempdir(), 
                        code = ".xx",
                        description = "showcase of the ontologics R-package", 
-                       homepage = "https://www.luckinet.org", 
+                       homepage = "http://www.luckinet.org", 
                        license = "CC-BY-4.0")
 
 str(lulc)
@@ -61,52 +61,68 @@ Next, classes and their hierarchy need to be defined. Each concept is always a c
 
 ```{r}
 # currently it is merely possible to set only one class at a time
-lulc <- new_class(new = "landcover", target = NA, description = "A good definition of landcover", 
-                  harmonised = TRUE, ontology = lulc) %>%
-  new_class(new = "land-use", target = "landcover", description = "A good definition of land-use", 
-            harmonised = TRUE, ontology = .)
+lulc <- new_class(
+  new = "landcover", target = NA, description = "A good definition of landcover",
+  ontology = lulc
+) %>%
+  new_class(
+    new = "land-use", target = "landcover", description = "A good definition of land-use",
+    ontology = .
+  )
 
-kable(lulc@classes$harmonised[,1:6])
+kable(lulc@classes$harmonised[, 1:6])
 ```
 
 Then, new concepts that have these classes can be defined. In case classes are chosen that are not yet defined, you'll get a warning.
 
 
 ```{r}
-lc <- c("Urban fabric", "Industrial, commercial and transport units",
-        "Mine, dump and construction sites", "Artificial, non-agricultural vegetated areas", 
-        "Temporary cropland", "Permanent cropland", "Heterogeneous agricultural areas", 
-        "Forests", "Other Wooded Areas", "Shrubland", "Herbaceous associations", 
-        "Heterogeneous semi-natural areas", "Open spaces with little or no vegetation", 
-        "Inland wetlands", "Marine wetlands", "Inland waters", "Marine waters")
+lc <- c(
+  "Urban fabric", "Industrial, commercial and transport units",
+  "Mine, dump and construction sites", "Artificial, non-agricultural vegetated areas",
+  "Temporary cropland", "Permanent cropland", "Heterogeneous agricultural areas",
+  "Forests", "Other Wooded Areas", "Shrubland", "Herbaceous associations",
+  "Heterogeneous semi-natural areas", "Open spaces with little or no vegetation",
+  "Inland wetlands", "Marine wetlands", "Inland waters", "Marine waters"
+)
 
-lulc <- new_concept(new = lc,
-                    class = "landcover", 
-                    ontology = lulc)
+lulc <- new_concept(
+  new = lc,
+  class = "landcover",
+  ontology = lulc
+)
 
-kable(lulc@concepts$harmonised[,1:6])
+kable(lulc@concepts$harmonised[, 1:5])
 ```
 
 An ontology is different from a vocabulary in that concepts that are contained in an ontology are related semantically to one another. For example, concepts can be nested into other concepts. Hence, let's create also a second level of concepts that depend on the first level.
 
 
 ```{r}
-lu <- tibble(concept = c("Fallow", "Herbaceous crops", "Temporary grazing",
-                         "Permanent grazing", "Shrub orchards", "Palm plantations", 
-                         "Tree orchards", "Woody plantation", "Protective cover", 
-                         "Agroforestry", "Mosaic of agricultural-uses",
-                         "Mosaic of agriculture and natural vegetation", 
-                         "Undisturbed Forest", "Naturally Regenerating Forest",
-                         "Planted Forest", "Temporally Unstocked Forest"),
-             broader = c(rep(lc[5], 3), rep(lc[6], 6),
-                        rep(lc[7], 3), rep(lc[8], 4)))
+lu <- tibble(
+  concept = c(
+    "Fallow", "Herbaceous crops", "Temporary grazing",
+    "Permanent grazing", "Shrub orchards", "Palm plantations",
+    "Tree orchards", "Woody plantation", "Protective cover",
+    "Agroforestry", "Mosaic of agricultural-uses",
+    "Mosaic of agriculture and natural vegetation",
+    "Undisturbed Forest", "Naturally Regenerating Forest",
+    "Planted Forest", "Temporally Unstocked Forest"
+  ),
+  broader = c(
+    rep(lc[5], 3), rep(lc[6], 6),
+    rep(lc[7], 3), rep(lc[8], 4)
+  )
+)
 
-lulc <- new_concept(new = lu$concept,
-                    broader = get_concept(x = lu %>% select(label = broader), ontology = lulc),
-                    class = "land-use",
-                    ontology =  lulc)
+lulc <- new_concept(
+  new = lu$concept,
+  broader = get_concept(x = lu %>% select(label = broader), ontology = lulc),
+  class = "land-use",
+  ontology = lulc
+)
 
-kable(lulc@concepts$harmonised[,1:6])
+kable(lulc@concepts$harmonised[, 1:5])
 ```
 
 Here we see that `get_concept()` was used to extract those broader concepts, into which the new level is nested. This is to ensure that a valid concept is provided, i.e., one that has already been included into the ontology.
