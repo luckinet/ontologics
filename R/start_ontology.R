@@ -15,7 +15,7 @@
 #'   concatenated for nested levels.
 #' @examples
 #' start_ontology(name = "crops", path = tempdir())
-#' @return it returns the new, emtpy ontology and also stores that within the
+#' @return it returns the new, empty ontology and also stores that within the
 #'   directory specified in \code{path}.
 #' @importFrom checkmate assertCharacter assertDirectoryExists
 #' @importFrom methods new
