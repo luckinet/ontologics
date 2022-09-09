@@ -150,55 +150,73 @@ setMethod(f = "show",
               separate(col = "id", sep = "[.]", into = paste0("id_", 0:usedClasses), fill = "right") %>%
               select(-id_0)
 
-            if(usedClasses > 1){
-              items1 <- itemsPerGroup %>%
-                filter(!is.na(id_2))
-            } else {
-              items1 <- itemsPerGroup
-            }
+            if(dim(itemsPerGroup)[1] != 0){
 
-            if(dim(items1)[1] < getOption("width")){
-              graphWidth <- dim(items1)[1]
-            } else {
-              graphWidth <- getOption("width") - 2
-            }
-            items1 <- items1 %>%
-              group_by(id_1) %>%
-              summarise(items_1 = n()) %>%
-              mutate(prop_1 =  round(items_1 / sum(items_1) * graphWidth, 0))
+              if(usedClasses > 1){
+                items1 <- itemsPerGroup %>%
+                  filter(!is.na(id_2))
+              } else {
+                items1 <- itemsPerGroup
+              }
 
-            if(usedConcepts > 5){
-              temp <- itemsPerGroup %>%
-                filter(is.na(has_broader)) %>%
-                left_join(items1, by = "id_1") %>%
-                mutate(temp = paste0("'", label, "'", " (", items_1, ")")) %>%
-                arrange(desc(items_1))
-              conceptList <- paste0("    -> ", paste0(temp$temp[1:5], collapse = ", "), ", ...\n\n")
-            } else {
-              conceptList <- paste0("    -> ", paste0(temp$temp, collapse = ", "), "\n\n")
-            }
+              if(dim(items1)[1] < getOption("width")){
+                graphWidth <- dim(items1)[1]
+              } else {
+                graphWidth <- getOption("width") - 2
+              }
 
-            indent1 <- 2 + itemsPerClass$level
-            className <- theClasses$harmonised$label
-            indent22 <- indent1 + nchar(className)
-            indent22 <- max(indent22) - indent22
-            definitions <- theClasses$harmonised$description
-            itemsPerClass <- itemsPerGroup %>%
-              group_by(class) %>%
-              summarise(items = n()) %>%
-              left_join(itemsPerClass, ., by = c("label" = "class")) %>%
-              mutate(items = if_else(is.na(items), 0L, items))
-            indent2 <- 3 + (max(nchar(itemsPerClass$items), na.rm = TRUE) - nchar(itemsPerClass$items)) + indent22
+              items1 <- items1 %>%
+                group_by(id_1) %>%
+                summarise(items_1 = n()) %>%
+                mutate(prop_1 =  round(items_1 / sum(items_1) * graphWidth, 0))
+
+              if(usedConcepts > 5){
+                temp <- itemsPerGroup %>%
+                  filter(is.na(has_broader)) %>%
+                  left_join(items1, by = "id_1") %>%
+                  mutate(temp = paste0("'", label, "'", " (", items_1, ")")) %>%
+                  arrange(desc(items_1))
+                conceptList <- paste0("    -> ", paste0(temp$temp[1:5], collapse = ", "), ", ...\n\n")
+              } else {
+                conceptList <- paste0("    -> ", paste0(temp$temp, collapse = ", "), "\n\n")
+              }
+
+              ticks <- map(seq_along(items1$prop_1), function(ix){
+                paste0(rep("-", items1$prop_1[ix]-1), collapse = "")
+              })
+              ticks <- paste0(ticks, collapse = "|")
+
+              conceptList <- paste0(conceptList,
+                                    " ", paste0("|", paste0(rep("-", nchar(ticks)), collapse = ""), "|"), "\n",
+                                    " ", paste0("|", ticks, "|"))
+
+              indent1 <- 2 + itemsPerClass$level
+              className <- theClasses$harmonised$label
+              indent22 <- indent1 + nchar(className)
+              indent22 <- max(indent22) - indent22
+              definitions <- theClasses$harmonised$description
+              itemsPerClass <- itemsPerGroup %>%
+                group_by(class) %>%
+                summarise(items = n()) %>%
+                left_join(itemsPerClass, ., by = c("label" = "class")) %>%
+                mutate(items = if_else(is.na(items), 0L, items))
+              indent2 <- 3 + (max(nchar(itemsPerClass$items), na.rm = TRUE) - nchar(itemsPerClass$items)) + indent22
+
+
+            } else {
+
+              conceptList <- ""
+              indent1
+              className
+              indent2
+              itemsPerClass
+              definitions
+
+            }
 
             classList <- paste0(strrep(" ", indent1), "\u221F ", className, strrep(" ", indent2), itemsPerClass$items, "   ", definitions)
-            # classList <- indent1
 
-            ticks <- map(seq_along(items1$prop_1), function(ix){
-              paste0(rep("-", items1$prop_1[ix]-1), collapse = "")
-            })
-            ticks <- paste0(ticks, collapse = "|")
 
-            #
             cat(paste0("  sources : ", nrSources, "\n"))
             cat(sourceList)
 
@@ -206,10 +224,6 @@ setMethod(f = "show",
             cat(paste0(classList, collapse = "\n"), "\n\n")
             cat("  concepts:", nrConcepts, "\n")
             cat(conceptList)
-            cat(" ", paste0("|", paste0(rep("-", nchar(ticks)), collapse = ""), "|"), "\n")
-            cat(" ", paste0("|", ticks, "|"))
-
-
 
           }
 )
