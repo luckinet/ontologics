@@ -11,14 +11,16 @@
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
 #'
-#' export_as_rdf(ontology = onto, filename = onto.ttl)
+#' export_as_rdf(ontology = onto, filename = "onto.ttl")
 #' @importFrom checkmate assertCharacter
 #' @importFrom stringr str_ends str_split
+#' @importFrom utils URLencode
 #' @importFrom dplyr na_if pull
 #' @importFrom rdflib rdf rdf_add rdf_serialize rdf_free
 #' @export
 
 export_as_rdf <- function(ontology, filename) {
+
     assertCharacter(x = filename, len = 1, any.missing = FALSE)
 
     make_resource <- function(prefix, id) {
@@ -36,11 +38,11 @@ export_as_rdf <- function(ontology, filename) {
     # check if each source contains a label and homepage,
     # if not: fill placeholders
     for (i in seq_len(nrow(prefixes))) {
-        if (prefixes[i, "label"] == "") {
-            prefixes[i, "label"] <- paste0("nosrc", i)
+        if (prefixes$label[i] == "") {
+            prefixes$label[i] <- paste0("nosrc", i)
         }
-        if (prefixes[i, "homepage"] == "") {
-            prefixes[i, "homepage"] <- paste0("no-source-homepage-entered", i)
+        if (is.na(prefixes$homepage[i])) {
+            prefixes$homepage[i] <- paste0("no-source-homepage-entered", i)
         }
     }
 
@@ -70,7 +72,7 @@ export_as_rdf <- function(ontology, filename) {
         rdfs = "http://www.w3.org/2000/01/rdf-schema#",
         owl = "http://www.w3.org/2002/07/owl#",
         xsd = "http://www.w3.org/2001/XMLSchema#",
-        dct = "http://purl.org/dc/terms/",
+        dct = "http://purl.org/dc/terms/"
     )
 
 
