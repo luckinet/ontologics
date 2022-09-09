@@ -219,5 +219,53 @@ setMethod(f = "show",
             #   cat(yellow("resolution "), as.numeric(theRes), "(x, y)\n")
             #   cat(yellow("extent     "), c(theExt$x, theExt$y), "(xmin, xmax, ymin, ymax)")
             # }
+            theSources <- object@sources
+            theConcepts <- object@concepts
+            theClasses <- object@classes
+
+            nrSources <- dim(theSources)[1]
+            nrClasses <- dim(theClasses$harmonised)[1]
+            usedClasses <- length(unique(theConcepts$harmonised$class))
+            nrConcepts <- dim(theConcepts$harmonised)[1]
+
+            itemsPerSource <- theConcepts$external %>%
+              group_by(has_source) %>%
+              summarise(items = n()) %>%
+              rename(id = has_source) %>%
+              bind_rows(tibble(id = "1", items = as.integer(nrConcepts)), .) %>%
+              left_join(theSources, by = "id") %>%
+              mutate(temp = paste0("'", label, "'", " (", items, ")")) %>%
+              arrange(desc(items))
+
+            if(dim(itemsPerSource)[1] > 3){
+              sourceList <- paste0("    -> ", paste0(itemsPerSource$temp[1:3], collapse = ", "), ", ...\n\n")
+            } else {
+              sourceList <- paste0("    -> ", paste0(itemsPerSource$temp, collapse = ", "), "\n\n")
+            }
+
+            itemsPerGroup <- theConcepts$harmonised %>%
+              separate(col = "id", sep = "[.]", into = paste0("id_", 0:usedClasses), fill = "right") %>%
+              select(-id_0)
+
+            if(usedClasses > 1){
+              items1 <- itemsPerGroup %>%
+                filter(!is.na(id_2))
+            } else {
+              items1 <- itemsPerGroup
+            }
+            items1 <- items1 %>%
+              group_by(id_1) %>%
+              summarise(items_1 = n()) %>%
+              mutate(props_1 =  items_1 / sum(items_1) * 100)
+
+            # "\u221F"
+            cat(paste0("  sources : ", nrSources, "\n"))
+            cat(sourceList)
+
+            cat("  classes :", nrClasses, "\n")
+            cat("  concepts:", nrConcepts, "\n")
+
+
+
           }
 )
