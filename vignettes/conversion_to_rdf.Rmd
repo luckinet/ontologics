@@ -152,5 +152,5 @@ Harmonised concepts relate to other harmonized concepts via the SKOS semantic re
 
 Harmonised Concepts relate to external concepts via the SKOS mapping properties. Harmonised Classes relate to external Classes via the SKOS mapping properties.
 
-![](./onto.png)
+<img src="onto.png" alt="onto_schematic" width="100%"/>
 
