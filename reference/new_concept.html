@@ -18,7 +18,7 @@ thus harmonise it with the already existing ontology."><meta property="og:image"
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -119,42 +119,62 @@ added to the ontology, or a message that nothing new was added.</p>
 <span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_ontology.html">load_ontology</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># add fully known concepts</span></span></span>
-<span class="r-in"><span><span class="va">concepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bioenergy woody"</span>, <span class="st">"Bioenergy herbaceous"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                       new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"acacia"</span>, <span class="st">"miscanthus"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">concepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bioenergy woody"</span>, <span class="st">"Bioenergy herbaceous"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"acacia"</span>, <span class="st">"miscanthus"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="new_source.html">new_source</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"externalDataset"</span>,</span></span>
-<span class="r-in"><span>                   version <span class="op">=</span> <span class="st">"0.0.1"</span>,</span></span>
-<span class="r-in"><span>                   description <span class="op">=</span> <span class="st">"a vocabulary"</span>,</span></span>
-<span class="r-in"><span>                   homepage <span class="op">=</span> <span class="st">"https://www.something.net"</span>,</span></span>
-<span class="r-in"><span>                   license <span class="op">=</span> <span class="st">"CC-BY-0"</span>,</span></span>
-<span class="r-in"><span>                   ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="new_source.html">new_source</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  version <span class="op">=</span> <span class="st">"0.0.1"</span>,</span></span>
+<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"externalDataset"</span>,</span></span>
+<span class="r-in"><span>  description <span class="op">=</span> <span class="st">"a vocabulary"</span>,</span></span>
+<span class="r-in"><span>  homepage <span class="op">=</span> <span class="st">"https://www.something.net"</span>,</span></span>
+<span class="r-in"><span>  license <span class="op">=</span> <span class="st">"CC-BY-0"</span>,</span></span>
+<span class="r-in"><span>  ontology <span class="op">=</span> <span class="va">onto</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">new_concept</span><span class="op">(</span>new <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">new</span>,</span></span>
-<span class="r-in"><span>              broader <span class="op">=</span> <span class="va">.</span>,</span></span>
-<span class="r-in"><span>              class <span class="op">=</span> <span class="st">"crop"</span>,</span></span>
-<span class="r-in"><span>              ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu">new_concept</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  new <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">new</span>,</span></span>
+<span class="r-in"><span>  broader <span class="op">=</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>              x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              ontology <span class="op">=</span> <span class="va">onto</span></span></span>
+<span class="r-in"><span>            <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  class <span class="op">=</span> <span class="st">"crop"</span>,</span></span>
+<span class="r-in"><span>  ontology <span class="op">=</span> <span class="va">onto</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># add concepts where the nesting is clear, but not the new class</span></span></span>
-<span class="r-in"><span><span class="va">concepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Barley"</span>, <span class="st">"Barley"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                       new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"food"</span>, <span class="st">"bio-energy"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">concepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Barley"</span>, <span class="st">"Barley"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"food"</span>, <span class="st">"bio-energy"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">new_concept</span><span class="op">(</span>new <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">new</span>,</span></span>
-<span class="r-in"><span>              broader <span class="op">=</span> <span class="va">.</span>,</span></span>
-<span class="r-in"><span>              ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu">new_concept</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  new <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">new</span>,</span></span>
+<span class="r-in"><span>  broader <span class="op">=</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>              x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              ontology <span class="op">=</span> <span class="va">onto</span></span></span>
+<span class="r-in"><span>            <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ontology <span class="op">=</span> <span class="va">onto</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>all new concepts don't have a class; please define this with 'new_class()' and re-run 'new_concept()' with these concepts and the new class.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># define that class ...</span></span></span>
-<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="new_class.html">new_class</a></span><span class="op">(</span>new <span class="op">=</span> <span class="st">"use type"</span>, target <span class="op">=</span> <span class="st">"class"</span>,</span></span>
-<span class="r-in"><span>                  description <span class="op">=</span> <span class="st">"the way a crop is used"</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="new_class.html">new_class</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  new <span class="op">=</span> <span class="st">"use type"</span>, target <span class="op">=</span> <span class="st">"class"</span>,</span></span>
+<span class="r-in"><span>  description <span class="op">=</span> <span class="st">"the way a crop is used"</span>, ontology <span class="op">=</span> <span class="va">onto</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ... and set the concepts again</span></span></span>
-<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">new_concept</span><span class="op">(</span>new <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">new</span>,</span></span>
-<span class="r-in"><span>              broader <span class="op">=</span> <span class="va">.</span>,</span></span>
-<span class="r-in"><span>              class <span class="op">=</span> <span class="st">"use type"</span>,</span></span>
-<span class="r-in"><span>              ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu">new_concept</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  new <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">new</span>,</span></span>
+<span class="r-in"><span>  broader <span class="op">=</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>              x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              ontology <span class="op">=</span> <span class="va">onto</span></span></span>
+<span class="r-in"><span>            <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  class <span class="op">=</span> <span class="st">"use type"</span>,</span></span>
+<span class="r-in"><span>  ontology <span class="op">=</span> <span class="va">onto</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

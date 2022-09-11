@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -234,12 +234,16 @@
 <p>Next, classes and their hierarchy need to be defined. Each concept is always a combination of a code, a label and a class. The code must be unique for each unique concept, but the label or the class can have the same value for two concepts. For instance, the concept <code>football</code> can have the class <code>game</code> or the class <code>object</code> and then mean two different things, despite having the same label.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># currently it is merely possible to set only one class at a time</span></span>
-<span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>new <span class="op">=</span> <span class="st">"landcover"</span>, target <span class="op">=</span> <span class="cn">NA</span>, description <span class="op">=</span> <span class="st">"A good definition of landcover"</span>, </span>
-<span>                  ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>new <span class="op">=</span> <span class="st">"land-use"</span>, target <span class="op">=</span> <span class="st">"landcover"</span>, description <span class="op">=</span> <span class="st">"A good definition of land-use"</span>, </span>
-<span>            ontology <span class="op">=</span> <span class="va">.</span><span class="op">)</span></span>
+<span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span></span>
+<span>  new <span class="op">=</span> <span class="st">"landcover"</span>, target <span class="op">=</span> <span class="cn">NA</span>, description <span class="op">=</span> <span class="st">"A good definition of landcover"</span>,</span>
+<span>  ontology <span class="op">=</span> <span class="va">lulc</span></span>
+<span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span></span>
+<span>    new <span class="op">=</span> <span class="st">"land-use"</span>, target <span class="op">=</span> <span class="st">"landcover"</span>, description <span class="op">=</span> <span class="st">"A good definition of land-use"</span>,</span>
+<span>    ontology <span class="op">=</span> <span class="va">.</span></span>
+<span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">classes</span><span class="op">$</span><span class="va">harmonised</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">classes</span><span class="op">$</span><span class="va">harmonised</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">id</th>
@@ -270,18 +274,22 @@
 </table>
 <p>Then, new concepts that have these classes can be defined. In case classes are chosen that are not yet defined, you’ll get a warning.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Urban fabric"</span>, <span class="st">"Industrial, commercial and transport units"</span>,</span>
-<span>        <span class="st">"Mine, dump and construction sites"</span>, <span class="st">"Artificial, non-agricultural vegetated areas"</span>, </span>
-<span>        <span class="st">"Temporary cropland"</span>, <span class="st">"Permanent cropland"</span>, <span class="st">"Heterogeneous agricultural areas"</span>, </span>
-<span>        <span class="st">"Forests"</span>, <span class="st">"Other Wooded Areas"</span>, <span class="st">"Shrubland"</span>, <span class="st">"Herbaceous associations"</span>, </span>
-<span>        <span class="st">"Heterogeneous semi-natural areas"</span>, <span class="st">"Open spaces with little or no vegetation"</span>, </span>
-<span>        <span class="st">"Inland wetlands"</span>, <span class="st">"Marine wetlands"</span>, <span class="st">"Inland waters"</span>, <span class="st">"Marine waters"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">lc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"Urban fabric"</span>, <span class="st">"Industrial, commercial and transport units"</span>,</span>
+<span>  <span class="st">"Mine, dump and construction sites"</span>, <span class="st">"Artificial, non-agricultural vegetated areas"</span>,</span>
+<span>  <span class="st">"Temporary cropland"</span>, <span class="st">"Permanent cropland"</span>, <span class="st">"Heterogeneous agricultural areas"</span>,</span>
+<span>  <span class="st">"Forests"</span>, <span class="st">"Other Wooded Areas"</span>, <span class="st">"Shrubland"</span>, <span class="st">"Herbaceous associations"</span>,</span>
+<span>  <span class="st">"Heterogeneous semi-natural areas"</span>, <span class="st">"Open spaces with little or no vegetation"</span>,</span>
+<span>  <span class="st">"Inland wetlands"</span>, <span class="st">"Marine wetlands"</span>, <span class="st">"Inland waters"</span>, <span class="st">"Marine waters"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span>new <span class="op">=</span> <span class="va">lc</span>,</span>
-<span>                    class <span class="op">=</span> <span class="st">"landcover"</span>, </span>
-<span>                    ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span></span>
+<span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span></span>
+<span>  new <span class="op">=</span> <span class="va">lc</span>,</span>
+<span>  class <span class="op">=</span> <span class="st">"landcover"</span>,</span>
+<span>  ontology <span class="op">=</span> <span class="va">lulc</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">concepts</span><span class="op">$</span><span class="va">harmonised</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">concepts</span><span class="op">$</span><span class="va">harmonised</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">id</th>
@@ -414,22 +422,30 @@
 </table>
 <p>An ontology is different from a vocabulary in that concepts that are contained in an ontology are related semantically to one another. For example, concepts can be nested into other concepts. Hence, let’s create also a second level of concepts that depend on the first level.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lu</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>concept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Fallow"</span>, <span class="st">"Herbaceous crops"</span>, <span class="st">"Temporary grazing"</span>,</span>
-<span>                         <span class="st">"Permanent grazing"</span>, <span class="st">"Shrub orchards"</span>, <span class="st">"Palm plantations"</span>, </span>
-<span>                         <span class="st">"Tree orchards"</span>, <span class="st">"Woody plantation"</span>, <span class="st">"Protective cover"</span>, </span>
-<span>                         <span class="st">"Agroforestry"</span>, <span class="st">"Mosaic of agricultural-uses"</span>,</span>
-<span>                         <span class="st">"Mosaic of agriculture and natural vegetation"</span>, </span>
-<span>                         <span class="st">"Undisturbed Forest"</span>, <span class="st">"Naturally Regenerating Forest"</span>,</span>
-<span>                         <span class="st">"Planted Forest"</span>, <span class="st">"Temporally Unstocked Forest"</span><span class="op">)</span>,</span>
-<span>             broader <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>, <span class="fl">6</span><span class="op">)</span>,</span>
-<span>                        <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">8</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">lu</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>  concept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Fallow"</span>, <span class="st">"Herbaceous crops"</span>, <span class="st">"Temporary grazing"</span>,</span>
+<span>    <span class="st">"Permanent grazing"</span>, <span class="st">"Shrub orchards"</span>, <span class="st">"Palm plantations"</span>,</span>
+<span>    <span class="st">"Tree orchards"</span>, <span class="st">"Woody plantation"</span>, <span class="st">"Protective cover"</span>,</span>
+<span>    <span class="st">"Agroforestry"</span>, <span class="st">"Mosaic of agricultural-uses"</span>,</span>
+<span>    <span class="st">"Mosaic of agriculture and natural vegetation"</span>,</span>
+<span>    <span class="st">"Undisturbed Forest"</span>, <span class="st">"Naturally Regenerating Forest"</span>,</span>
+<span>    <span class="st">"Planted Forest"</span>, <span class="st">"Temporally Unstocked Forest"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  broader <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>, <span class="fl">6</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lc</span><span class="op">[</span><span class="fl">8</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span>new <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">concept</span>,</span>
-<span>                    broader <span class="op">=</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">lu</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">broader</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span>,</span>
-<span>                    class <span class="op">=</span> <span class="st">"land-use"</span>,</span>
-<span>                    ontology <span class="op">=</span>  <span class="va">lulc</span><span class="op">)</span></span>
+<span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span></span>
+<span>  new <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">concept</span>,</span>
+<span>  broader <span class="op">=</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">lu</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">broader</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span>,</span>
+<span>  class <span class="op">=</span> <span class="st">"land-use"</span>,</span>
+<span>  ontology <span class="op">=</span> <span class="va">lulc</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">concepts</span><span class="op">$</span><span class="va">harmonised</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">concepts</span><span class="op">$</span><span class="va">harmonised</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">id</th>

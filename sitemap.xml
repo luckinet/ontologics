@@ -7,6 +7,9 @@
     <loc>http://luckinet.github.io/ontologics/LICENSE.html</loc>
   </url>
   <url>
+    <loc>http://luckinet.github.io/ontologics/articles/conversion_to_rdf.html</loc>
+  </url>
+  <url>
     <loc>http://luckinet.github.io/ontologics/articles/create_an_ontology.html</loc>
   </url>
   <url>
@@ -14,6 +17,9 @@
   </url>
   <url>
     <loc>http://luckinet.github.io/ontologics/articles/map_new_concepts.html</loc>
+  </url>
+  <url>
+    <loc>http://luckinet.github.io/ontologics/articles/ontology_database_description.html</loc>
   </url>
   <url>
     <loc>http://luckinet.github.io/ontologics/authors.html</loc>
@@ -26,6 +32,9 @@
   </url>
   <url>
     <loc>http://luckinet.github.io/ontologics/reference/edit_matches.html</loc>
+  </url>
+  <url>
+    <loc>http://luckinet.github.io/ontologics/reference/export_as_rdf.html</loc>
   </url>
   <url>
     <loc>http://luckinet.github.io/ontologics/reference/get_concept.html</loc>
