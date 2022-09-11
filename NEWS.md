@@ -1,3 +1,5 @@
+# ontologics 0.5.0
+
 # ontologics 0.4.2
 
 - various fixes of convenience and to make ontologics work smoothly together with `arealDB`
