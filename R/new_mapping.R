@@ -38,6 +38,7 @@
 #'                       type = c("close", "broader", "broader"))
 #'
 #' onto <- new_source(name = "externalDataset",
+#'                    version = "0.0.1",
 #'                    description = "a vocabulary",
 #'                    homepage = "https://www.something.net",
 #'                    license = "CC-BY-0",
