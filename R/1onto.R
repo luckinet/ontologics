@@ -191,7 +191,7 @@ setMethod(f = "show",
                                     " ", paste0("|", ticks, "|"))
 
               indent1 <- 2 + itemsPerClass$level
-              className <- theClasses$harmonised$label
+              className <- paste0("\u221F ", theClasses$harmonised$label)
               indent22 <- indent1 + nchar(className)
               indent22 <- max(indent22) - indent22
               definitions <- theClasses$harmonised$description
@@ -206,15 +206,15 @@ setMethod(f = "show",
             } else {
 
               conceptList <- ""
-              indent1
-              className
-              indent2
-              itemsPerClass
-              definitions
+              indent1 <- 0
+              className <- NULL
+              indent2 <- 0
+              itemsPerClass <- NULL
+              definitions <- NULL
 
             }
 
-            classList <- paste0(strrep(" ", indent1), "\u221F ", className, strrep(" ", indent2), itemsPerClass$items, "   ", definitions)
+            classList <- paste0(strrep(" ", indent1), className, strrep(" ", indent2), itemsPerClass$items, "   ", definitions)
 
 
             cat(paste0("  sources : ", nrSources, "\n"))
