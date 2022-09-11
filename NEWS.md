@@ -1,5 +1,7 @@
 # ontologics 0.5.0
 
+- include functions `export_as_rdf()` for being able to explort any ontology in other, semantic-web based, formats.
+
 # ontologics 0.4.2
 
 - various fixes of convenience and to make ontologics work smoothly together with `arealDB`
