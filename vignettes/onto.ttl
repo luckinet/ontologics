@@ -1,0 +1,495 @@
+@base <localhost://> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+<no-source-homepage-entered1#>
+    a skos:ConceptScheme ;
+    skos:hasTopConcept <no-source-homepage-entered1#class#group>, <no-source-homepage-entered1#concept#.01>, <no-source-homepage-entered1#concept#.02>, <no-source-homepage-entered1#concept#.03>, <no-source-homepage-entered1#concept#.04>, <no-source-homepage-entered1#concept#.05>, <no-source-homepage-entered1#concept#.06>, <no-source-homepage-entered1#concept#.07>, <no-source-homepage-entered1#concept#.08>, <no-source-homepage-entered1#concept#.09>, <no-source-homepage-entered1#concept#.10>, <no-source-homepage-entered1#concept#.11>, <no-source-homepage-entered1#concept#.12>, <no-source-homepage-entered1#concept#.13>, <no-source-homepage-entered1#concept#.14>, <no-source-homepage-entered1#concept#.15>, <no-source-homepage-entered1#concept#.16>, <no-source-homepage-entered1#concept#.17>, <no-source-homepage-entered1#concept#.18>, <no-source-homepage-entered1#concept#.19>, <no-source-homepage-entered1#concept#.20> ;
+    skos:note "imported manually" ;
+    skos:prefLabel "harmonised" .
+
+<no-source-homepage-entered1#class#class>
+    a rdfs:Class, skos:Concept ;
+    skos:broader <no-source-homepage-entered1#class#group> ;
+    skos:definition "Classes of crop or livestock commodities" ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#class#crop> ;
+    skos:prefLabel "class" .
+
+<no-source-homepage-entered1#class#crop>
+    a rdfs:Class, skos:Concept ;
+    skos:broader <no-source-homepage-entered1#class#class> ;
+    skos:definition "Crop or livestock commodities" ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "crop" .
+
+<no-source-homepage-entered1#class#group>
+    a rdfs:Class, skos:Concept ;
+    skos:definition "Groups of crop or livestock commodities" ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#class#class> ;
+    skos:prefLabel "group" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.01>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.01.01>, <no-source-homepage-entered1#concept#.01.02>, <no-source-homepage-entered1#concept#.01.03> ;
+    skos:prefLabel "BIOENERGY CROPS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.01.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.01> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Bioenergy herbaceous" .
+
+<no-source-homepage-entered1#concept#.01.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.01> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Bioenergy woody" .
+
+<no-source-homepage-entered1#concept#.01.03>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.01> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Other bioenergy crops" .
+
+<no-source-homepage-entered1#concept#.02>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.02.01>, <no-source-homepage-entered1#concept#.02.02>, <no-source-homepage-entered1#concept#.02.03>, <no-source-homepage-entered1#concept#.02.04>, <no-source-homepage-entered1#concept#.02.05>, <no-source-homepage-entered1#concept#.02.06>, <no-source-homepage-entered1#concept#.02.07>, <no-source-homepage-entered1#concept#.02.08>, <no-source-homepage-entered1#concept#.02.09> ;
+    skos:prefLabel "CEREALS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.02.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.02> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Barley" .
+
+<no-source-homepage-entered1#concept#.02.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.02> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Maize" .
+
+<no-source-homepage-entered1#concept#.02.03>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.02> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Millets" .
+
+<no-source-homepage-entered1#concept#.02.04>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.02> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Oats" .
+
+<no-source-homepage-entered1#concept#.02.05>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.02> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Other cereals" .
+
+<no-source-homepage-entered1#concept#.02.06>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.02> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Rice" .
+
+<no-source-homepage-entered1#concept#.02.07>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.02> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Rye" .
+
+<no-source-homepage-entered1#concept#.02.08>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.02> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Sorghum" .
+
+<no-source-homepage-entered1#concept#.02.09>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.02> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Wheat" .
+
+<no-source-homepage-entered1#concept#.03>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.03.01> ;
+    skos:prefLabel "FIBRE CROPS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.03.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.03> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Fibre crops" .
+
+<no-source-homepage-entered1#concept#.04>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.04.01>, <no-source-homepage-entered1#concept#.04.02> ;
+    skos:prefLabel "FLOWER CROPS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.04.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.04> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Flower herbs" .
+
+<no-source-homepage-entered1#concept#.04.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.04> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Woody flower crops" .
+
+<no-source-homepage-entered1#concept#.05>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.05.01>, <no-source-homepage-entered1#concept#.05.02>, <no-source-homepage-entered1#concept#.05.03> ;
+    skos:prefLabel "FODDER CROPS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.05.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.05> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Grass crops" .
+
+<no-source-homepage-entered1#concept#.05.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.05> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Fodder legumes" .
+
+<no-source-homepage-entered1#concept#.05.03>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.05> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Other fodder crops" .
+
+<no-source-homepage-entered1#concept#.06>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.06.01>, <no-source-homepage-entered1#concept#.06.02>, <no-source-homepage-entered1#concept#.06.03>, <no-source-homepage-entered1#concept#.06.04>, <no-source-homepage-entered1#concept#.06.05>, <no-source-homepage-entered1#concept#.06.06>, <no-source-homepage-entered1#concept#.06.07> ;
+    skos:prefLabel "FRUIT" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.06.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.06> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Berries" .
+
+<no-source-homepage-entered1#concept#.06.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.06> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Citrus Fruit" .
+
+<no-source-homepage-entered1#concept#.06.03>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.06> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Grapes" .
+
+<no-source-homepage-entered1#concept#.06.04>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.06> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Pome Fruit" .
+
+<no-source-homepage-entered1#concept#.06.05>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.06> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Stone Fruit" .
+
+<no-source-homepage-entered1#concept#.06.06>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.06> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Tropical and subtropical Fruit" .
+
+<no-source-homepage-entered1#concept#.06.07>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.06> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Other fruit" .
+
+<no-source-homepage-entered1#concept#.07>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.07.01>, <no-source-homepage-entered1#concept#.07.02> ;
+    skos:prefLabel "GUMS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.07.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.07> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Rubber" .
+
+<no-source-homepage-entered1#concept#.07.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.07> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Other gums" .
+
+<no-source-homepage-entered1#concept#.08>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.08.01> ;
+    skos:prefLabel "LEGUMINOUS CROPS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.08.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.08> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Leguminous crops" .
+
+<no-source-homepage-entered1#concept#.09>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.09.01> ;
+    skos:prefLabel "MEDICINAL CROPS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.09.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.09> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Medicinal crops" .
+
+<no-source-homepage-entered1#concept#.10>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.10.01>, <no-source-homepage-entered1#concept#.10.02> ;
+    skos:prefLabel "NUTS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.10.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.10> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Treenuts" .
+
+<no-source-homepage-entered1#concept#.10.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.10> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Other nuts" .
+
+<no-source-homepage-entered1#concept#.11>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.11.01> ;
+    skos:prefLabel "OILCROPS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.11.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.11> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Oilseed crops" .
+
+<no-source-homepage-entered1#concept#.12>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.12.01> ;
+    skos:prefLabel "OTHER CROPS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.12.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.12> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Other crops" .
+
+<no-source-homepage-entered1#concept#.13>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.13.01> ;
+    skos:prefLabel "ROOTS AND TUBERS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.13.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.13> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Roots and Tubers" .
+
+<no-source-homepage-entered1#concept#.14>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.14.01>, <no-source-homepage-entered1#concept#.14.02>, <no-source-homepage-entered1#concept#.14.03> ;
+    skos:prefLabel "STIMULANTS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.14.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.14> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Stimulant crops" .
+
+<no-source-homepage-entered1#concept#.14.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.14> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Spice crops" .
+
+<no-source-homepage-entered1#concept#.14.03>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.14> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Other stimulants" .
+
+<no-source-homepage-entered1#concept#.15>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.15.01>, <no-source-homepage-entered1#concept#.15.02>, <no-source-homepage-entered1#concept#.15.03> ;
+    skos:prefLabel "SUGAR CROPS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.15.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.15> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Sugar beet" .
+
+<no-source-homepage-entered1#concept#.15.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.15> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Sugar cane" .
+
+<no-source-homepage-entered1#concept#.15.03>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.15> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Other sugar crops" .
+
+<no-source-homepage-entered1#concept#.16>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.16.01>, <no-source-homepage-entered1#concept#.16.02>, <no-source-homepage-entered1#concept#.16.03>, <no-source-homepage-entered1#concept#.16.04>, <no-source-homepage-entered1#concept#.16.05> ;
+    skos:prefLabel "VEGETABLES" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.16.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.16> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Fruit-bearing vegetables" .
+
+<no-source-homepage-entered1#concept#.16.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.16> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Leafy or stem vegetables" .
+
+<no-source-homepage-entered1#concept#.16.03>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.16> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Mushrooms and truffles" .
+
+<no-source-homepage-entered1#concept#.16.04>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.16> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Root or Bulb vegetables" .
+
+<no-source-homepage-entered1#concept#.16.05>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.16> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Other vegetables" .
+
+<no-source-homepage-entered1#concept#.17>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.17.01> ;
+    skos:prefLabel "BIRDS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.17.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.17> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Poultry Birds" .
+
+<no-source-homepage-entered1#concept#.18>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.18.01>, <no-source-homepage-entered1#concept#.18.02> ;
+    skos:prefLabel "GLIRES" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.18.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.18> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Lagomorphs" .
+
+<no-source-homepage-entered1#concept#.18.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.18> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Rodents" .
+
+<no-source-homepage-entered1#concept#.19>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.19.01>, <no-source-homepage-entered1#concept#.19.02>, <no-source-homepage-entered1#concept#.19.03>, <no-source-homepage-entered1#concept#.19.04> ;
+    skos:prefLabel "UNGULATES" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.19.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.19> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Bovines" .
+
+<no-source-homepage-entered1#concept#.19.02>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.19> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Camelids" .
+
+<no-source-homepage-entered1#concept#.19.03>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.19> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Equines" .
+
+<no-source-homepage-entered1#concept#.19.04>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.19> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Pigs" .
+
+<no-source-homepage-entered1#concept#.20>
+    a skos:Concept, <no-source-homepage-entered1#class#group> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:narrower <no-source-homepage-entered1#concept#.20.01> ;
+    skos:prefLabel "INSECTS" ;
+    skos:topConceptOf <no-source-homepage-entered1#> .
+
+<no-source-homepage-entered1#concept#.20.01>
+    a skos:Concept, <no-source-homepage-entered1#class#class> ;
+    skos:broader <no-source-homepage-entered1#concept#.20> ;
+    skos:inScheme "no-source-homepage-entered1#" ;
+    skos:prefLabel "Insects" .
+

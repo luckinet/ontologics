@@ -43,40 +43,60 @@ ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 onto <- load_ontology(path = ontoDir)
 
 # add fully known concepts
-concepts <- data.frame(old = c("Bioenergy woody", "Bioenergy herbaceous"),
-                       new = c("acacia", "miscanthus"))
+concepts <- data.frame(
+  old = c("Bioenergy woody", "Bioenergy herbaceous"),
+  new = c("acacia", "miscanthus")
+)
 
-onto <- new_source(name = "externalDataset",
-                   version = "0.0.1",
-                   description = "a vocabulary",
-                   homepage = "https://www.something.net",
-                   license = "CC-BY-0",
-                   ontology = onto)
+onto <- new_source(
+  version = "0.0.1",
+  name = "externalDataset",
+  description = "a vocabulary",
+  homepage = "https://www.something.net",
+  license = "CC-BY-0",
+  ontology = onto
+)
 
-onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) \%>\%
-  new_concept(new = concepts$new,
-              broader = .,
-              class = "crop",
-              ontology = onto)
+onto <- new_concept(
+  new = concepts$new,
+  broader = get_concept(
+              x = data.frame(label = concepts$old),
+              ontology = onto
+            ),
+  class = "crop",
+  ontology = onto
+)
 
 # add concepts where the nesting is clear, but not the new class
-concepts <- data.frame(old = c("Barley", "Barley"),
-                       new = c("food", "bio-energy"))
+concepts <- data.frame(
+  old = c("Barley", "Barley"),
+  new = c("food", "bio-energy")
+)
 
-onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) \%>\%
-  new_concept(new = concepts$new,
-              broader = .,
-              ontology = onto)
+onto <- new_concept(
+  new = concepts$new,
+  broader = get_concept(
+              x = data.frame(label = concepts$old),
+              ontology = onto
+            ),
+  ontology = onto
+)
 
 # define that class ...
-onto <- new_class(new = "use type", target = "class",
-                  description = "the way a crop is used", ontology = onto)
+onto <- new_class(
+  new = "use type", target = "class",
+  description = "the way a crop is used", ontology = onto
+)
 
 # ... and set the concepts again
-onto <- get_concept(x = data.frame(label = concepts$old), ontology = onto) \%>\%
-  new_concept(new = concepts$new,
-              broader = .,
-              class = "use type",
-              ontology = onto)
+onto <- new_concept(
+  new = concepts$new,
+  broader = get_concept(
+              x = data.frame(label = concepts$old),
+              ontology = onto
+            ),
+  class = "use type",
+  ontology = onto
+)
 
 }
