@@ -49,6 +49,7 @@ concepts <- data.frame(
 )
 
 onto <- new_source(
+  version = "0.0.1",
   name = "externalDataset",
   description = "a vocabulary",
   homepage = "https://www.something.net",
