@@ -7,16 +7,31 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+library(knitr)
+```
+
+```{r setup}
+library(ontologics)
+library(tibble)
+library(dplyr, warn.conflicts = FALSE)
+```
+
 
 # Usage
 
 To export the ontology as RDF just call `export_as_rdf()`. The ontology and the filename have to be specified. The format is optional and defaults to RDF-Turtle. Available formats are `rdfxml`, `nquads`, `ntriples`, `turtle` or `jsonld`.
 
-```
+```{r}
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 onto <- load_ontology(path = ontoDir)
 
-export_as_rdf(ontology = onto, filename = onto.ttl, format = "turtle")
+export_as_rdf(ontology = onto, filename = "onto.ttl")
 ```
 
 # Conversion Rational
@@ -137,5 +152,5 @@ Harmonised concepts relate to other harmonized concepts via the SKOS semantic re
 
 Harmonised Concepts relate to external concepts via the SKOS mapping properties. Harmonised Classes relate to external Classes via the SKOS mapping properties.
 
-![](./assets/onto.png)
+![](./onto.png)
 
