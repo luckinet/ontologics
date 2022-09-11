@@ -1,12 +1,15 @@
 #' Start an ontology
 #'
 #' @param name [`character(1)`][character]\cr the path of the ontology.
+#' @param version [`character(1)`][character]\cr the version of the ontology.
 #' @param path [`character(1)`][character]\cr the path where the ontology shall
 #'   be stored.
 #' @param description [`character(1)`][character]\cr a brief description of the
 #'   new ontology.
 #' @param homepage [`character(1)`][character]\cr the url to the homepage of the
 #'   new ontology.
+#' @param url [`character(1)`][character]\cr the url basis to construct URIs for
+#'   all concepts.
 #' @param license [`character(1)`][character]\cr any string describing the
 #'   license under which this ontology can be (re)used.
 #' @param notes [`character(1)`][character]\cr any notes that might apply to
@@ -18,24 +21,29 @@
 #' @return it returns the new, empty ontology and also stores that within the
 #'   directory specified in \code{path}.
 #' @importFrom checkmate assertCharacter assertDirectoryExists
+#' @importFrom httr http_error
 #' @importFrom methods new
 #' @importFrom readr write_rds
 #' @export
 
-start_ontology <- function(name = NULL, path = NULL, code = ".xx", description = NULL,
-                           homepage = NULL, license = NULL, notes = NULL){
+start_ontology <- function(name = NULL, version = NULL, path = NULL, code = ".xx",
+                           description = NULL, homepage = NULL, url = NULL,
+                           license = NULL, notes = NULL){
 
   assertDirectoryExists(x = path, access = "rw")
 
   if(is.null(description)) description <- ""
   if(is.null(homepage)) homepage <- ""
+  if(!is.null(url)) http_error(x = url)
   if(is.null(license)) license <- ""
   if(is.null(notes)) notes <- ""
 
   theSources <- tibble(id = as.character(1),
                        label = "harmonised",
+                       version = version,
                        description = description,
                        homepage = homepage,
+                       url = url,
                        license = license,
                        notes = notes)
 

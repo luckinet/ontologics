@@ -26,6 +26,7 @@ RoxygenNote: 7.2.1
 Imports: 
     checkmate,
     dplyr,
+    httr,
     magrittr,
     methods,
     purrr,

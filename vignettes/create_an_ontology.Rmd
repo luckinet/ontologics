@@ -40,6 +40,7 @@ A new ontology is built by calling the function `start_ontology()`. This require
 
 ```{r}
 lulc <- start_ontology(name = "land_surface_properties",
+                       version = "0.0.1",
                        path = tempdir(), 
                        code = ".xx",
                        description = "showcase of the ontologics R-package", 
