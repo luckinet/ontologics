@@ -5,18 +5,21 @@
 #'   included.
 #' @param name [`character(1)`][character]\cr the name of the new source (must
 #'   not contain empty spaces).
-#' @param version [`character(1)`][character]\cr the version of the new source
-#'   (any value is allowed, but should be a value that follows
-#'   \href{https://semver.org/}{semantic versioning}).
+#' @param version [`character(1)`][character]\cr an optional version of the new
+#'   source (any value is allowed, but should be a value that follows
+#'   \href{https://semver.org/}{semantic versioning}). Either version or date
+#'   need to be given.
+#' @param date [`character(1)`][character]\cr an optional date at which that
+#'   version of an external vocabulary has been created. Should be a value of
+#'   the form YYYY-MM-DD. Either version or date need to be given.
 #' @param description [`character(1)`][character]\cr a verbatim description of
 #'   the new source.
 #' @param homepage [`character(1)`][character]\cr the homepage of the new
 #'   source, typically the place where additional information or meta-data could
 #'   be retrieved in a non-formalised way.
-#' @param url [`character(1)`][character]\cr the specific uniform resource
-#'   locator of the concepts. This is a web address all concepts of the new
-#'   source have in common and which is thus the basis to construct the concept
-#'   specific URI.
+#' @param uri_prefix [`character(1)`][character]\cr the basic uniform resource
+#'   locator (URL) all concepts of a new source have in common and which is thus
+#'   the basis to construct the concept specific URI.
 #' @param license [`character(1)`][character]\cr the licenses under which the
 #'   new source is published.
 #' @param notes [`character(1)`][character]\cr any notes on the new source that
@@ -48,18 +51,21 @@
 #' @importFrom methods new
 #' @export
 
-new_source <- function(ontology = NULL, name = NULL, version = NULL, description = NULL,
-                       homepage = NULL, url = NULL, license = NULL, notes = NULL){
+new_source <- function(ontology = NULL, name = NULL, version = NULL, date = NULL,
+                       description = NULL, homepage = NULL, uri_prefix = NULL,
+                       license = NULL, notes = NULL){
 
   assertCharacter(x = name, len = 1)
-  assertCharacter(x = version, len = 1)
+  isVersion <- testCharacter(version, len = 1)
+  isDate <- testCharacter(date, len = 1)
+  assert(isDate, isVersion)
   assertCharacter(x = description, len = 1, null.ok = TRUE)
   assertCharacter(x = homepage, len = 1, null.ok = TRUE)
-  assertCharacter(x = url, len = 1, null.ok = TRUE)
+  assertCharacter(x = uri_prefix, len = 1, null.ok = TRUE)
   assertCharacter(x = license, len = 1, null.ok = TRUE)
   assertCharacter(x = notes, len = 1, null.ok = TRUE)
 
-  if(!is.null(url)) http_error(x = url)
+  if(!is.null(uri_prefix)) http_error(x = uri_prefix)
 
   if(inherits(x = ontology, what = "onto")){
     ontoPath <- NULL
@@ -93,9 +99,10 @@ new_source <- function(ontology = NULL, name = NULL, version = NULL, description
   newSource <- tibble(id = newID,
                       label = name,
                       version = version,
+                      date = date,
                       description = description,
                       homepage = homepage,
-                      url = url,
+                      uri_prefix = uri_prefix,
                       license = license,
                       notes = notes)
 

@@ -8,9 +8,10 @@ new_source(
   ontology = NULL,
   name = NULL,
   version = NULL,
+  date = NULL,
   description = NULL,
   homepage = NULL,
-  url = NULL,
+  uri_prefix = NULL,
   license = NULL,
   notes = NULL
 )
@@ -23,9 +24,14 @@ included.}
 \item{name}{\code{\link[=character]{character(1)}}\cr the name of the new source (must
 not contain empty spaces).}
 
-\item{version}{\code{\link[=character]{character(1)}}\cr the version of the new source
-(any value is allowed, but should be a value that follows
-\href{https://semver.org/}{semantic versioning}).}
+\item{version}{\code{\link[=character]{character(1)}}\cr an optional version of the new
+source (any value is allowed, but should be a value that follows
+\href{https://semver.org/}{semantic versioning}). Either version or date
+need to be given.}
+
+\item{date}{\code{\link[=character]{character(1)}}\cr an optional date at which that
+version of an external vocabulary has been created. Should be a value of
+the form YYYY-MM-DD. Either version or date need to be given.}
 
 \item{description}{\code{\link[=character]{character(1)}}\cr a verbatim description of
 the new source.}
@@ -34,10 +40,9 @@ the new source.}
 source, typically the place where additional information or meta-data could
 be retrieved in a non-formalised way.}
 
-\item{url}{\code{\link[=character]{character(1)}}\cr the specific uniform resource
-locator of the concepts. This is a web address all concepts of the new
-source have in common and which is thus the basis to construct the concept
-specific URI.}
+\item{uri_prefix}{\code{\link[=character]{character(1)}}\cr the basic uniform resource
+locator (URL) all concepts of a new source have in common and which is thus
+the basis to construct the concept specific URI.}
 
 \item{license}{\code{\link[=character]{character(1)}}\cr the licenses under which the
 new source is published.}
