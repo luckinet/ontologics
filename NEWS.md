@@ -1,3 +1,8 @@
+# ontologics 0.5.1
+
+- describe an ontology either by version, or by date
+- revision of vignettes
+
 # ontologics 0.5.0
 
 - include functions `export_as_rdf()` for being able to explort any ontology in other, semantic-web based, formats.
