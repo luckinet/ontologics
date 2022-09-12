@@ -69,9 +69,10 @@
 <span>  ontology <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  date <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  homepage <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  url <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  uri_prefix <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  license <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  notes <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -91,9 +92,16 @@ not contain empty spaces).</p></dd>
 
 
 <dt>version</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the version of the new source
-(any value is allowed, but should be a value that follows
-<a href="https://semver.org/" class="external-link">semantic versioning</a>).</p></dd>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> an optional version of the new
+source (any value is allowed, but should be a value that follows
+<a href="https://semver.org/" class="external-link">semantic versioning</a>). Either version or date
+need to be given.</p></dd>
+
+
+<dt>date</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> an optional date at which that
+version of an external vocabulary has been created. Should be a value of
+the form YYYY-MM-DD. Either version or date need to be given.</p></dd>
 
 
 <dt>description</dt>
@@ -107,11 +115,10 @@ source, typically the place where additional information or meta-data could
 be retrieved in a non-formalised way.</p></dd>
 
 
-<dt>url</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the specific uniform resource
-locator of the concepts. This is a web address all concepts of the new
-source have in common and which is thus the basis to construct the concept
-specific URI.</p></dd>
+<dt>uri_prefix</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the basic uniform resource
+locator (URL) all concepts of a new source have in common and which is thus
+the basis to construct the concept specific URI.</p></dd>
 
 
 <dt>license</dt>
