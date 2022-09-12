@@ -187,8 +187,8 @@ setMethod(f = "show",
               ticks <- paste0(ticks, collapse = "|")
 
               conceptList <- paste0(conceptList,
-                                    " ", paste0("|", paste0(rep("-", nchar(ticks)), collapse = ""), "|"), "\n",
-                                    " ", paste0("|", ticks, "|"))
+                                    "   ", paste0("|", paste0(rep("-", nchar(ticks)), collapse = ""), "|"), "\n",
+                                    "   ", paste0("|", ticks, "|"))
 
               indent1 <- 2 + itemsPerClass$level
               className <- paste0("\u221F ", theClasses$harmonised$label)
@@ -202,26 +202,23 @@ setMethod(f = "show",
                 mutate(items = if_else(is.na(items), 0L, items))
               indent2 <- 3 + (max(nchar(itemsPerClass$items), na.rm = TRUE) - nchar(itemsPerClass$items)) + indent22
 
+              classList <- paste0(strrep(" ", indent1), className, strrep(" ", indent2), itemsPerClass$items, "   ", definitions)
+              classList <- paste0(paste0(classList, collapse = "\n"), "\n\n")
 
             } else {
 
-              conceptList <- ""
-              indent1 <- 0
-              className <- NULL
-              indent2 <- 0
-              itemsPerClass <- NULL
-              definitions <- NULL
+              conceptList <- "\n"
+              classList <- "\n"
+              if(is.na(theClasses$harmonised$label)) nrClasses <- 0
+
 
             }
-
-            classList <- paste0(strrep(" ", indent1), className, strrep(" ", indent2), itemsPerClass$items, "   ", definitions)
 
 
             cat(paste0("  sources : ", nrSources, "\n"))
             cat(sourceList)
-
             cat("  classes :", nrClasses, "\n")
-            cat(paste0(classList, collapse = "\n"), "\n\n")
+            cat(classList)
             cat("  concepts:", nrConcepts, "\n")
             cat(conceptList)
 
