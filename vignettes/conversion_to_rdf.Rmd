@@ -25,7 +25,7 @@ library(dplyr, warn.conflicts = FALSE)
 
 # Usage
 
-To export the ontology as RDF just call `export_as_rdf()`. The ontology and the filename have to be specified. The format is optional and defaults to RDF-Turtle. Available formats are `rdfxml`, `nquads`, `ntriples`, `turtle` or `jsonld`.
+To export the ontology as RDF just call `export_as_rdf()`. The ontology and the file name have to be specified. The format is optional and defaults to RDF-Turtle. Available formats are `rdfxml`, `nquads`, `ntriples`, `turtle` or `jsonld`.
 
 ```{r}
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
@@ -40,7 +40,7 @@ Conversion to an RDF (Resource Description Framework) serialization is integrate
 
 ## IDs in RDF / Prefixes
 
-The IDs that are used in an RDF database have to be IRIs (IRIs are a superset of URIs, which are in turn a superset of URLs). Typically, the structure of URLs is used. In this package, we generate the RDF-IDs of the concepts in the ontology by concatenating a _prefix_ (the string you defined as `homepage`, when you created the ontology) with internal package IDs. The homepage of the example ontology we created in [create an ontology](create_an_ontology.html) is `https://www.luckinet.org`. The internal ID of the concept with the label `Naturally Regenerating Forest` in this ontology is `.08.02`. The resulting IRI-ID for this concept therefore resolves to <https://www.luckinet.org#.08.02>. As you see, `#` was used as concatenation symbol. Another widely used option is `/`. If the `homepage` string ends with `/` or `#`, this symbol is used for concatenation, otherwise `#` is appended as default.
+The IDs that are used in an RDF database have to be IRIs (IRIs are a superset of URIs, which are in turn a superset of URLs). Typically, the structure of URLs is used. In this package, we generate the RDF-IDs of the concepts in the ontology by concatenating a _prefix_ (specified as `uri_prefix` in some of the functions) with internal package IDs. The homepage of the example ontology we created in [create an ontology](create_an_ontology.html) is `http://www.luckinet.org`. The internal ID of the concept with the label `Naturally Regenerating Forest` in this ontology is `.08.02`. The resulting IRI-ID for this concept therefore resolves to <https://www.luckinet.org#.08.02>. As you see, `#` is used as concatenation symbol. Another widely used option is `/`, in case the `homepage` string ends with `/` or `#`, which is then used by default.
 
 The so-built IRI-IDs do not have to resolve to an actual resource on the Web, but it is highly recommended. If not possible, at least the prefix should resemble an actual Web page, as it is the case for the example.
 <!-- (see [publishing an ontology](publishing_an_ontology.html)) -->
@@ -62,7 +62,7 @@ In this case `luckinet:.08.02` is the subject, `skos:prefLabel` is the predicate
 skos:prefLabel skos:definition "The preferred lexical label for a resource, in a given language." .
 ```
 
-We can add some more facts from our ontology to the RDF database. The RDF representation that we use here is called RDF-Turtle. In RDF-Turtle a semicolon at the end of a triple indicates that the next statement also refers to the same subject (which is followingly let out). A comma indicates that the next statement refers to the same subject and predicate.
+We can add some more facts from our ontology to the RDF database. The RDF representation that we use here is called RDF-Turtle. In RDF-Turtle a semicolon at the end of a triple indicates that the next statement also refers to the same subject (which is left out thereafter). A comma indicates that the next statement refers to the same subject and predicate.
 
 ```
 @prefix luckinet: <https://www.luckinet.org/> .
@@ -72,7 +72,7 @@ We can add some more facts from our ontology to the RDF database. The RDF repres
 luckinet:.08.02 skos:prefLabel "Naturally Regenerating Forest" ;    
     skos:broader luckinet:.08 ;
     rdf:type luckinet:land-use ;
-    skos:definition "Forest that regenerates naturally (this definition need revision)." . 
+    skos:definition "Forest that regenerates naturally ..." . 
 
 luckinet:.08 skos:prefLabel "Forests";
     rdf:type luckinet:landcover;
@@ -83,7 +83,7 @@ luckinet:land-use skos:prefLabel "Land-Use";
 luckinet:landcover skos:prefLabel "Landcover" .
 ```
 
-RDF is based on the open world assumption: in the above case that means that not stating a definition of the concept `.08` does not mean that no definition exists; it's simply not known if a definition exists.
+RDF is based on the open world assumption: in the above case that means that not stating a definition of the concept `.08` does not mean that no definition exists; it's simply not known whether a definition exists.
 
 ## RDS 2 RDF
 
@@ -141,16 +141,16 @@ The SKOS **semantic relations** are intended to be used to built links between c
 
 The SKOS **mapping properties** are similar to the semantic relations, but they are used to construct relations between concepts that are part of the expressed KOS and concepts that are __not__ part of it. For this package that means all relations between harmonised classes or concepts and external classes or concepts have to be described with the SKOS mapping properties. We support four of the SKOS mapping relations: `skos:narrowMatch` and `skos:broadMatch` have similar meanings as the semantic relations introduces above. The property `skos:closeMatch` indicates "two concepts that are sufficiently similar that they can be used interchangeably in __some__ information retrieval applications" and `skos:exactMatch` denotes "a high degree of confidence that the concepts can be used interchangeably across a wide range of information retrieval applications", thus it allows transitive closure. In this package, the mapping properties are indicated with `has_narrow_match`, `has_broad_match`, `has_close_match` and `has_exact_match` in the tables _harmonised classes_ and _harmonised concepts_.
 
-Finally, SKOS provides the property `skos:inScheme` that denotes that a concept is part of some KOS. In this package, the table _sources_ administers these KOS' (`skos:Scheme`s). Each concept and class in this package is assigned to a certain scheme listed in the *sources* table. For external concepts and classes the column `has_source` indicates that scheme. Harmonised concepts and classes are part of the harmonised scheme, which is typically described in the first row of the *sources* table.
+Finally, SKOS provides the property `skos:inScheme` that denotes that a concept is part of some KOS. In this package, the table _sources_ administers these KOS' (`skos:Scheme`s). Each concept and class in this package is assigned to a certain scheme listed in the *sources* table. For external concepts and classes the column `has_source` indicates that scheme. Harmonized concepts and classes are part of the harmonized scheme, which is typically described in the first row of the *sources* table.
 
 <!-- TODO: -->
 ### Structure of exported SKOS
 
-In the resulting document, both the harmonised classes and concepts are explicitly instantiated as SKOS-Concepts. The harmonised classes are additionally explicitly instantiated as RDF-Classes. Every harmonised concept is instatiated as an object of its according harmonised class. External concepts and classes are not explicitly instatiated as anything, although the use of the SKOS mapping propertis allows to infer that they are instances of SKOS-Concept. 
+In the resulting document, both the harmonized classes and concepts are explicitly instantiated as SKOS-Concepts. The harmonized classes are additionally explicitly instantiated as RDF-Classes. Every harmonized concept is instantiated as an object of its according harmonized class. External concepts and classes are not explicitly instantiated as anything, although the use of the SKOS mapping properties allows to infer that they are instances of SKOS-Concept. 
 
-Harmonised concepts relate to other harmonized concepts via the SKOS semantic relation `skos:broader`. Harmonised classes relate to other harmonized classes via the SKOS semantic relation `skos:broader`. Each harmonised concept that has a value in the `class` column is instatiated as a member of this class using `rdf:type`.
+Harmonized concepts relate to other harmonized concepts via the SKOS semantic relation `skos:broader`. Harmonized classes relate to other harmonized classes via the SKOS semantic relation `skos:broader`. Each harmonized concept that has a value in the `class` column is instantiated as a member of this class using `rdf:type`.
 
-Harmonised Concepts relate to external concepts via the SKOS mapping properties. Harmonised Classes relate to external Classes via the SKOS mapping properties.
+Harmonized Concepts relate to external concepts via the SKOS mapping properties. Harmonized Classes relate to external Classes via the SKOS mapping properties.
 
 <img src="onto.png" alt="onto_schematic" width="100%"/>
 
