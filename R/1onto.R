@@ -176,9 +176,9 @@ setMethod(f = "show",
                   left_join(items1, by = "id_1") %>%
                   mutate(temp = paste0("'", label, "'", " (", items_1, ")")) %>%
                   arrange(desc(items_1))
-                conceptList <- paste0("    -> ", paste0(temp$temp[1:5], collapse = ", "), ", ...\n\n")
+                conceptList <- paste0("   -> ", paste0(temp$temp[1:5], collapse = ", "), ", ...\n\n")
               } else {
-                conceptList <- paste0("    -> ", paste0(temp$temp, collapse = ", "), "\n\n")
+                conceptList <- paste0("   -> ", paste0(temp$temp, collapse = ", "), "\n\n")
               }
 
               ticks <- map(seq_along(items1$prop_1), function(ix){
