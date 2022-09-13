@@ -1,5 +1,5 @@
 ---
-title: "Ontology database description"
+title: "Onto Class Reference"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ontology_database_description}
@@ -11,8 +11,6 @@ vignette: >
 
 > This is an informative document. Manipulation of the contents of the tables should always be performed with the functions of the package.
 
-The Database of the package is stored in a list that holds the five tables `sources`, `classes$internal`, `classes$external`, `concepts$internal` and `concepts$external`. The name of the list is defined when loading or starting a new ontology (see: [create_an_ontology](create_an_ontology.html): `crops <- load_ontology()` or `lulc <- start_ontology()`). The tables are accessed with `@`, e.g., `crops@sources` or `crops@concepts$harmonised`. For any references below we assume, the name of the ontology is `ontology`.
-
 ## Sources (ontology@sources)
 
 Each row in the sources table represents a source of one or more concepts and/or classes. A source is typically some form of a knowledge organization system (KOS); e.g., a vocabulary. A source record features the six properties:
@@ -21,9 +19,15 @@ __id__ (*generated*): Unique identifier of this source record. Built by counting
 
 __label__ (*mandatory*): A speaking label for the source.
 
+__version__ (*optional*): The version of the source.
+
+__date__ (*optional*): The creation date of the source.
+
 __description__ (*optional*): A description of the source.
 
-__homepage__ (*mandatory*): Homepage of the source. Ideally, this is some Website that hosts the terms that are described in the source-KOS. It can also be a link to a PDF or similar. It is also possible to enter the ISBN (or another identifier) of a book or an other real world document. If everything is correct, the values that are inserted in the homepage should also be primary keys.
+__homepage__ (*optional*): Homepage of the source. 
+
+__uri_prefix__ (*optional*): Prefix of the resources of the ontology. See also [https://www.w3.org/TR/turtle/] at 2.4 IRIs. If no `uri_prefix` for the harmonised resources of the ontology is given, the `export_as_rdf()` function, inserts the placeholder value "http://www.example.org/ontologics/". If non-harmonised sources are provided without a `uri_prefix` the are ignored by the `export_as_rdf()` function. 
 
 __license__ (*mandatory*): Licensing information of the source-KOS.
 
@@ -89,15 +93,15 @@ __id__ (*generated*): Unique identifier of this harmonised concept record. The I
 
 The ID consists of multiple 3-digit codes that begin with prefixed a dot, e.g. `.004.002.007`. The number of the codes indicates the hierarchical level of the concept - third level in the example - where the first level is the broadest. The ID is read from right to left. The example ID means that the according concept is the 7th concept that was defined in the 3rd hierarchical level, it has a narrower meaning than 2nd the concept that was defined in the 2nd hierarchical level, which in turn has a narrower meaning than the 4th concept that was defined in the 1st (the broadest) hierarchical level.
 
-__label__ (*mandatory*): The label of the harmonised concept.
+__label__ (*mandatory*): The label of the harmonized concept.
 
-__class__ (*mandatory*): Assigns the harmonised concept to a specific class. Each concept can only be assigned to one specific class. As an example: The concept *permanent grazing* could be a concept of the class *land-use* or *permanent cropland* could be a concept of the class *landcover*. The values are foreign keys to labels in the harmonised classes table (`ontology@classes$harmonised$label`), since the ID-generation logic for the harmonised classes is not implemented yet. (__IN THE FUTURE:__ The values are foreign keys to IDs in the harmonised classes table (`ontology@classes$harmonised$id`). )
+__class__ (*mandatory*): Assigns the harmonized concept to a specific class. Each concept can only be assigned to one specific class. As an example: The concept *permanent grazing* could be a concept of the class *land-use* or *permanent cropland* could be a concept of the class *landcover*. The values are foreign keys to labels in the harmonized classes table (`ontology@classes$harmonised$label`), since the ID-generation logic for the harmonized classes is not implemented yet. (__IN THE FUTURE:__ The values are foreign keys to IDs in the harmonized classes table (`ontology@classes$harmonised$id`). )
 
-__description__ (*optional*): The description of the harmonised concept. It is strongly recommended to provide a description.
+__description__ (*optional*): The description of the harmonized concept. It is strongly recommended to provide a description.
 
-__has_broader__ (*optional*): Relates this harmonised concept to another harmonised concept that conveys a broader meaning. As an example, with this relation, a concept *permanent grazing* could be related to a concept *permanent cropland*, which has a semantically broader meaning. Values are foreign keys to IDs in this table (`ontology@concepts$harmonised$id`).
+__has_broader__ (*optional*): Relates this harmonized concept to another harmonized concept that conveys a broader meaning. As an example, with this relation, a concept *permanent grazing* could be related to a concept *permanent cropland*, which has a semantically broader meaning. Values are foreign keys to IDs in this table (`ontology@concepts$harmonised$id`).
 
-__has_exact_match__ (*optional*): Identifies an external concept as a concept that has exactly the same meaning (they can be used interchangeably in any context). Values are strings of concatenated foreign keys to IDs in the external concepts table (`ontology$concepts$external$id`). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3, e.g., *wikidata_1.3*. The number indicates the certainty of the match, where 3 means *most certain*. An exact match entry for the harmonised concept *permanent grazing* could therefore be *wikidata_1.3 | wikidata_24.2 | agrovoc_32.3*. )
+__has_exact_match__ (*optional*): Identifies an external concept as a concept that has exactly the same meaning (they can be used interchangeably in any context). Values are strings of concatenated foreign keys to IDs in the external concepts table (`ontology$concepts$external$id`). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3, e.g., *wikidata_1.3*. The number indicates the certainty of the match, where 3 means *most certain*. An exact match entry for the harmonized concept *permanent grazing* could therefore be *wikidata_1.3 | wikidata_24.2 | agrovoc_32.3*. )
 
 __has_close_match__ (*optional*): Identifies an external concept as a concept that has a similar meaning (they can be used interchangeably in some contexts). Values are strings of concatenated foreign keys to IDs in the external concepts table (`ontology$concepts$external$id`). Concatenation is performed with ` | `. Each foreign key is furthermore suffixed with a dot and a number in the range from 1 to 3.
 

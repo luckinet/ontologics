@@ -32,6 +32,7 @@ reference:
     contents:
       - make_tree
       - edit_matches
+      - export_as_rdf
 
 navbar:
   left:

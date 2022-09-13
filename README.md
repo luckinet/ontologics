@@ -12,6 +12,7 @@ Status](https://codecov.io/gh/luckinet/ontologics/branch/master/graph/badge.svg)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/ontologics)](https://cran.r-project.org/package=geometr)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![R-CMD-check](https://github.com/luckinet/ontologics/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/luckinet/ontologics/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## Overview
@@ -20,7 +21,7 @@ The `ontologics` package provides tools to build and work with an
 ontology of [linked (open)
 data](https://en.wikipedia.org/wiki/Linked_data) in a tidy workflow. In
 the current workflow the data are only available at the three star level
-in comma-separated values tables, or actually an R-optimised \*.rds file
+in comma-separated values tables, or actually an R-optimized \*.rds file
 of such a table.
 
 The type of ontology is inspired by the [FAO
@@ -28,12 +29,12 @@ caliper](https://datalab.review.fao.org/datalab/caliper/web/) platform
 and makes use of the Simple Knowledge Organisation System
 ([SKOS](https://www.w3.org/TR/skos-reference/)).
 
-An ontology is any data structure that stores concepts of any knowledge
+An ontology is any data structure that stores concept of any knowledge
 field in a linked way. It is typically built on a set of
-standardised/harmonised terms that have a clear definition and
+standardized/harmonized terms that have a clear definition and
 potentially some attributes. According to the SKOS, concepts can have
 semantic relations or can be mapped to one another. Semantic relations
-describe how *harmonised concepts* **relate** to one another and
+describe how *harmonized concepts* **relate** to one another and
 mappings describe which concepts *from different vocabularies* should be
 **linked** to one another.
 
@@ -57,6 +58,9 @@ devtools::install_github("luckinet/ontologics")
 ```
 
 Read the vignettes [Create an
-ontology](https://luckinet.github.io/ontologics/articles/create_an_ontology.html)
-and [Map new
-concepts](https://luckinet.github.io/ontologics/articles/map_new_concepts.html).
+ontology](https://luckinet.github.io/ontologics/articles/create_an_ontology.html),
+[Map new
+concepts](https://luckinet.github.io/ontologics/articles/map_new_concepts.html),
+[Convert Ontology to
+RDF](https://luckinet.github.io/ontologics/articles/conversion_to_rdf.html) 
+and [Onto Class Reference]((https://luckinet.github.io/ontologics/articles/ontology_database_description.html)).

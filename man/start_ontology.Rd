@@ -11,7 +11,7 @@ start_ontology(
   code = ".xx",
   description = NULL,
   homepage = NULL,
-  url = NULL,
+  uri_prefix = NULL,
   license = NULL,
   notes = NULL
 )
@@ -30,11 +30,11 @@ concatenated for nested levels.}
 \item{description}{\code{\link[=character]{character(1)}}\cr a brief description of the
 new ontology.}
 
-\item{homepage}{\code{\link[=character]{character(1)}}\cr the url to the homepage of the
+\item{homepage}{\code{\link[=character]{character(1)}}\cr the URL to the homepage of the
 new ontology.}
 
-\item{url}{\code{\link[=character]{character(1)}}\cr the url basis to construct URIs for
-all concepts.}
+\item{uri_prefix}{\code{\link[=character]{character(1)}}\cr the basic URL to construct
+URIs for all concepts.}
 
 \item{license}{\code{\link[=character]{character(1)}}\cr any string describing the
 license under which this ontology can be (re)used.}
