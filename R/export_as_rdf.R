@@ -13,11 +13,13 @@
 #'
 #' # export_as_rdf(ontology = onto, filename = "onto.ttl")
 #' @importFrom checkmate assertCharacter
-#' @importFrom stringr str_ends str_split
+#' @importFrom stringr str_ends str_split string_replace_all
+#' @importFrom readr read_file write_file
 #' @importFrom utils URLencode
 #' @importFrom dplyr na_if pull
 #' @importFrom rdflib rdf rdf_add rdf_serialize rdf_free
 #' @export
+#'
 
 export_as_rdf <- function(ontology, filename) {
 
@@ -33,36 +35,53 @@ export_as_rdf <- function(ontology, filename) {
         broadMatch = "has_broader_match",
         narrowMatch = "has_narrower_match"
     )
-
-    prefixes <- ontology@sources
-    # check if each source contains a label and homepage,
-    # if not: fill placeholders
-    for (i in seq_len(nrow(prefixes))) {
-        if (prefixes$label[i] == "") {
-            prefixes$label[i] <- paste0("nosrc", i)
+    sources <- ontology@sources
+    # if harmonised onto does not have `uri_prefix`, set to www.example.org/ontologics
+    if(is.na(sources[sources$label == "harmonised", "uri_prefix"])){
+        sources[sources$label == "harmonised", "uri_prefix"] <- "http://www.example.org/ontologics"
+    }
+    # if harmonised onto has version add after prefix
+    if (!is.na(sources[sources$label == "harmonised", "version"])) {
+        version <- sources[sources$label == "harmonised", "version"]
+        prefix <- sources[sources$label == "harmonised", "uri_prefix"]
+        if (str_ends(prefix, "/")) {
+            prefix <- paste0(prefix, version, "/")
+        } else if (str_ends(prefix, "#")) {
+            prefix <- paste0(prefix, version, "#")
+        } else {
+            prefix <- paste0(prefix, "/", version, "/")
         }
-        if (is.na(prefixes$homepage[i])) {
-            prefixes$homepage[i] <- paste0("no-source-homepage-entered", i)
+        sources[sources$label == "harmonised", "uri_prefix"] <- prefix
+    }
+
+    # exclude sources that dont have a uri_prefix
+    exclude_sources <- list()
+    for (i in seq_len(nrow(sources))) {
+        if (is.na(sources$uri_prefix[i])) {
+            exclude_sources <- append(exclude_sources, sources$id[i])
         }
     }
 
-    for (i in seq_len(nrow(prefixes))) {
-        # make sure labels are valid RDF prefixes (we just do this by URL encoding them)
+
+    for (i in seq_len(nrow(sources))) {
+        # make sure labels are valid RDF sources (we just do this by URL encoding them)
         # TODO: don't use URLencode, but do it in some better way
-        prefixes[i, "label"] <- URLencode(prefixes[i, "label"], reserved = FALSE)
-        # check if string ends with '/' or '#'; if not concatenate '#'.
-        if (!str_ends(prefixes[i, "homepage"], "(/|#)")) {
-            prefixes[i, "homepage"] <- paste0(prefixes[i, "homepage"], "#")
+        sources[i, "label"] <- URLencode(sources[i, "label"], reserved = FALSE)
+        # check if existing uri_prefixes end with '/' or '#'; if not concatenate '#'.
+        if(!is.na(sources[i, "uri_prefix"])) {
+            if (str_ends(sources[i, "uri_prefix"], "(/|#)", negate=TRUE)) {
+                sources[i, "uri_prefix"] <- paste0(sources[i, "uri_prefix"], "#")
+            }
         }
     }
 
 
     rdf <- rdf()
 
-    # TODO: use labels of ontology$sources as shorthands for prefixes
+    # TODO: use labels of ontology$sources as shorthands for sources
     # build namespaces for rdf doc
-    # namespaces <- do.call(rbind, list(prefixes$homepage))
-    # colnames(namespaces) <- prefixes$label
+    # namespaces <- do.call(rbind, list(sources$uri_prefix))
+    # colnames(namespaces) <- sources$label
     # namespaces <- enframe(namespaces)
 
     # print(namespaces)
@@ -77,48 +96,62 @@ export_as_rdf <- function(ontology, filename) {
 
 
     # convert sources table
-    for (i in seq_len(nrow(prefixes))) {
-        rdf %>% rdf_add(
-            subject = make_resource(prefixes[i, "homepage"], ""),
-            predicate = make_resource(namespaces["rdf"], "type"),
-            object = make_resource(namespaces["skos"], "ConceptScheme")
-        )
-        # ignore if Obj == NULL or ""
-        if (!is.na(na_if(prefixes[i, "label"], ""))) {
+    for (i in seq_len(nrow(sources))) {
+        if(!is.na(sources[i, "uri_prefix"])){
             rdf %>% rdf_add(
-                subject = make_resource(prefixes[i, "homepage"], ""),
-                predicate = make_resource(namespaces["skos"], "prefLabel"),
-                object = prefixes[i, "label"],
-                objectType = "literal"
+                subject = make_resource(sources[i, "uri_prefix"], ""),
+                predicate = make_resource(namespaces["rdf"], "type"),
+                object = make_resource(namespaces["skos"], "ConceptScheme")
             )
-        }
-        # ignore if Obj == NULL or ""
-        if (!is.na(na_if(prefixes[i, "description"], ""))) {
-            rdf %>% rdf_add(
-                subject = make_resource(prefixes[i, "homepage"], ""),
-                predicate = make_resource(namespaces["skos"], "definition"),
-                object = prefixes[i, "description"],
-                objectType = "literal"
-            )
-        }
-        # ignore if Obj == NULL or ""
-        if (!is.na(na_if(prefixes[i, "notes"], ""))) {
-            rdf %>% rdf_add(
-                subject = make_resource(prefixes[i, "homepage"], ""),
-                predicate = make_resource(namespaces["skos"], "note"),
-                object = prefixes[i, "notes"],
-                objectType = "literal"
-            )
-        }
-        # ignore if Obj == NULL or ""
-        if (!is.na(na_if(prefixes[i, "license"], ""))) {
-            rdf %>% rdf_add(
-                subject = make_resource(prefixes[i, "homepage"], ""),
-                predicate = make_resource(namespaces["dct"], "license"),
-                object = prefixes[i, "license"]
-            )
+            # ignore if Obj == NULL or ""
+            if (!is.na(na_if(sources[i, "label"], ""))) {
+                rdf %>% rdf_add(
+                    subject = make_resource(sources[i, "uri_prefix"], ""),
+                    predicate = make_resource(namespaces["skos"], "prefLabel"),
+                    object = paste0(sources[i, "label"], "@en"),
+                    objectType = "literal"
+                )
+            }
+            # ignore if Obj == NULL or ""
+            if (!is.na(na_if(sources[i, "description"], ""))) {
+                rdf %>% rdf_add(
+                    subject = make_resource(sources[i, "uri_prefix"], ""),
+                    predicate = make_resource(namespaces["skos"], "definition"),
+                    object = paste0(sources[i, "description"], "@en"),
+                    objectType = "literal"
+                )
+            }
+            # ignore if Obj == NULL or ""
+            if (!is.na(na_if(sources[i, "notes"], ""))) {
+                rdf %>% rdf_add(
+                    subject = make_resource(sources[i, "uri_prefix"], ""),
+                    predicate = make_resource(namespaces["skos"], "note"),
+                    object = paste0(sources[i, "notes"], "@en"),
+                    objectType = "literal"
+                )
+            }
+            # ignore if Obj == NULL or ""
+            if (!is.na(na_if(sources[i, "license"], ""))) {
+                rdf %>% rdf_add(
+                    subject = make_resource(sources[i, "uri_prefix"], ""),
+                    predicate = make_resource(namespaces["dct"], "license"),
+                    object = sources[i, "license"]
+                )
+            }
         }
     }
+
+    # add creation date to harmonised source if available
+    # if (!is.na(sources[sources$label == "harmonised", "date"])) {
+    #     rdf %>% rdf_add(
+    #                 subject = make_resource(sources[sources$label == "harmonised", "uri_prefix"], ""),
+    #                 predicate = make_resource(namespaces["dct"], "created"),
+    #                 object = paste0(
+    #                     sources[sources$label == "harmonised", "date"],
+    #                     "^^xsd:date"
+    #                 )
+    #             )
+    # }
 
     # currently both internal and external classes have no actual IDs
     # in the id row. For now I rewrite the id column with urlencoded
@@ -135,8 +168,8 @@ export_as_rdf <- function(ontology, filename) {
 
     # convert classes$harmonised table
     for (i in seq_len(nrow(harmonised_classes))) {
-        prefix <- pull(prefixes[prefixes["label"] == "harmonised", "homepage"])
-        sub <- make_resource(prefix, paste0("class#", harmonised_classes[i, "id"]))
+        prefix <- pull(sources[sources["label"] == "harmonised", "uri_prefix"])
+        sub <- make_resource(prefix, paste0("class-", harmonised_classes[i, "id"]))
         rdf %>% rdf_add(
             subject = sub,
             predicate = make_resource(namespaces["rdf"], "type"),
@@ -150,14 +183,15 @@ export_as_rdf <- function(ontology, filename) {
         rdf %>% rdf_add(
             subject = sub,
             predicate = make_resource(namespaces["skos"], "inScheme"),
-            object = make_resource(prefix, "")
+            object = make_resource(prefix, ""),
+            objectType = "uri"
         )
         # ignore if Obj == NULL or ""
         if (!is.na(na_if(harmonised_classes[i, "label"], ""))) {
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "prefLabel"),
-                object = harmonised_classes[i, "label"],
+                object = paste0(harmonised_classes[i, "label"], "@en"),
                 objectType = "literal"
             )
         }
@@ -165,13 +199,13 @@ export_as_rdf <- function(ontology, filename) {
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "definition"),
-                object = harmonised_classes[i, "description"],
+                object = paste0(harmonised_classes[i, "description"], "@en"),
                 objectType = "literal"
             )
         }
         # semantic relations (skos:broader & skos:narrower)
         if (!is.na(na_if(harmonised_classes[i, "has_broader"], ""))) {
-            broader <- paste0("class#", URLencode(harmonised_classes[i, "has_broader"], FALSE))
+            broader <- paste0("class-", URLencode(harmonised_classes[i, "has_broader"], FALSE))
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "broader"),
@@ -207,14 +241,18 @@ export_as_rdf <- function(ontology, filename) {
                 mappings_certainty <- str_split(pull(ontology@classes$harmonised[i, mapping_relations[mapping_relation]]), pattern = " [|] ")
                 for (mapping in mappings_certainty[[1]]) {
                     matched_class_id <- URLencode(str_split(mapping, pattern = "[.]")[[1]][1], FALSE)
-                    matched_class_prefix <- pull(prefixes[prefixes["id"] == pull(external_classes[external_classes["id"] == matched_class_id, "has_source"]), "homepage"])
-                    matched_class <- make_resource(matched_class_prefix, matched_class_id)
-                    rdf %>% rdf_add(
-                        subject = sub,
-                        predicate = make_resource(namespaces["skos"], mapping_relation),
-                        object = matched_class,
-                        objectType = "uri"
-                    )
+                    # check if the source of the matched_class_id has a uri_prefix
+                    source_id = pull(external_classes[external_classes["id"] == matched_class_id, "has_source"])
+                    if (!(source_id %in% exclude_sources)) {
+                        matched_class_prefix <- pull(sources[sources["id"] == source_id, "uri_prefix"])
+                        matched_class <- make_resource(matched_class_prefix, matched_class_id)
+                        rdf %>% rdf_add(
+                            subject = sub,
+                            predicate = make_resource(namespaces["skos"], mapping_relation),
+                            object = matched_class,
+                            objectType = "uri"
+                        )
+                    }
                 }
             }
         }
@@ -222,47 +260,51 @@ export_as_rdf <- function(ontology, filename) {
 
     # convert classes$external table
     for (i in seq_len(nrow(external_classes))) {
-        prefix <- pull(prefixes[prefixes["id"] == pull(external_classes[i, "has_source"]), "homepage"])
-        sub <- make_resource(prefix, external_classes[i, "id"])
-        # we don't explicitly type external resources as skos:Concept
-        # rdf %>% rdf_add(
-        #     subject = sub,
-        #     predicate = make_resource(namespaces["rdf"], "type"),
-        #     object = make_resource(namespaces["skos"], "Concept")
-        # )
-        rdf %>% rdf_add(
-            subject = sub,
-            predicate = make_resource(namespaces["rdf"], "type"),
-            object = make_resource(namespaces["rdfs"], "Class")
-        )
-        rdf %>% rdf_add(
-            subject = sub,
-            predicate = make_resource(namespaces["skos"], "inScheme"),
-            object = make_resource(prefix, "")
-        )
-        # ignore if Obj == NULL or ""
-        if (!is.na(na_if(external_classes[i, "label"], ""))) {
+        prefix <- pull(sources[sources["id"] == pull(external_classes[i, "has_source"]), "uri_prefix"])
+        if(!is.na(prefix)){
+            sub <- make_resource(prefix, external_classes[i, "id"])
+            # we don't explicitly type external resources as skos:Concept
+            # rdf %>% rdf_add(
+            #     subject = sub,
+            #     predicate = make_resource(namespaces["rdf"], "type"),
+            #     object = make_resource(namespaces["skos"], "Concept")
+            # )
             rdf %>% rdf_add(
                 subject = sub,
-                predicate = make_resource(namespaces["skos"], "prefLabel"),
-                object = external_classes[i, "label"],
-                objectType = "literal"
+                predicate = make_resource(namespaces["rdf"], "type"),
+                object = make_resource(namespaces["rdfs"], "Class")
             )
-        }
-        if (!is.na(na_if(external_classes[i, "description"], ""))) {
             rdf %>% rdf_add(
                 subject = sub,
-                predicate = make_resource(namespaces["skos"], "definition"),
-                object = external_classes[i, "description"],
-                objectType = "literal"
+                predicate = make_resource(namespaces["skos"], "inScheme"),
+                object = make_resource(prefix, ""),
+                objectType = "uri"
             )
+            # ignore if Obj == NULL or ""
+            if (!is.na(na_if(external_classes[i, "label"], ""))) {
+                rdf %>% rdf_add(
+                    subject = sub,
+                    predicate = make_resource(namespaces["skos"], "prefLabel"),
+                    object = paste0(external_classes[i, "label"], "@en"),
+                    objectType = "literal"
+                )
+            }
+            if (!is.na(na_if(external_classes[i, "description"], ""))) {
+                rdf %>% rdf_add(
+                    subject = sub,
+                    predicate = make_resource(namespaces["skos"], "definition"),
+                    object = paste0(external_classes[i, "description"], "@en"),
+                    objectType = "literal"
+                )
+            }
         }
+        
     }
 
     # convert concepts$harmonised table
     for (i in seq_len(nrow(ontology@concepts$harmonised))) {
-        prefix <- pull(prefixes[prefixes["label"] == "harmonised", "homepage"])
-        sub <- make_resource(prefix, paste0("concept#", ontology@concepts$harmonised[i, "id"]))
+        prefix <- pull(sources[sources["label"] == "harmonised", "uri_prefix"])
+        sub <- make_resource(prefix, paste0("concept-", ontology@concepts$harmonised[i, "id"]))
         rdf %>% rdf_add(
             subject = sub,
             predicate = make_resource(namespaces["rdf"], "type"),
@@ -271,14 +313,15 @@ export_as_rdf <- function(ontology, filename) {
         rdf %>% rdf_add(
             subject = sub,
             predicate = make_resource(namespaces["skos"], "inScheme"),
-            object = make_resource(prefix, "")
+            object = make_resource(prefix, ""),
+            objectType = "uri"
         )
         # ignore if Obj == NULL or ""
         if (!is.na(na_if(ontology@concepts$harmonised[i, "label"], ""))) {
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "prefLabel"),
-                object = ontology@concepts$harmonised[i, "label"],
+                object = paste0(ontology@concepts$harmonised[i, "label"], "@en"),
                 objectType = "literal"
             )
         }
@@ -286,7 +329,7 @@ export_as_rdf <- function(ontology, filename) {
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "definition"),
-                object = ontology@concepts$harmonised[i, "description"],
+                object = paste0(ontology@concepts$harmonised[i, "description"], "@en"),
                 objectType = "literal"
             )
         }
@@ -294,13 +337,13 @@ export_as_rdf <- function(ontology, filename) {
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["rdf"], "type"),
-                object = make_resource(prefix, paste0("class#", URLencode(ontology@concepts$harmonised[i, "class"], FALSE))),
+                object = make_resource(prefix, paste0("class-", URLencode(ontology@concepts$harmonised[i, "class"], FALSE))),
                 objectType = "uri"
             )
         }
         # semantic relations (skos:broader and skos:narrower)
         if (!is.na(na_if(ontology@concepts$harmonised[i, "has_broader"], ""))) {
-            broader <- paste0("concept#", ontology@concepts$harmonised[i, "has_broader"])
+            broader <- paste0("concept-", ontology@concepts$harmonised[i, "has_broader"])
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "broader"),
@@ -337,14 +380,18 @@ export_as_rdf <- function(ontology, filename) {
                     matched_concept_id <- str_split(mapping, pattern = "[.]")[[1]][1]
                     # not possible to assign a certainty to a match in SKOS
                     # match_certainty <- str_split(mapping, pattern = "[.]")[[1]][2]
-                    matched_concept_prefix <- pull(prefixes[prefixes["id"] == pull(ontology@concepts$external[ontology@concepts$external["id"] == matched_concept_id, "has_source"]), "homepage"])
-                    matched_concept <- make_resource(matched_concept_prefix, matched_concept_id)
-                    rdf %>% rdf_add(
-                        subject = sub,
-                        predicate = make_resource(namespaces["skos"], mapping_relation),
-                        object = matched_concept,
-                        objectType = "uri"
-                    )
+                    source_id = pull(ontology@concepts$external[ontology@concepts$external["id"] == matched_concept_id, "has_source"])
+                    if (!(source_id %in% exclude_sources)) {
+                        matched_concept_prefix <- pull(sources[sources["id"] == source_id, "uri_prefix"])
+                        matched_concept <- make_resource(matched_concept_prefix, matched_concept_id)
+                        rdf %>% rdf_add(
+                            subject = sub,
+                            predicate = make_resource(namespaces["skos"], mapping_relation),
+                            object = matched_concept,
+                            objectType = "uri"
+                        )
+                    }
+                    
                 }
             }
         }
@@ -352,38 +399,46 @@ export_as_rdf <- function(ontology, filename) {
 
     # convert concepts$external table
     for (i in seq_len(nrow(ontology@concepts$external))) {
-        prefix <- pull(prefixes[prefixes["id"] == pull(ontology@concepts$external[i, "has_source"]), "homepage"])
-        sub <- make_resource(prefix, URLencode(ontology@concepts$external[i, "id"]))
-        # we don't explicitly type external resources as skos:Concept
-        # rdf %>% rdf_add(
-        #     subject = sub,
-        #     predicate = make_resource(namespaces["rdf"], "type"),
-        #     object = make_resource(namespaces["skos"], "Concept")
-        # )
-        rdf %>% rdf_add(
-            subject = sub,
-            predicate = make_resource(namespaces["skos"], "inScheme"),
-            object = make_resource(prefix, "")
-        )
-        # ignore if Obj == NULL or ""
-        if (!is.na(na_if(ontology@concepts$external[i, "label"], ""))) {
+        prefix <- pull(sources[sources["id"] == pull(ontology@concepts$external[i, "has_source"]), "uri_prefix"])
+        # exclude concept with no uri_prefix
+        if(!is.na(prefix)) {
+            sub <- make_resource(prefix, URLencode(ontology@concepts$external[i, "id"]))
+            # we don't explicitly type external resources as skos:Concept
+            # rdf %>% rdf_add(
+            #     subject = sub,
+            #     predicate = make_resource(namespaces["rdf"], "type"),
+            #     object = make_resource(namespaces["skos"], "Concept")
+            # )
             rdf %>% rdf_add(
                 subject = sub,
-                predicate = make_resource(namespaces["skos"], "prefLabel"),
-                object = ontology@concepts$external[i, "label"],
-                objectType = "literal"
+                predicate = make_resource(namespaces["skos"], "inScheme"),
+                object = make_resource(prefix, ""),
+                objectType = "uri"
             )
-        }
-        if (!is.na(na_if(ontology@concepts$external[i, "description"], ""))) {
-            rdf %>% rdf_add(
-                subject = sub,
-                predicate = make_resource(namespaces["skos"], "definition"),
-                object = ontology@concepts$external[i, "description"],
-                objectType = "literal"
-            )
-        }
+            # ignore if Obj == NULL or ""
+            if (!is.na(na_if(ontology@concepts$external[i, "label"], ""))) {
+                rdf %>% rdf_add(
+                    subject = sub,
+                    predicate = make_resource(namespaces["skos"], "prefLabel"),
+                    object = paste0(ontology@concepts$external[i, "label"], "@en"),
+                    objectType = "literal"
+                )
+            }
+            if (!is.na(na_if(ontology@concepts$external[i, "description"], ""))) {
+                rdf %>% rdf_add(
+                    subject = sub,
+                    predicate = make_resource(namespaces["skos"], "definition"),
+                    object = paste0(ontology@concepts$external[i, "description"], "@en"),
+                    objectType = "literal"
+                )
+            }
+        }        
     }
 
     rdf_serialize(rdf, filename, namespace = namespaces)
     rdf_free(rdf)
+    rdfstring <- read_file(filename)
+    rdfstring <- str_replace_all(rdfstring, "@en\"", "\"@en")
+    # rdfstring <- str_replace_all(rdfstring, "^^xsd:date\"", "\"^^xsd:date")
+    write_file(rdfstring, filename)
 }
