@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ontology database description • ontologics</title>
+<title>Onto Class Reference • ontologics</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Ontology database description">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Onto Class Reference">
 <meta property="og:description" content="ontologics">
 <meta property="og:image" content="http://luckinet.github.io/ontologics/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -85,7 +85,7 @@
       </header><script src="ontology_database_description_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Ontology database description</h1>
+      <h1 data-toc-skip>Onto Class Reference</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/luckinet/ontologics/blob/HEAD/vignettes/ontology_database_description.Rmd" class="external-link"><code>vignettes/ontology_database_description.Rmd</code></a></small>
@@ -98,15 +98,17 @@
 <blockquote>
 <p>This is an informative document. Manipulation of the contents of the tables should always be performed with the functions of the package.</p>
 </blockquote>
-<p>The Database of the package is stored in a list that holds the five tables <code>sources</code>, <code>classes$internal</code>, <code>classes$external</code>, <code>concepts$internal</code> and <code>concepts$external</code>. The name of the list is defined when loading or starting a new ontology (see: <a href="create_an_ontology.html">create_an_ontology</a>: <code>crops &lt;- load_ontology()</code> or <code>lulc &lt;- start_ontology()</code>). The tables are accessed with <code>@</code>, e.g., <code>crops@sources</code> or <code>crops@concepts$harmonised</code>. For any references below we assume, the name of the ontology is <code>ontology</code>.</p>
 <div class="section level2">
 <h2 id="sources-ontologysources">Sources (<a href="mailto:ontology@sources" class="email">ontology@sources</a>)<a class="anchor" aria-label="anchor" href="#sources-ontologysources"></a>
 </h2>
 <p>Each row in the sources table represents a source of one or more concepts and/or classes. A source is typically some form of a knowledge organization system (KOS); e.g., a vocabulary. A source record features the six properties:</p>
 <p><strong>id</strong> (<em>generated</em>): Unique identifier of this source record. Built by counting upwards, starting with <code>1</code>.</p>
 <p><strong>label</strong> (<em>mandatory</em>): A speaking label for the source.</p>
+<p><strong>version</strong> (<em>optional</em>): The version of the source.</p>
+<p><strong>date</strong> (<em>optional</em>): The creation date of the source.</p>
 <p><strong>description</strong> (<em>optional</em>): A description of the source.</p>
-<p><strong>homepage</strong> (<em>mandatory</em>): Homepage of the source. Ideally, this is some Website that hosts the terms that are described in the source-KOS. It can also be a link to a PDF or similar. It is also possible to enter the ISBN (or another identifier) of a book or an other real world document. If everything is correct, the values that are inserted in the homepage should also be primary keys.</p>
+<p><strong>homepage</strong> (<em>optional</em>): Homepage of the source.</p>
+<p><strong>uri_prefix</strong> (<em>optional</em>): Prefix of the resources of the ontology. See also [<a href="https://www.w3.org/TR/turtle/" class="external-link uri">https://www.w3.org/TR/turtle/</a>] at 2.4 IRIs. If no <code>uri_prefix</code> for the harmonised resources of the ontology is given, the <code><a href="../reference/export_as_rdf.html">export_as_rdf()</a></code> function, inserts the placeholder value “<a href="http://www.example.org/ontologics/" class="external-link uri">http://www.example.org/ontologics/</a>”. If non-harmonised sources are provided without a <code>uri_prefix</code> the are ignored by the <code><a href="../reference/export_as_rdf.html">export_as_rdf()</a></code> function.</p>
 <p><strong>license</strong> (<em>mandatory</em>): Licensing information of the source-KOS.</p>
 <p><strong>notes</strong> (<em>optional</em>): Further notes about the source.</p>
 <p>The first row of the sources table refers the ontology itself as a source. Every harmonised concept and class is considered to belong to this source.</p>
