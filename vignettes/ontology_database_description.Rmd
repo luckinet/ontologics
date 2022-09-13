@@ -1,5 +1,5 @@
 ---
-title: "Ontology database description"
+title: "Onto Class Reference"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ontology_database_description}
@@ -11,8 +11,6 @@ vignette: >
 
 > This is an informative document. Manipulation of the contents of the tables should always be performed with the functions of the package.
 
-The Database of the package is stored in a list that holds the five tables `sources`, `classes$internal`, `classes$external`, `concepts$internal` and `concepts$external`. The name of the list is defined when loading or starting a new ontology (see: [create_an_ontology](create_an_ontology.html): `crops <- load_ontology()` or `lulc <- start_ontology()`). The tables are accessed with `@`, e.g., `crops@sources` or `crops@concepts$harmonised`. For any references below we assume, the name of the ontology is `ontology`.
-
 ## Sources (ontology@sources)
 
 Each row in the sources table represents a source of one or more concepts and/or classes. A source is typically some form of a knowledge organization system (KOS); e.g., a vocabulary. A source record features the six properties:
@@ -21,9 +19,15 @@ __id__ (*generated*): Unique identifier of this source record. Built by counting
 
 __label__ (*mandatory*): A speaking label for the source.
 
+__version__ (*optional*): The version of the source.
+
+__date__ (*optional*): The creation date of the source.
+
 __description__ (*optional*): A description of the source.
 
-__homepage__ (*mandatory*): Homepage of the source. Ideally, this is some Website that hosts the terms that are described in the source-KOS. It can also be a link to a PDF or similar. It is also possible to enter the ISBN (or another identifier) of a book or an other real world document. If everything is correct, the values that are inserted in the homepage should also be primary keys.
+__homepage__ (*optional*): Homepage of the source. 
+
+__uri_prefix__ (*optional*): Prefix of the resources of the ontology. See also [https://www.w3.org/TR/turtle/] at 2.4 IRIs. If no `uri_prefix` for the harmonised resources of the ontology is given, the `export_as_rdf()` function, inserts the placeholder value "http://www.example.org/ontologics/". If non-harmonised sources are provided without a `uri_prefix` the are ignored by the `export_as_rdf()` function. 
 
 __license__ (*mandatory*): Licensing information of the source-KOS.
 

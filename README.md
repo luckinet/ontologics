@@ -60,6 +60,7 @@ devtools::install_github("luckinet/ontologics")
 Read the vignettes [Create an
 ontology](https://luckinet.github.io/ontologics/articles/create_an_ontology.html),
 [Map new
-concepts](https://luckinet.github.io/ontologics/articles/map_new_concepts.html)
-and [Convert Ontology to
-RDF](https://luckinet.github.io/ontologics/articles/conversion_to_rdf.html).
+concepts](https://luckinet.github.io/ontologics/articles/map_new_concepts.html),
+[Convert Ontology to
+RDF](https://luckinet.github.io/ontologics/articles/conversion_to_rdf.html) 
+and [Onto Class Reference]((https://luckinet.github.io/ontologics/articles/ontology_database_description.html)).
