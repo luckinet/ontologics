@@ -13,7 +13,7 @@
 #'
 #' # export_as_rdf(ontology = onto, filename = "onto.ttl")
 #' @importFrom checkmate assertCharacter
-#' @importFrom stringr str_ends str_split string_replace_all
+#' @importFrom stringr str_ends str_split str_replace_all
 #' @importFrom readr read_file write_file
 #' @importFrom utils URLencode
 #' @importFrom dplyr na_if pull
@@ -298,7 +298,7 @@ export_as_rdf <- function(ontology, filename) {
                 )
             }
         }
-        
+
     }
 
     # convert concepts$harmonised table
@@ -391,7 +391,7 @@ export_as_rdf <- function(ontology, filename) {
                             objectType = "uri"
                         )
                     }
-                    
+
                 }
             }
         }
@@ -432,7 +432,7 @@ export_as_rdf <- function(ontology, filename) {
                     objectType = "literal"
                 )
             }
-        }        
+        }
     }
 
     rdf_serialize(rdf, filename, namespace = namespaces)
