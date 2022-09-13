@@ -104,6 +104,7 @@ setValidity("onto", function(object){
 #' @param object object to \code{show}.
 #' @importFrom dplyr select mutate if_else group_by summarise rename bind_rows left_join arrange desc filter
 #' @importFrom tidyr separate
+#' @importFrom stringr str_count str_c
 #' @importFrom purrr map
 #' @importFrom tibble tibble
 
@@ -122,13 +123,19 @@ setMethod(f = "show",
             nrConcepts <- dim(theConcepts$harmonised)[1]
             usedConcepts <- length(unique(theConcepts$harmonised$label))
 
+            classLevels <- theClasses$harmonised %>%
+              mutate(clslvls = str_count(string = id, pattern = "[.]"))
+            classLevels <- max(classLevels$clslvls)
+
             lvlChars <- nchar(theClasses$harmonised$id[1])
 
             itemsPerClass <- theClasses$harmonised %>%
               mutate(level = if_else(nchar(id) == lvlChars, 1, if_else(
                 nchar(id) == 2 * lvlChars, 2, if_else(
-                  nchar(id) == 3 * lvlChars, 3, NA_real_)))) %>%
-              separate(col = "id", sep = "[.]", into = paste0("id_", 0:nrClasses), fill = "right") %>%
+                  nchar(id) == 3 * lvlChars, 3, if_else(
+                    nchar(id) == 4 * lvlChars, 4, if_else(
+                      nchar(id) == 5 * lvlChars, 5, NA_real_)))))) %>%
+              separate(col = "id", sep = "[.]", into = paste0("id_", 0:classLevels), fill = "right") %>%
               select(-id_0)
 
             itemsPerSource <- theConcepts$external %>%
@@ -140,70 +147,102 @@ setMethod(f = "show",
               mutate(temp = paste0("'", label, "'", " (", items, ")")) %>%
               arrange(desc(items))
 
-            if(dim(itemsPerSource)[1] > 3){
-              sourceList <- paste0("    -> ", paste0(itemsPerSource$temp[1:3], collapse = ", "), ", ...\n\n")
+            if(dim(itemsPerSource)[1] > 5){
+              sourceList <- paste0("    -> ", paste0(itemsPerSource$temp[1:5], collapse = ", "), ", ...\n\n")
             } else {
               sourceList <- paste0("    -> ", paste0(itemsPerSource$temp, collapse = ", "), "\n\n")
             }
 
-            itemsPerGroup <- theConcepts$harmonised %>%
-              separate(col = "id", sep = "[.]", into = paste0("id_", 0:usedClasses), fill = "right") %>%
+            theConceptsHarm <- theConcepts$harmonised %>%
+              mutate(level = if_else(nchar(id) == lvlChars, 1, if_else(
+                nchar(id) == 2 * lvlChars, 2, if_else(
+                  nchar(id) == 3 * lvlChars, 3, if_else(
+                    nchar(id) == 4 * lvlChars, 4, if_else(
+                      nchar(id) == 5 * lvlChars, 5, NA_real_)))))) %>%
+              separate(col = "id", sep = "[.]", into = paste0("id_", 0:classLevels), fill = "right", remove = FALSE) %>%
               select(-id_0)
 
-            if(dim(itemsPerGroup)[1] != 0){
+            if(dim(theConceptsHarm)[1] != 0){
 
               if(usedClasses > 1){
-                items1 <- itemsPerGroup %>%
+                lvl1Items <- theConceptsHarm %>%
                   filter(!is.na(id_2))
+                lvl1Items <- dim(lvl1Items)[1]
               } else {
-                items1 <- itemsPerGroup
+                lvl1Items <- dim(theConceptsHarm)[1]
               }
 
-              if(dim(items1)[1] < getOption("width")){
-                graphWidth <- dim(items1)[1]
+              if(lvl1Items < getOption("width")){
+                graphWidth <- lvl1Items
               } else {
                 graphWidth <- getOption("width") - 2
               }
 
-              items1 <- items1 %>%
-                group_by(id_1) %>%
-                summarise(items_1 = n()) %>%
-                mutate(prop_1 =  round(items_1 / sum(items_1) * graphWidth, 0))
-
-              if(usedConcepts > 5){
-                temp <- itemsPerGroup %>%
-                  filter(is.na(has_broader)) %>%
-                  left_join(items1, by = "id_1") %>%
-                  mutate(temp = paste0("'", label, "'", " (", items_1, ")")) %>%
-                  arrange(desc(items_1))
-                conceptList <- paste0("    -> ", paste0(temp$temp[1:5], collapse = ", "), ", ...\n\n")
-              } else {
-                conceptList <- paste0("    -> ", paste0(temp$temp, collapse = ", "), "\n\n")
-              }
-
-              ticks <- map(seq_along(items1$prop_1), function(ix){
-                paste0(rep("-", items1$prop_1[ix]-1), collapse = "")
-              })
-              ticks <- paste0(ticks, collapse = "|")
-
-              conceptList <- paste0(conceptList,
-                                    "   ", paste0("|", paste0(rep("-", nchar(ticks)), collapse = ""), "|"), "\n",
-                                    "   ", paste0("|", ticks, "|"))
-
-              indent1 <- 2 + itemsPerClass$level
-              className <- paste0("\u221F ", theClasses$harmonised$label)
-              indent22 <- indent1 + nchar(className)
-              indent22 <- max(indent22) - indent22
-              definitions <- theClasses$harmonised$description
-              itemsPerClass <- itemsPerGroup %>%
+              itemsPerClass <- theConceptsHarm %>%
                 group_by(class) %>%
                 summarise(items = n()) %>%
                 left_join(itemsPerClass, ., by = c("label" = "class")) %>%
                 mutate(items = if_else(is.na(items), 0L, items))
-              indent2 <- 3 + (max(nchar(itemsPerClass$items), na.rm = TRUE) - nchar(itemsPerClass$items)) + indent22
 
-              classList <- paste0(strrep(" ", indent1), className, strrep(" ", indent2), itemsPerClass$items, "   ", definitions)
+              indent1 <- 2 + itemsPerClass$level
+              className <- paste0(strrep(" ", indent1), "\u221F ", theClasses$harmonised$label)
+
+              indent2 <- max(nchar(className)) - nchar(className)
+              indent2 <- 3 + (max(nchar(itemsPerClass$items), na.rm = TRUE) - nchar(itemsPerClass$items)) + indent2
+
+              defInd <- graphWidth - nchar(itemsPerClass$items) - max(indent2) - nchar(className)
+
+              definitions <- tibble(def1 = str_sub(string = theClasses$harmonised$description, start = 1, end = defInd),
+                                    def2 = theClasses$harmonised$description,
+                                    len = nchar(def2),
+                                    defInd = defInd,
+                                    out = if_else(len > defInd, str_c(def1, "..."), def1)) %>%
+                pull(out)
+
+              classList <- paste0(className, strrep(" ", indent2), itemsPerClass$items, "   ", definitions)
               classList <- paste0(paste0(classList, collapse = "\n"), "\n\n")
+
+              conceptList <- conceptChart <- ""
+              for(i in 1:3){
+
+                itemsPerGroup <- theConceptsHarm %>%
+                  # filter(!is.na(!!sym(paste0("id_", i + 1)))) %>%
+                  unite(col = "id_group", paste0("id_", 1:i), sep = ".", remove = FALSE) %>%
+                  mutate(id_group = paste0(".", id_group)) %>%
+                  group_by(id_group) %>%
+                  summarise(items = n()) %>%
+                  mutate(prop =  round(items / sum(items) * graphWidth, 0))
+
+                temp <- theConceptsHarm %>%
+                  filter(level == i) %>%
+                  left_join(itemsPerGroup, by = c("id" = "id_group")) %>%
+                  mutate(temp = paste0("'", label, "'", " (", items, ")"))
+                tempArr <- temp %>%
+                  arrange(desc(items)) %>%
+                  mutate(len = nchar(temp) + 2,
+                         len = cumsum(len)) %>%
+                  filter(len < (graphWidth - 8))
+
+                if(dim(temp)[1] > dim(tempArr)[1]){
+                  conceptList <- paste0(conceptList, "    -> ", paste0(tempArr$temp, collapse = ", "), ", ...\n")
+                } else {
+                  conceptList <- paste0(conceptList, "    -> ", paste0(tempArr$temp, collapse = ", "), "\n")
+                }
+
+                ticks <- map(seq_along(temp$prop), function(ix){
+                  if(temp$prop[ix] == 0){
+                    "|"
+                  } else {
+                    paste0(c(rep("-", temp$prop[ix]-1), "|"), collapse = "")
+                  }
+                })
+                ticks <- paste0(c("|", ticks), collapse = "")
+
+                conceptChart <- paste0(conceptChart, "   ", ticks, "\n")
+
+              }
+
+              conceptList <- paste0(conceptList, "\n", conceptChart)
 
             } else {
 
@@ -211,9 +250,7 @@ setMethod(f = "show",
               classList <- "\n"
               if(is.na(theClasses$harmonised$label)) nrClasses <- 0
 
-
             }
-
 
             cat(paste0("  sources : ", nrSources, "\n"))
             cat(sourceList)
