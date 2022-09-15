@@ -117,13 +117,10 @@
 <span><span class="co">#&gt;      ∟ crop    0   Crop or livestock commodities</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   concepts: 73 </span></span>
-<span><span class="co">#&gt;     -&gt; 'CEREALS' (10), 'FRUIT' (8), ...</span></span>
-<span><span class="co">#&gt;     -&gt; 'Bioenergy herbaceous' (1), ...</span></span>
+<span><span class="co">#&gt;     -&gt; 'CEREALS' (10), 'FRUIT' (8), 'VEGETABLES' (6), 'UNGULATES' (5), 'BIOENERGY CROPS' (4), ...</span></span>
+<span><span class="co">#&gt;     -&gt; 'Bioenergy herbaceous' (20), 'Barley' (20), 'Fibre crops' (20), 'Flower herbs' (20), 'Grass crops' (20), ...</span></span>
 <span><span class="co">#&gt;     -&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    |--|------||-|--|-----|-|||-||||--|--|---||-|---||</span></span>
-<span><span class="co">#&gt;    ||||||||||||||||||||||||||||||||||||||||||||||||||||||</span></span>
-<span><span class="co">#&gt;    |</span></span></code></pre></div>
+<span><span class="co">#&gt;    |------|-----|---|---|--|--|--|--|-|-|-|-|||||||||   |--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|-----|-----|-----|-----|-----|-----|-----|-----|--|--|--|--|-|-|-|||||||   ||</span></span></code></pre></div>
 <p>The <code>onto</code> class is an S3 class with the 3 slots <code>@sources</code>, <code>@classes</code> and <code>@concepts</code>, each of which are reflected by an entry in the show-method. Often the classes in an ontology have a hierarchical order, but this is not obligatory. In any case, the first three levels of the hierarchical structure together with the number of concepts of each level and the description is shown here. Moreover, the five most frequent concepts are shown together with a visual representation of the frequency distribution of all concepts at the first three levels.</p>
 <p>The three main slots are represented by a function that allows to add new items to this slot (<code>new_source</code>, <code>new_class</code> and <code>new_concept</code>) and an additional function allows to create mappings between your focal ontology and any external ontology (<code>new_mappings</code>). There is more detailed information about the architecture of the <code>onto</code>-class in the vignette <a href="ontology_database_description.html">Ontology database description</a>.</p>
 </div>
