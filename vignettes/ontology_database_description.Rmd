@@ -13,7 +13,7 @@ vignette: >
 
 ## Sources (ontology@sources)
 
-Each row in the sources table represents a source of one or more concepts and/or classes. A source is typically some form of a knowledge organization system (KOS); e.g., a vocabulary. A source record features the six properties:
+Each row in the sources table represents a source of one or more concepts and/or classes. A source is typically some form of a knowledge organization system (KOS); e.g., a vocabulary. A source record features the nine properties:
 
 __id__ (*generated*): Unique identifier of this source record. Built by counting upwards, starting with `1`.
 
