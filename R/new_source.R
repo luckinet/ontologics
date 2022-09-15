@@ -44,7 +44,8 @@
 #'                    homepage = "https://www.something.net",
 #'                    license = "CC-BY-0",
 #'                    ontology = onto)
-#' @importFrom checkmate assertCharacter assertClass
+#' @importFrom checkmate assert assertCharacter assertClass testCharacter
+#'   testDate
 #' @importFrom httr http_error
 #' @importFrom tibble tibble
 #' @importFrom dplyr bind_rows distinct
@@ -57,7 +58,7 @@ new_source <- function(ontology = NULL, name = NULL, version = NULL, date = NULL
 
   assertCharacter(x = name, len = 1)
   isVersion <- testCharacter(version, len = 1)
-  isDate <- testCharacter(date, len = 1)
+  isDate <- testDate(date, len = 1)
   assert(isDate, isVersion)
   assertCharacter(x = description, len = 1, null.ok = TRUE)
   assertCharacter(x = homepage, len = 1, null.ok = TRUE)
