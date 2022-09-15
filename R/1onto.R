@@ -105,6 +105,7 @@ setValidity("onto", function(object){
 #' @importFrom dplyr select mutate if_else group_by summarise rename bind_rows left_join arrange desc filter
 #' @importFrom tidyr separate
 #' @importFrom purrr map
+#' @importFrom stringr str_count str_c
 #' @importFrom tibble tibble
 
 setMethod(f = "show",
