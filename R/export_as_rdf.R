@@ -380,10 +380,11 @@ export_as_rdf <- function(ontology, filename) {
                     matched_concept_id <- str_split(mapping, pattern = "[.]")[[1]][1]
                     # not possible to assign a certainty to a match in SKOS
                     # match_certainty <- str_split(mapping, pattern = "[.]")[[1]][2]
-                    source_id = pull(ontology@concepts$external[ontology@concepts$external["id"] == matched_concept_id, "has_source"])
+                    source_id <- pull(ontology@concepts$external[ontology@concepts$external["id"] == matched_concept_id, "has_source"])
+                    matched_concept_external_id <- pull(ontology@concepts$external[ontology@concepts$external["id"] == matched_concept_id, "label"])
                     if (!(source_id %in% exclude_sources)) {
                         matched_concept_prefix <- pull(sources[sources["id"] == source_id, "uri_prefix"])
-                        matched_concept <- make_resource(matched_concept_prefix, matched_concept_id)
+                        matched_concept <- make_resource(matched_concept_prefix, matched_concept_external_id)
                         rdf %>% rdf_add(
                             subject = sub,
                             predicate = make_resource(namespaces["skos"], mapping_relation),
@@ -402,7 +403,7 @@ export_as_rdf <- function(ontology, filename) {
         prefix <- pull(sources[sources["id"] == pull(ontology@concepts$external[i, "has_source"]), "uri_prefix"])
         # exclude concept with no uri_prefix
         if(!is.na(prefix)) {
-            sub <- make_resource(prefix, URLencode(ontology@concepts$external[i, "id"]))
+            sub <- make_resource(prefix, URLencode(ontology@concepts$external[i, "label"]))
             # we don't explicitly type external resources as skos:Concept
             # rdf %>% rdf_add(
             #     subject = sub,
@@ -416,14 +417,16 @@ export_as_rdf <- function(ontology, filename) {
                 objectType = "uri"
             )
             # ignore if Obj == NULL or ""
-            if (!is.na(na_if(ontology@concepts$external[i, "label"], ""))) {
-                rdf %>% rdf_add(
-                    subject = sub,
-                    predicate = make_resource(namespaces["skos"], "prefLabel"),
-                    object = paste0(ontology@concepts$external[i, "label"], "@en"),
-                    objectType = "literal"
-                )
-            }
+            # the label col contains the external concept id, whcih is used to build the `sub`.
+            # -> effectively there is no label, currently.
+            # if (!is.na(na_if(ontology@concepts$external[i, "label"], ""))) {
+            #     rdf %>% rdf_add(
+            #         subject = sub,
+            #         predicate = make_resource(namespaces["skos"], "prefLabel"),
+            #         object = paste0(ontology@concepts$external[i, "label"], "@en"),
+            #         objectType = "literal"
+            #     )
+            # }
             if (!is.na(na_if(ontology@concepts$external[i, "description"], ""))) {
                 rdf %>% rdf_add(
                     subject = sub,
