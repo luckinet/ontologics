@@ -1,3 +1,7 @@
+# 27.09.2022
+
+- one of the vignette contains links that are currently only dummy links. I do get a NOTE when checking on rhub. These links are supposed to work in the future, as they are currently being set up.
+
 # 08.07.2022
 
 - much more development and thus no immediate re-submission. Now it's a new version, so we restart the submission process soon.

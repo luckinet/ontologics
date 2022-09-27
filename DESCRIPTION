@@ -17,7 +17,7 @@ Description: Provides tools to build and work with an ontology of linked (open)
 URL: https://github.com/luckinet/ontologics
 BugReports: https://github.com/luckinet/ontologics/issues
 Depends:
-    R (>= 2.10)
+    R (>= 3.5.0)
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
