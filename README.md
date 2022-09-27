@@ -12,7 +12,6 @@ Status](https://codecov.io/gh/luckinet/ontologics/branch/master/graph/badge.svg)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/ontologics)](https://cran.r-project.org/package=geometr)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![R-CMD-check](https://github.com/luckinet/ontologics/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/luckinet/ontologics/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## Overview
