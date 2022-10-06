@@ -119,8 +119,7 @@
 <span><span class="co">#&gt;   concepts: 73 </span></span>
 <span><span class="co">#&gt;     -&gt; 'CEREALS' (10), 'FRUIT' (8), 'VEGETABLES' (6), 'UNGULATES' (5), 'BIOENERGY CROPS' (4), ...</span></span>
 <span><span class="co">#&gt;     -&gt; 'Bioenergy herbaceous' (20), 'Barley' (20), 'Fibre crops' (20), 'Flower herbs' (20), 'Grass crops' (20), ...</span></span>
-<span><span class="co">#&gt;     -&gt; </span></span>
-<span><span class="co">#&gt;    |------|-----|---|---|--|--|--|--|-|-|-|-|||||||||   |--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|-----|-----|-----|-----|-----|-----|-----|-----|--|--|--|--|-|-|-|||||||   ||</span></span></code></pre></div>
+<span><span class="co">#&gt;     -&gt;</span></span></code></pre></div>
 <p>The <code>onto</code> class is an S3 class with the 3 slots <code>@sources</code>, <code>@classes</code> and <code>@concepts</code>, each of which are reflected by an entry in the show-method. Often the classes in an ontology have a hierarchical order, but this is not obligatory. In any case, the first three levels of the hierarchical structure together with the number of concepts of each level and the description is shown here. Moreover, the five most frequent concepts are shown together with a visual representation of the frequency distribution of all concepts at the first three levels.</p>
 <p>The three main slots are represented by a function that allows to add new items to this slot (<code>new_source</code>, <code>new_class</code> and <code>new_concept</code>) and an additional function allows to create mappings between your focal ontology and any external ontology (<code>new_mappings</code>). There is more detailed information about the architecture of the <code>onto</code>-class in the vignette <a href="ontology_database_description.html">Ontology database description</a>.</p>
 </div>
@@ -134,7 +133,7 @@
 <span>                       path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, </span>
 <span>                       code <span class="op">=</span> <span class="st">".xx"</span>,</span>
 <span>                       description <span class="op">=</span> <span class="st">"showcase of the ontologics R-package"</span>, </span>
-<span>                       homepage <span class="op">=</span> <span class="st">"http://www.luckinet.org"</span>, </span>
+<span>                       homepage <span class="op">=</span> <span class="st">"https://www.idiv.de/luckinet"</span>, </span>
 <span>                       license <span class="op">=</span> <span class="st">"CC-BY-4.0"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lulc</span></span>
@@ -150,12 +149,12 @@
 <table class="table">
 <colgroup>
 <col width="2%">
-<col width="10%">
-<col width="7%">
-<col width="10%">
-<col width="33%">
-<col width="21%">
 <col width="9%">
+<col width="6%">
+<col width="9%">
+<col width="32%">
+<col width="25%">
+<col width="8%">
 <col width="5%">
 </colgroup>
 <thead><tr class="header">
@@ -172,9 +171,9 @@
 <td align="left">1</td>
 <td align="left">harmonised</td>
 <td align="left">0.0.1</td>
-<td align="left">2022-09-27</td>
+<td align="left">2022-10-06</td>
 <td align="left">showcase of the ontologics R-package</td>
-<td align="left"><a href="http://www.luckinet.org" class="external-link uri">http://www.luckinet.org</a></td>
+<td align="left"><a href="https://www.idiv.de/luckinet" class="external-link uri">https://www.idiv.de/luckinet</a></td>
 <td align="left">CC-BY-4.0</td>
 <td align="left"></td>
 </tr></tbody>
