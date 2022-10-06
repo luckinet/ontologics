@@ -81,7 +81,7 @@ new_source <- function(ontology = NULL, name = NULL, version = NULL, date = NULL
 
   if(name %in% ontology@sources$label){
     warning("the source '", name, "' has already been registered.", call. = FALSE)
-    return(NULL)
+    return(ontology)
   }
 
   if(length(ontology@sources$id) == 0){
