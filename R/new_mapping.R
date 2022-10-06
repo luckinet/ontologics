@@ -93,15 +93,17 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
 
     if(length(description) != length(new)){
       if(length(description) == 1){
-        description <- rep(x = description, length.out = length(new))
+        description <- bind_cols(desc = description, label = new)
       } else {
         stop("the number of elements in 'description' is neither the same as in 'new' nor 1.")
       }
     } else if(all(description == "")) {
-      description <- rep(NA_character_, length(new))
+      description <- bind_cols(desc = NA_character_, label = new)
+    } else {
+      description <- bind_cols(desc = description, label = new)
     }
   } else {
-    description <- NA_character_
+    description <- bind_cols(desc = NA_character_, label = new)
   }
 
   if(!is.null(match)){
@@ -185,7 +187,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     temp <- target %>%
       select(all_of(targetCols)) %>%
       bind_cols(tibble(new = new, match = match, certainty = certainty,
-                       description = description, has_source = srcID)) %>%
+                       description = description$desc, has_source = srcID)) %>%
       separate_rows(new, sep = " \\| ")
 
   }
@@ -197,8 +199,10 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
     mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
     select(id = newid, label = new, description, has_source)
 
-  if(!all(is.na(description))){
-    extMps$description <- description[which(new %in% temp$new)]
+  if(!all(is.na(description$desc)) & !dim(extMps)[1] == 0){
+    extMps <- left_join(extMps, description, by = "label") %>%
+      mutate(description = desc) %>%
+      select(-desc)
   }
 
   theTable$external <- extMps %>%
