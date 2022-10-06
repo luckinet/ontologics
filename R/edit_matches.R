@@ -70,13 +70,13 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   selectedCols <- which(colnames(allAttribs) %in% c("id", "has_broader", "source_id", "class", "label", "source_label", "external_label"))
 
   temp <- get_concept(x = allAttribs[,selectedCols], na.rm = FALSE, ontology = ontology, mappings = "all") %>%
-    unite(col = "has_close_match", label, has_close_match, sep = " | ", na.rm = TRUE, remove = FALSE) %>%
-    separate_rows(has_close_match, sep = " \\| ") %>%
-    distinct() %>%
-    group_by(label, class, id, has_broader, description, has_broader_match, has_exact_match, has_narrower_match) %>%
-    summarise(has_close_match = paste0(has_close_match, collapse = " | ")) %>%
-    ungroup() %>%
-    mutate(has_close_match = if_else(is.na(id), NA_character_, has_close_match)) %>%
+    # unite(col = "has_close_match", label, has_close_match, sep = " | ", na.rm = TRUE, remove = FALSE) %>%
+    # separate_rows(has_close_match, sep = " \\| ") %>%
+    # distinct() %>%
+    # group_by(label, class, id, has_broader, description, has_broader_match, has_exact_match, has_narrower_match) %>%
+    # summarise(has_close_match = paste0(has_close_match, collapse = " | ")) %>%
+    # ungroup() %>%
+    # mutate(has_close_match = if_else(is.na(id), NA_character_, has_close_match)) %>%
     left_join(allAttribs)
 
   # determine those concepts, that are not yet defined in the ontology
@@ -89,6 +89,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
                    names_to = "match", values_to = "label") %>%
       separate_rows(label, sep = " \\| ") %>%
       full_join(temp, by = c("label", "class", "id", "has_broader", "description")) %>%
+      filter(!(is.na(match) & !is.na(id))) %>%
       mutate(harmLab = if_else(is.na(match), label, harmLab),
              match = if_else(!is.na(has_close_match), "has_close_match", if_else(is.na(match), "sort_in", match)),
              label = if_else(is.na(match), NA_character_, label)) %>%
@@ -132,18 +133,19 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       write_csv(file = paste0(matchDir, "/matching.csv"), quote = "all", na = "")
 
     # ... and make them aware of their duty
-    message("please edit the file '", paste0(matchDir, "/matching.csv"), "'")
+    message("please edit the file '", paste0(matchDir, "/matching.csv"), "' \n")
     if(verbose){
-      message("column description and tips \n\n")
-      message("sort_in             cut out these values and sort them either into 'has_broader_match', \n                    'has_exact_match', has_narrower_match or 'has_close_match' \n")
-      message("id                  filter by this column to jump to the subset you need to edit\n")
-      message("label               concepts to which the new terms should be related \n")
-      message("class               the class of harmonised concepts \n")
-      message("has_close_match     in case a new concept is a close match to the harmonised concept, paste \n                    it here, delimit several concepts with a '|' \n")
+      message("--- column description ---\n")
+      message("sort_in             cut out these values and sort them either into 'has_broader_match', \n                    'has_exact_match', has_narrower_match or 'has_close_match'")
+      message("id                  filter by this column to jump to the subset you need to edit")
+      message("label               concepts to which the new terms should be related")
+      message("class               the class of harmonised concepts")
+      message("has_close_match     in case a new concept is a close match to the harmonised concept, paste \n                    it here, delimit several concepts with a '|'")
       message("has_broader_match   in case a new concept is a broader match than the harmonised concept, \n                    paste it here, delimit several concepts with a '|'")
       message("has_narrower_match  in case a new concept is a narrower match than the harmonised concept, \n                    paste it here, delimit several concepts with a '|'")
       message("has_exact_match     in case a new concept is an exact match to the harmonised concept \n                    (which is only the case when it's from the same ontology), paste it \n                    here, delimit several concepts with a '|'")
-      message("-> values that were already successfully matched by previous translations are listed here, \n   however, altering them here doesn't change the ontology. \n\n-> any row that doesn't contain a value in the column 'code' will be discarded. Hence, \n   if you want a value to be ignored, simply don't paste it anywhere. \n\n-> do not change the values in the columns 'code', 'harmonised' and 'class', as they \n   are important to insert the new matches into the ontology. \n\n-> if a term shall be nested into a position that doesn't have a class, (for example, \n   because that class occurrs the first time with this term) first create that nested \n   class with 'new_class()'.")
+      message("\n--- some useful tips ---")
+      message("\n-> values that were already successfully matched by previous translations are listed here, \n   however, altering them here doesn't change the ontology. \n\n-> any row that doesn't contain a value in the column 'code' will be discarded. Hence, \n   if you want a value to be ignored, simply don't paste it anywhere. \n\n-> do not change the values in the columns 'code', 'harmonised' and 'class', as they \n   are important to insert the new matches into the ontology. \n\n-> if a term shall be nested into a position that doesn't have a class, (for example, \n   because that class occurrs the first time with this term) first create that nested \n   class with 'new_class()'.\n")
     }
     done <- readline(" -> press any key when done: ")
 
