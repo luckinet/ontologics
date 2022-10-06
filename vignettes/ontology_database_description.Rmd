@@ -27,7 +27,7 @@ __description__ (*optional*): A description of the source.
 
 __homepage__ (*optional*): Homepage of the source. 
 
-__uri_prefix__ (*optional*): Prefix of the resources of the ontology. See also [https://www.w3.org/TR/turtle/] at 2.4 IRIs. If no `uri_prefix` for the harmonized resources of the ontology is given, the `export_as_rdf()` function, inserts the placeholder value "http://www.example.org/ontologics/". If non-harmonized sources are provided without a `uri_prefix` the are ignored by the `export_as_rdf()` function. 
+__uri_prefix__ (*optional*): Prefix of the resources of the ontology. See also [https://www.w3.org/TR/turtle/] at 2.4 IRIs. If no `uri_prefix` for the harmonized resources of the ontology is given, the `export_as_rdf()` function, inserts the placeholder value `http:[slash][slash] www[dot]example[dot]org[slash]ontologics `. If non-harmonized sources are provided without a `uri_prefix` they are ignored by the `export_as_rdf()` function. 
 
 __license__ (*mandatory*): Licensing information of the source-KOS.
 

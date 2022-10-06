@@ -50,7 +50,7 @@ lulc <- start_ontology(name = "land_surface_properties",
                        path = tempdir(), 
                        code = ".xx",
                        description = "showcase of the ontologics R-package", 
-                       homepage = "http://www.luckinet.org", 
+                       homepage = "https://www.idiv.de/luckinet", 
                        license = "CC-BY-4.0")
 
 lulc

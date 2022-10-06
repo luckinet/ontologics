@@ -1,3 +1,7 @@
+# 06.10.2022
+
+- fixing links with placeholders that dont throw error messages.
+
 # 27.09.2022
 
 - one of the vignette contains links that are currently only dummy links. I do get a NOTE when checking on rhub. These links are supposed to work in the future, as they are currently being set up.
