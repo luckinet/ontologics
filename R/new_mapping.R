@@ -97,6 +97,8 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
       } else {
         stop("the number of elements in 'description' is neither the same as in 'new' nor 1.")
       }
+    } else if(all(description == "")) {
+      description <- rep(NA_character_, length(new))
     }
   } else {
     description <- NA_character_
@@ -209,7 +211,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
       filter(!is.na(newid)) %>%
       mutate(newid = if_else(!is.na(newid), paste0(newid, ".", certainty), NA_character_),
              match = paste0("has_", match, "_match")) %>%
-      select(-certainty, -has_source, -new)# %>%
+      select(-certainty, -has_source, -new)
 
     toOut <- theTable$harmonised %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
