@@ -231,14 +231,14 @@ setMethod(f = "show",
 
               }
 
-              conceptList <- paste0(conceptList, conceptChart)
+              # conceptList <- paste0(conceptList, conceptChart)
+              conceptList <- paste0(conceptList)
 
             } else {
 
               conceptList <- "\n"
               classList <- "\n"
               if(is.na(theClasses$harmonised$label)) nrClasses <- 0
-
 
             }
 
