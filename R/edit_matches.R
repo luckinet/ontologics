@@ -25,7 +25,7 @@
 #' @export
 
 edit_matches <- function(concepts, attributes = NULL, source = NULL,
-                         ontology = NULL, matchDir = NULL, verbose = FALSE){
+                         ontology = NULL, matchDir = NULL, verbose = TRUE){
 
   assertDataFrame(x = concepts, min.cols = 1)
   assertNames(x = names(concepts), must.include = c("label"))
@@ -82,25 +82,12 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   # determine those concepts, that are not yet defined in the ontology
   if(!is.null(prevMatches)){
 
-    # temp <- temp %>%
-    #   rename(prev_broader_match = has_broader_match,
-    #          prev_close_match = has_close_match,
-    #          prev_exact_match = has_exact_match,
-    #          prev_narrower_match = has_narrower_match) %>%
-    #   full_join(prevMatches, by = c("label", "class", "id", "has_broader", "description")) %>%
-    #   unite(col = "has_broader_match", prev_broader_match, has_broader_match, sep = " | ", na.rm = TRUE) %>%
-    #   unite(col = "has_close_match", prev_close_match, has_close_match, sep = " | ", na.rm = TRUE) %>%
-    #   unite(col = "has_exact_match", prev_exact_match, has_exact_match, sep = " | ", na.rm = TRUE) %>%
-    #   unite(col = "has_narrower_match", prev_narrower_match, has_narrower_match, sep = " | ", na.rm = TRUE) %>%
-    #   na_if(y = "")
-
     temp <- prevMatches %>%
       filter(class %in% filterClasses) %>%
       rename(harmLab = label) %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
                    names_to = "match", values_to = "label") %>%
       separate_rows(label, sep = " \\| ") %>%
-      # full_join(concepts, by = "label") %>%
       full_join(temp, by = c("label", "class", "id", "has_broader", "description")) %>%
       mutate(harmLab = if_else(is.na(match), label, harmLab),
              match = if_else(!is.na(has_close_match), "has_close_match", if_else(is.na(match), "sort_in", match)),
@@ -147,7 +134,16 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     # ... and make them aware of their duty
     message("please edit the file '", paste0(matchDir, "/matching.csv"), "'")
     if(verbose){
-      message("column description and tips \n\ncode       : filter by this column to jump to the subset you need to edit\nharmonised : concepts to which the new terms should be related \nclass      : the class of harmonised concepts \nclose      : in case a new concept is a close match to the harmonised concept, paste \n             it next to that concept, delimit several concepts with a '|' \nnarrower     : in case a new concept is not the same as any harmonised concept, paste \n             it next to that concept into which it is nested, delimit \n             several concepts with a '|' \nsort_in    : cut out these concepts and sort them either into 'close' or into 'narrower' \n\n-> values that were already successfully matched by previous translations are listed here, \n   however, altering them here doesn't change the ontology. \n\n-> any row that doesn't contain a value in the column 'code' will be discarded. Hence, \n   if you want a value to be ignored, simply don't paste it anywhere. \n\n-> do not change the values in the columns 'code', 'harmonised' and 'class', as they \n   are important to insert the new matches into the ontology. \n\n-> if a term shall be nested into a position that doesn't have a class, (for example, \n   because that class occurrs the first time with this term) first create that nested \n   class with 'new_class()'.")
+      message("column description and tips \n\n")
+      message("sort_in             cut out these values and sort them either into 'has_broader_match', \n                    'has_exact_match', has_narrower_match or 'has_close_match' \n")
+      message("id                  filter by this column to jump to the subset you need to edit\n")
+      message("label               concepts to which the new terms should be related \n")
+      message("class               the class of harmonised concepts \n")
+      message("has_close_match     in case a new concept is a close match to the harmonised concept, paste \n                    it here, delimit several concepts with a '|' \n")
+      message("has_broader_match   in case a new concept is a broader match than the harmonised concept, \n                    paste it here, delimit several concepts with a '|'")
+      message("has_narrower_match  in case a new concept is a narrower match than the harmonised concept, \n                    paste it here, delimit several concepts with a '|'")
+      message("has_exact_match     in case a new concept is an exact match to the harmonised concept \n                    (which is only the case when it's from the same ontology), paste it \n                    here, delimit several concepts with a '|'")
+      message("-> values that were already successfully matched by previous translations are listed here, \n   however, altering them here doesn't change the ontology. \n\n-> any row that doesn't contain a value in the column 'code' will be discarded. Hence, \n   if you want a value to be ignored, simply don't paste it anywhere. \n\n-> do not change the values in the columns 'code', 'harmonised' and 'class', as they \n   are important to insert the new matches into the ontology. \n\n-> if a term shall be nested into a position that doesn't have a class, (for example, \n   because that class occurrs the first time with this term) first create that nested \n   class with 'new_class()'.")
     }
     done <- readline(" -> press any key when done: ")
 
