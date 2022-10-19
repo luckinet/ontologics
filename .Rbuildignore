@@ -10,4 +10,4 @@ cran-comments.md
 ^docs$
 ^pkgdown$
 ^assets$
-onto.ttl
+vignettes/onto.ttl

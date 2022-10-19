@@ -1,3 +1,7 @@
+# ontologics 0.5.2
+
+- fix documentation to make it fit for CRAN.
+
 # ontologics 0.5.1
 
 - describe an ontology either by version, or by date
