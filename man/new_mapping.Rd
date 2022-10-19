@@ -21,7 +21,7 @@ new_mapping(
 \item{new}{\code{\link[=character]{character(.)}}\cr the english external label(s) that
 shall be mapped to labels that do already exist in the ontology.}
 
-\item{target}{\code{\link[=data.frame]{data.frame(.)}}\cr the already harmonised english
+\item{target}{\code{\link[=data.frame]{data.frame(.)}}\cr the already harmonised English
 label(s) to which the external labels shall be mapped.}
 
 \item{source}{\code{\link[=character]{character(1)}}\cr any character uniquely

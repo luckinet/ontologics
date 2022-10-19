@@ -50,6 +50,9 @@ new source is published.}
 \item{notes}{\code{\link[=character]{character(1)}}\cr any notes on the new source that
 don't fit into any of the other meta-data fields here.}
 }
+\value{
+the updated ontology that contains the new source defined here.
+}
 \description{
 Add a new valid source to an ontology
 }

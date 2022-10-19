@@ -4,7 +4,7 @@
 #' external vocabularies and the harmonised classes and concepts.
 #' @param new [`character(.)`][character]\cr the english external label(s) that
 #'   shall be mapped to labels that do already exist in the ontology.
-#' @param target [`data.frame(.)`][data.frame]\cr the already harmonised english
+#' @param target [`data.frame(.)`][data.frame]\cr the already harmonised English
 #'   label(s) to which the external labels shall be mapped.
 #' @param match [`character(1)`][character]\cr the
 #'   \href{https://www.w3.org/TR/skos-reference/#mapping}{skos mapping property}

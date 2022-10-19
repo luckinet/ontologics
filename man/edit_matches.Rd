@@ -17,9 +17,9 @@ edit_matches(
 \item{concepts}{\code{\link[=data.frame]{data.frame(.)}}\cr the new concepts that shall
 be manually matched.}
 
-\item{attributes}{\code{\link[=character]{character(1)}}\cr the attributes of new
-concepts that help to match new and target concepts concepts manually (must
-contain at least the column 'class').}
+\item{attributes}{\code{\link[=data.frame]{data.frame(.)}}\cr the attributes of new
+concepts that help to match new and target concepts manually (must contain
+at least the column 'class').}
 
 \item{source}{\code{\link[=character]{character(1)}}\cr any character uniquely
 identifying the source dataset of the new concepts.}
@@ -33,6 +33,26 @@ source-specific matching tables.}
 \item{verbose}{\code{\link[=logical]{logical(1)}}\cr whether or not to give detailed
 information on the process of this function.}
 }
+\value{
+A table that contains all new matches, or if none of the new concepts
+weren't already in the ontology, a table of the already sucessful matches.
+}
 \description{
-Edit matches manually in a csv-table
+Allows the user to match concepts with an already existing ontology, without
+actually writing into the ontology, but instead storing the resulting
+matching table as csv. This function is used in the function
+\code{\link{new_mapping}} and is not primarily intended for use on its own.
+}
+\details{
+In order to match new concepts into an already existing ontology, it
+may become necessary to carry out manual matches of the new concepts with
+already harmonised concepts, for example, when the new concepts are
+described with terms that are not yet in the ontology. This function puts
+together a table, in which the user would edit matches by hand. Whith the
+argument \code{verbose = TRUE}, detailed information about the edit process
+are shown to the user. After defining matches, and even if not all
+necessary matches are finished, the function stores a specific "matching
+table" with the name \emph{match_SOURCE.csv} in the respective directory
+(\code{matchDir}), from where work can be picked up and continued at
+another time.
 }

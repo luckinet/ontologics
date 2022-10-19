@@ -1,17 +1,20 @@
-#' Exports an ontology as RDF
+#' Export an ontology as RDF
 #'
-#' @param ontology [`ontology(1)`][list]\cr an already loaded
-#' or created ontology object.
-#' @param filename [`character(1)`][character]\cr the filename of
-#' the exported ontology. The format of the exported ontology is
-#' guessed by the extension of the filename. The guessing is performed
-#' by the rdflib package. Valid extensions are ".rdf" for "rdfxml",
-#' ".nt" for "ntriples", ".ttl" for "turtle" or ".json" for "jsonld".
+#' @param ontology [`ontology(1)`][list]\cr an already loaded or created
+#'   ontology object.
+#' @param filename [`character(1)`][character]\cr the filename of the exported
+#'   ontology. The format of the exported ontology is guessed by the extension
+#'   of the filename. The guessing is performed by the rdflib package. Valid
+#'   extensions are ".rdf" for "rdfxml", ".nt" for "ntriples", ".ttl" for
+#'   "turtle" or ".json" for "jsonld".
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
 #'
-#' # export_as_rdf(ontology = onto, filename = "onto.ttl")
+#' \donttest{
+#' export_as_rdf(ontology = onto, filename = "onto.ttl")
+#' }
+#' @return No return value, called for the side effect of exporting an ontology.
 #' @importFrom checkmate assertCharacter
 #' @importFrom stringr str_ends str_split str_replace_all
 #' @importFrom readr read_file write_file

@@ -14,6 +14,7 @@
 #' onto <- new_class(new = "use type", target = "class", description = "something",
 #'                   ontology = onto)
 #'
+#' @return the updated ontology that contains the new class(es) defined here.
 #' @importFrom checkmate assertCharacter assertClass assertTRUE
 #' @importFrom methods new
 #' @export

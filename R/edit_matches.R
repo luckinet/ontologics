@@ -1,10 +1,14 @@
 #' Edit matches manually in a csv-table
 #'
+#' Allows the user to match concepts with an already existing ontology, without
+#' actually writing into the ontology, but instead storing the resulting
+#' matching table as csv. This function is used in the function
+#' \code{\link{new_mapping}} and is not primarily intended for use on its own.
 #' @param concepts [`data.frame(.)`][data.frame]\cr the new concepts that shall
 #'   be manually matched.
-#' @param attributes [`character(1)`][character]\cr the attributes of new
-#'   concepts that help to match new and target concepts concepts manually (must
-#'   contain at least the column 'class').
+#' @param attributes [`data.frame(.)`][data.frame]\cr the attributes of new
+#'   concepts that help to match new and target concepts manually (must contain
+#'   at least the column 'class').
 #' @param source [`character(1)`][character]\cr any character uniquely
 #'   identifying the source dataset of the new concepts.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
@@ -13,6 +17,19 @@
 #'   source-specific matching tables.
 #' @param verbose [`logical(1)`][logical]\cr whether or not to give detailed
 #'   information on the process of this function.
+#' @details In order to match new concepts into an already existing ontology, it
+#'   may become necessary to carry out manual matches of the new concepts with
+#'   already harmonised concepts, for example, when the new concepts are
+#'   described with terms that are not yet in the ontology. This function puts
+#'   together a table, in which the user would edit matches by hand. Whith the
+#'   argument \code{verbose = TRUE}, detailed information about the edit process
+#'   are shown to the user. After defining matches, and even if not all
+#'   necessary matches are finished, the function stores a specific "matching
+#'   table" with the name \emph{match_SOURCE.csv} in the respective directory
+#'   (\code{matchDir}), from where work can be picked up and continued at
+#'   another time.
+#' @return A table that contains all new matches, or if none of the new concepts
+#'   weren't already in the ontology, a table of the already sucessful matches.
 #' @importFrom checkmate assertDataFrame assertNames assertCharacter
 #'   assertFileExists testFileExists
 #' @importFrom utils tail head
@@ -70,13 +87,6 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   selectedCols <- which(colnames(allAttribs) %in% c("id", "has_broader", "source_id", "class", "label", "source_label", "external_label"))
 
   temp <- get_concept(x = allAttribs[,selectedCols], na.rm = FALSE, ontology = ontology, mappings = "all") %>%
-    # unite(col = "has_close_match", label, has_close_match, sep = " | ", na.rm = TRUE, remove = FALSE) %>%
-    # separate_rows(has_close_match, sep = " \\| ") %>%
-    # distinct() %>%
-    # group_by(label, class, id, has_broader, description, has_broader_match, has_exact_match, has_narrower_match) %>%
-    # summarise(has_close_match = paste0(has_close_match, collapse = " | ")) %>%
-    # ungroup() %>%
-    # mutate(has_close_match = if_else(is.na(id), NA_character_, has_close_match)) %>%
     left_join(allAttribs)
 
   # determine those concepts, that are not yet defined in the ontology

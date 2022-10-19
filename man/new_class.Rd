@@ -18,6 +18,9 @@ the new class.}
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
 }
+\value{
+the updated ontology that contains the new class(es) defined here.
+}
 \description{
 Add a new valid class to an ontology
 }

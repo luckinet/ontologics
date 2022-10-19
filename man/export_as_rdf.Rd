@@ -2,26 +2,31 @@
 % Please edit documentation in R/export_as_rdf.R
 \name{export_as_rdf}
 \alias{export_as_rdf}
-\title{Exports an ontology as RDF}
+\title{Export an ontology as RDF}
 \usage{
 export_as_rdf(ontology, filename)
 }
 \arguments{
-\item{ontology}{\code{\link[=list]{ontology(1)}}\cr an already loaded
-or created ontology object.}
+\item{ontology}{\code{\link[=list]{ontology(1)}}\cr an already loaded or created
+ontology object.}
 
-\item{filename}{\code{\link[=character]{character(1)}}\cr the filename of
-the exported ontology. The format of the exported ontology is
-guessed by the extension of the filename. The guessing is performed
-by the rdflib package. Valid extensions are ".rdf" for "rdfxml",
-".nt" for "ntriples", ".ttl" for "turtle" or ".json" for "jsonld".}
+\item{filename}{\code{\link[=character]{character(1)}}\cr the filename of the exported
+ontology. The format of the exported ontology is guessed by the extension
+of the filename. The guessing is performed by the rdflib package. Valid
+extensions are ".rdf" for "rdfxml", ".nt" for "ntriples", ".ttl" for
+"turtle" or ".json" for "jsonld".}
+}
+\value{
+No return value, called for the side effect of exporting an ontology.
 }
 \description{
-Exports an ontology as RDF
+Export an ontology as RDF
 }
 \examples{
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 onto <- load_ontology(path = ontoDir)
 
-# export_as_rdf(ontology = onto, filename = "onto.ttl")
+\donttest{
+export_as_rdf(ontology = onto, filename = "onto.ttl")
+}
 }

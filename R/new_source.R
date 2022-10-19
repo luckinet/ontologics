@@ -44,6 +44,7 @@
 #'                    homepage = "https://www.something.net",
 #'                    license = "CC-BY-0",
 #'                    ontology = onto)
+#' @return the updated ontology that contains the new source defined here.
 #' @importFrom checkmate assert assertCharacter assertClass testCharacter
 #'   testDate
 #' @importFrom httr http_error
