@@ -1,3 +1,7 @@
+# 19.11.2022
+
+- fix documentation and vignettes
+
 # 06.10.2022
 
 - fixing links with placeholders that dont throw error messages.
