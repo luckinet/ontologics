@@ -26,7 +26,8 @@ Export an ontology as RDF
 ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 onto <- load_ontology(path = ontoDir)
 
-\donttest{
-export_as_rdf(ontology = onto, filename = "onto.ttl")
+\dontrun{
+
+  export_as_rdf(ontology = onto, filename = "onto.ttl")
 }
 }

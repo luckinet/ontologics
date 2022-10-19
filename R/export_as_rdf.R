@@ -11,8 +11,9 @@
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
 #'
-#' \donttest{
-#' export_as_rdf(ontology = onto, filename = "onto.ttl")
+#' \dontrun{
+#'
+#'   export_as_rdf(ontology = onto, filename = "onto.ttl")
 #' }
 #' @return No return value, called for the side effect of exporting an ontology.
 #' @importFrom checkmate assertCharacter
