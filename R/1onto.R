@@ -1,7 +1,5 @@
 #' Ontology class (S4) and methods
 #'
-#'
-#'
 #' @slot sources [`data.frame(.)`][data.frame]\cr
 #' @slot classes [`data.frame(.)`][data.frame]\cr
 #' @slot concepts [`data.frame(.)`][data.frame]\cr
