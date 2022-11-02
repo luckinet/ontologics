@@ -16,7 +16,7 @@
 #' @importFrom checkmate assertDataFrame assertNames assertCharacter
 #'   assertFileExists testFileExists
 #' @importFrom utils tail head
-#' @importFrom stringr str_split str_detect
+#' @importFrom stringr str_split
 #' @importFrom readr read_csv write_csv cols
 #' @importFrom dplyr filter rename full_join mutate if_else select left_join
 #'   bind_rows distinct arrange
@@ -70,17 +70,16 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   selectedCols <- which(colnames(allAttribs) %in% c("id", "has_broader", "source_id", "class", "label", "source_label", "external_label"))
 
   temp <- get_concept(x = allAttribs[,selectedCols], na.rm = FALSE, ontology = ontology, mappings = "all") %>%
-    # unite(col = "has_close_match", label, has_close_match, sep = " | ", na.rm = TRUE, remove = FALSE) %>%
-    # separate_rows(has_close_match, sep = " \\| ") %>%
-    # distinct() %>%
-    # group_by(label, class, id, has_broader, description, has_broader_match, has_exact_match, has_narrower_match) %>%
-    # summarise(has_close_match = paste0(has_close_match, collapse = " | ")) %>%
-    # ungroup() %>%
-    # mutate(has_close_match = if_else(is.na(id), NA_character_, has_close_match)) %>%
     left_join(allAttribs)
 
   # determine those concepts, that are not yet defined in the ontology
   if(!is.null(prevMatches)){
+
+    prevMatchLabels <- prevMatches %>%
+      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
+      filter(!is.na(labels)) %>%
+      distinct(labels) %>%
+      pull(labels)
 
     temp <- prevMatches %>%
       filter(class %in% filterClasses) %>%
@@ -105,10 +104,10 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
 
   }
 
-  missingConcepts <- temp %>%
-    filter(is.na(id))
   inclConcepts <- temp %>%
     filter(!is.na(id))
+  missingConcepts <- temp %>%
+    filter(is.na(id) & !label %in% prevMatchLabels)
 
   # build a table of external concepts and of harmonised concepts these should be overwritten with
   if(dim(missingConcepts)[1] != 0){
