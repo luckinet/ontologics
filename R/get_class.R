@@ -69,7 +69,7 @@ get_class <- function(..., regex = FALSE, external = FALSE, ontology = NULL){
     for(i in seq_along(attrib)){
 
       toOut <- toOut %>%
-        filter(str_detect(toOut[[names(attrib)[i]]], paste0(as_name(attrib[[i]]), collapse = "|")))
+        filter(str_detect(toOut[[names(attrib)[i]]], paste0(eval_tidy(attrib[[i]]), collapse = "|")))
 
     }
 
