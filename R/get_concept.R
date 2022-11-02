@@ -116,7 +116,7 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
     if(!is.null(mappings)){
 
       # and replace external IDs with the labels
-      toOut <- toOut%>%
+      toOut <- toOut %>%
         pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
         separate_rows(extid, sep = " \\| ") %>%
         separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
@@ -152,17 +152,16 @@ get_concept <- function(x = NULL, ..., regex = FALSE, tree = FALSE,
           group_by(id, label, class, description, has_broader, match) %>%
           summarise(external_label = paste0(external_label, collapse = " | ")) %>%
           ungroup() %>%
+          arrange(external_label) %>%
           pivot_wider(id_cols = c(id, label, class, description, has_broader), names_from = match, values_from = external_label)
 
         toOut <- toOut %>%
-          bind_rows(temp) %>%
-          arrange(id)
+          bind_rows(temp)
       }
 
     } else {
       toOut <- toOut %>%
-        select(id, label, class, description, has_broader) %>%
-        arrange(id)
+        select(id, label, class, description, has_broader)
     }
 
     for(i in seq_along(attrib)){

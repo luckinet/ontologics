@@ -156,7 +156,8 @@ setMethod(f = "show",
                 nchar(id) == 2 * lvlChars, 2, if_else(
                   nchar(id) == 3 * lvlChars, 3, if_else(
                     nchar(id) == 4 * lvlChars, 4, if_else(
-                      nchar(id) == 5 * lvlChars, 5, NA_real_)))))) %>%
+                      nchar(id) == 5 * lvlChars, 5, if_else(
+                        nchar(id) == 6 * lvlChars, 6, NA_real_))))))) %>%
               separate(col = "id", sep = "[.]", into = paste0("id_", 0:classLevels), fill = "right") %>%
               select(-id_0)
 
@@ -220,12 +221,12 @@ setMethod(f = "show",
                   conceptList <- paste0(conceptList, "    -> ", paste0(temp$temp, collapse = ", "), "\n")
                 }
 
-                ticks <- map(seq_along(temp$prop), function(ix){
-                  paste0(rep("-", temp$prop[ix]-1), collapse = "")
-                })
-                ticks <- paste0(ticks, collapse = "|")
+                # ticks <- map(seq_along(temp$prop), function(ix){
+                #   paste0(rep("-", temp$prop[ix]-1), collapse = "")
+                # })
+                # ticks <- paste0(ticks, collapse = "|")
 
-                conceptChart <- paste0(conceptChart, "   ", paste0("|", ticks, "|"))
+                # conceptChart <- paste0(conceptChart, "   ", paste0("|", ticks, "|"))
 
               }
 

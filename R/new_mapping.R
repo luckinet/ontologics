@@ -208,9 +208,11 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
   theTable$external <- extMps %>%
     bind_rows(theTable$external, .)
 
+  # map external concept to harmonised table
   if(dim(extMps)[1] != 0){
 
     toOut <- temp %>%
+      select(-description) %>%
       left_join(theTable$external %>% filter(has_source == srcID) %>% select(new = label, newid = id), by = "new") %>%
       filter(!is.na(newid)) %>%
       mutate(newid = if_else(!is.na(newid), paste0(newid, ".", certainty), NA_character_),
@@ -218,18 +220,18 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
       select(-certainty, -has_source, -new)
 
     toOut <- theTable$harmonised %>%
-      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
+      pivot_longer(cols = c(description, has_broader_match, has_close_match, has_exact_match, has_narrower_match),
                    names_to = "match", values_to = "newid") %>%
       separate_rows(newid, sep = " \\| ") %>%
-      full_join(toOut, by = c(all_of(targetCols), "description", "match", "newid")) %>%
+      full_join(toOut, by = c(all_of(targetCols), "match", "newid")) %>%
       distinct()
 
     toOut <- toOut %>%
-      group_by(across(all_of(targetCols)), description, has_broader, match) %>%
+      group_by(across(all_of(targetCols)), has_broader, match) %>%
       summarise(newid = paste0(na.omit(newid), collapse = " | ")) %>%
       ungroup() %>%
       mutate(newid = na_if(newid, "")) %>%
-      pivot_wider(id_cols = c(all_of(targetCols), description, has_broader), names_from = match, values_from = newid)
+      pivot_wider(id_cols = c(all_of(targetCols), has_broader), names_from = match, values_from = newid)
 
     toOut <- toOut %>%
       na_if(y = "") %>%

@@ -1,6 +1,7 @@
 # ontologics 0.5.2
 
-- fix documentation to make it fit for CRAN.
+- write the getters `get_class()` and `get_source()`
+- reconstruct sorting in `get_concept()` so that it corresponds to the order of the input table
 
 # ontologics 0.5.1
 

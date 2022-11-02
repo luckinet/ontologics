@@ -33,7 +33,7 @@
 #' @importFrom checkmate assertDataFrame assertNames assertCharacter
 #'   assertFileExists testFileExists
 #' @importFrom utils tail head
-#' @importFrom stringr str_split str_detect
+#' @importFrom stringr str_split
 #' @importFrom readr read_csv write_csv cols
 #' @importFrom dplyr filter rename full_join mutate if_else select left_join
 #'   bind_rows distinct arrange
@@ -92,6 +92,12 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   # determine those concepts, that are not yet defined in the ontology
   if(!is.null(prevMatches)){
 
+    prevMatchLabels <- prevMatches %>%
+      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
+      filter(!is.na(labels)) %>%
+      distinct(labels) %>%
+      pull(labels)
+
     temp <- prevMatches %>%
       filter(class %in% filterClasses) %>%
       rename(harmLab = label) %>%
@@ -115,10 +121,10 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
 
   }
 
-  missingConcepts <- temp %>%
-    filter(is.na(id))
   inclConcepts <- temp %>%
     filter(!is.na(id))
+  missingConcepts <- temp %>%
+    filter(is.na(id) & !label %in% prevMatchLabels)
 
   # build a table of external concepts and of harmonised concepts these should be overwritten with
   if(dim(missingConcepts)[1] != 0){
