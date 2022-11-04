@@ -86,7 +86,8 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     bind_cols(attributes)
   selectedCols <- which(colnames(allAttribs) %in% c("id", "has_broader", "source_id", "class", "label", "source_label", "external_label"))
 
-  temp <- get_concept(x = allAttribs[,selectedCols], na.rm = FALSE, ontology = ontology, mappings = "all") %>%
+  # temp <- get_concept(x = allAttribs[,selectedCols], na.rm = FALSE, ontology = ontology, mappings = "all") %>%
+  temp <- get_concept(table = allAttribs[,selectedCols], ontology = ontology) %>%
     left_join(allAttribs)
 
   # determine those concepts, that are not yet defined in the ontology
@@ -119,6 +120,8 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
         select(-sort_in)
     }
 
+  } else {
+    prevMatchLabels <- NULL
   }
 
   inclConcepts <- temp %>%
