@@ -60,7 +60,7 @@ onto <- new_source(
 onto <- new_concept(
   new = concepts$new,
   broader = get_concept(
-              x = data.frame(label = concepts$old),
+              table = data.frame(label = concepts$old),
               ontology = onto
             ),
   class = "crop",
@@ -76,7 +76,7 @@ concepts <- data.frame(
 onto <- new_concept(
   new = concepts$new,
   broader = get_concept(
-              x = data.frame(label = concepts$old),
+              table = data.frame(label = concepts$old),
               ontology = onto
             ),
   ontology = onto
@@ -92,7 +92,7 @@ onto <- new_class(
 onto <- new_concept(
   new = concepts$new,
   broader = get_concept(
-              x = data.frame(label = concepts$old),
+              table = data.frame(label = concepts$old),
               ontology = onto
             ),
   class = "use type",

@@ -4,13 +4,14 @@
 \alias{make_tree}
 \title{Make a tree of an ontology}
 \usage{
-make_tree(input, top)
+make_tree(top, ontology = NULL)
 }
 \arguments{
-\item{input}{\code{\link[=tibble]{tibble(1)}}\cr the concepts table of an ontology.}
+\item{top}{\code{\link[=tibble]{tibble(1)}}\cr the concepts table that shall be at the
+top of the tree.}
 
-\item{top}{\code{\link[=character]{character(1)}}\cr the ID from which to derive the
-tree.}
+\item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
+stored, or an already loaded ontology.}
 }
 \description{
 Make a tree of an ontology
