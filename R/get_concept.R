@@ -97,32 +97,36 @@ get_concept <- function(table = NULL,ontology = NULL#, regex = FALSE
       select(external, match, label, class, id, has_broader, description, has_source) %>%
       filter(!is.na(id))
 
-    extOut <- table %>%
-      left_join(theConcepts$external, by = "label") %>%
-      select(extid = id, extLabel = label, has_source) %>%
-      filter(!is.na(extid))
+    if(names(table) %in% "label"){
 
-    if(dim(extOut)[1] != 0){
+      extOut <- table %>%
+        left_join(theConcepts$external, by = "label") %>%
+        select(extid = id, extLabel = label, has_source) %>%
+        filter(!is.na(extid))
 
-      extOut <- theConcepts$harmonised %>%
-        pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
-        separate_rows(extid, sep = " \\| ") %>%
-        separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
-        filter(extid %in% extOut$extid) %>%
-        left_join(extOut, by = "extid") %>%
-        mutate(match = str_replace_all(match, "has_", ""),
-               match = str_replace_all(match, "_match", "")) %>%
-        select(external = extLabel, match, label, class, id, has_broader, description, has_source)
+      if(dim(extOut)[1] != 0){
 
-    } else {
-      extOut <- extOut %>%
-        select(external = extLabel, has_source)
+        extOut <- theConcepts$harmonised %>%
+          pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
+          separate_rows(extid, sep = " \\| ") %>%
+          separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
+          filter(extid %in% extOut$extid) %>%
+          left_join(extOut, by = "extid") %>%
+          mutate(match = str_replace_all(match, "has_", ""),
+                 match = str_replace_all(match, "_match", "")) %>%
+          select(external = extLabel, match, label, class, id, has_broader, description, has_source)
+
+      } else {
+        extOut <- extOut %>%
+          select(external = extLabel, has_source)
+      }
+
+      toOut <- toOut %>%
+        bind_rows(extOut) %>%
+        arrange(match) %>%
+        left_join(table %>% select(external = label) %>% distinct(), ., by = "external")
     }
 
-    toOut <- toOut %>%
-      bind_rows(extOut) %>%
-      arrange(match) %>%
-      left_join(table %>% select(external = label) %>% distinct(), ., by = "external")
     # if(!is.null(mappings)){
     #
     #   # and replace external IDs with the labels
