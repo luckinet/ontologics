@@ -97,7 +97,7 @@ get_concept <- function(table = NULL,ontology = NULL#, regex = FALSE
       select(external, match, label, class, id, has_broader, description, has_source) %>%
       filter(!is.na(id))
 
-    if(names(table) %in% "label"){
+    if("label" %in% names(table)){
 
       extOut <- table %>%
         left_join(theConcepts$external, by = "label") %>%
