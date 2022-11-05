@@ -1,3 +1,7 @@
+# ontologics 0.5.3
+
+- reconstruct extracting mappings in `get_concept()`
+
 # ontologics 0.5.2
 
 - write the getters `get_class()` and `get_source()`
