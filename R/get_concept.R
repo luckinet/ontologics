@@ -1,9 +1,12 @@
 #' Get a concept in an ontology
 #'
-#' @param table [`character(1)`][character]\cr a table containing all columns of the
-#'   ontology that shall be filter by the values in those columns.
+#' @param table [`character(1)`][character]\cr a table containing all columns of
+#'   the ontology that shall be filter by the values in those columns.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
 #'   stored, or an already loaded ontology.
+#' @param mappings [`logical(1)`][logical]\cr whether or not to provide a table
+#'   that includes mappings. In this case, only unique items of the concepts in
+#'   \code{table} are included in the output table.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
@@ -28,12 +31,12 @@
 #' @importFrom utils head
 #' @export
 
-get_concept <- function(table = NULL, ontology = NULL#, regex = FALSE
+get_concept <- function(table = NULL, ontology = NULL, mappings = FALSE#, regex = FALSE
                         ){
 
   assertDataFrame(x = table, null.ok = FALSE)
   # assertLogical(x = regex, len = 1, any.missing = FALSE)
-  # assertLogical(x = tree, len = 1, any.missing = FALSE)
+  assertLogical(x = mappings, len = 1, any.missing = FALSE)
   # assertLogical(x = na.rm, len = 1, any.missing = FALSE)
   # assertSubset(x = mappings, choices = c("all", "none", "close", "broader", "narrower", "exact"))
 
@@ -130,6 +133,29 @@ get_concept <- function(table = NULL, ontology = NULL#, regex = FALSE
         bind_rows(extOut) %>%
         arrange(match) %>%
         left_join(table, ., by = colnames(table))
+    }
+
+    if(mappings){
+
+      toOut <- toOut %>%
+        distinct(external, class, id, has_broader) %>%
+        left_join(theConcepts$harmonised, by = c("class", "id", "has_broader"))
+
+      toOut <- toOut %>%
+        pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
+        separate_rows(extid, sep = " \\| ") %>%
+        separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
+        left_join(theConcepts$external %>% select(extid = id, external_label = label), by = "extid") %>%
+        group_by(label, class, id, description, has_broader, match) %>%
+        summarise(external_label = paste0(unique(external_label), collapse = " | ")) %>%
+        ungroup() %>%
+        mutate(external_label = na_if(external_label, "NA")) %>%
+        pivot_wider(id_cols = c(label, class, id, description, has_broader), names_from = match, values_from = external_label)
+
+      toOut <- toOut %>%
+        rename(external = label) %>%
+        left_join(table, ., by = colnames(table)) %>%
+        rename(label = external)
     }
 
     # if(!is.null(mappings)){

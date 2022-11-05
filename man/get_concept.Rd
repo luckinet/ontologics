@@ -4,14 +4,18 @@
 \alias{get_concept}
 \title{Get a concept in an ontology}
 \usage{
-get_concept(table = NULL, ontology = NULL)
+get_concept(table = NULL, ontology = NULL, mappings = FALSE)
 }
 \arguments{
-\item{table}{\code{\link[=character]{character(1)}}\cr a table containing all columns of the
-ontology that shall be filter by the values in those columns.}
+\item{table}{\code{\link[=character]{character(1)}}\cr a table containing all columns of
+the ontology that shall be filter by the values in those columns.}
 
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
+
+\item{mappings}{\code{\link[=logical]{logical(1)}}\cr whether or not to provide a table
+that includes mappings. In this case, only unique items of the concepts in
+\code{table} are included in the output table.}
 }
 \value{
 A table of a subset of the ontology according to the values in
