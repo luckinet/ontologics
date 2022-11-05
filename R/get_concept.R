@@ -28,7 +28,7 @@
 #' @importFrom utils head
 #' @export
 
-get_concept <- function(table = NULL,ontology = NULL#, regex = FALSE
+get_concept <- function(table = NULL, ontology = NULL#, regex = FALSE
                         ){
 
   assertDataFrame(x = table, null.ok = FALSE)
@@ -121,10 +121,15 @@ get_concept <- function(table = NULL,ontology = NULL#, regex = FALSE
           select(external = extLabel, has_source)
       }
 
+      # rename for join
+      table <-  table %>%
+        select(external = label, everything()) %>%
+        distinct()
+
       toOut <- toOut %>%
         bind_rows(extOut) %>%
         arrange(match) %>%
-        left_join(table %>% select(external = label) %>% distinct(), ., by = "external")
+        left_join(table, ., by = colnames(table))
     }
 
     # if(!is.null(mappings)){
