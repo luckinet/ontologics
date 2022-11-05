@@ -124,7 +124,7 @@ lu <- tibble(
 
 lulc <- new_concept(
   new = lu$concept,
-  broader = get_concept(x = lu %>% select(label = broader), ontology = lulc),
+  broader = get_concept(table = lu %>% select(label = broader), ontology = lulc),
   class = "land-use",
   ontology = lulc
 )
