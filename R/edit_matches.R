@@ -101,15 +101,15 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       filter(class %in% filterClasses) %>%
       rename(harmLab = label) %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
-                   names_to = "match", values_to = "external") %>%
-      separate_rows(external, sep = " \\| ") %>%
-      full_join(temp, by = c("external", "class", "id", "has_broader", "description", "match")) %>%
+                   names_to = "match", values_to = "label") %>%
+      separate_rows(label, sep = " \\| ") %>%
+      full_join(temp, by = c("label", "class", "id", "has_broader", "description")) %>%
       filter(!(is.na(match) & !is.na(id))) %>%
-      mutate(harmLab = if_else(is.na(match), external, harmLab),
+      mutate(harmLab = if_else(is.na(match), label, harmLab),
              match = if_else(is.na(match), "sort_in", match),
-             external = if_else(is.na(match), NA_character_, external)) %>%
+             label = if_else(is.na(match), NA_character_, label)) %>%
       pivot_wider(id_cols = c(harmLab, class, id, has_broader, description), names_from = match,
-                  values_from = external, values_fn = ~paste0(.x, collapse = " | ")) %>%
+                  values_from = label, values_fn = ~paste0(.x, collapse = " | ")) %>%
       na_if(y = "NA") %>%
       rename(label = harmLab)
 
