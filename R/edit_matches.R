@@ -119,6 +119,8 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
         select(-sort_in)
     }
 
+  } else {
+    prevMatchLabels <- NULL
   }
 
   inclConcepts <- temp %>%
