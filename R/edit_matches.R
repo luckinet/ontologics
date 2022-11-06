@@ -72,6 +72,9 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
 
   filterClasses <- ontology@classes$harmonised %>%
     filter(label %in% attributes$class)
+  if(dim(filterClasses)[1] == 0){
+    stop("no classes are matched in the ontology.")
+  }
   while(!any(is.na(filterClasses$has_broader))){
     filterClasses <- ontology@classes$harmonised %>%
       filter(label %in% filterClasses$label | label %in% filterClasses$has_broader)
