@@ -67,7 +67,11 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   if(testFileExists(paste0(matchDir, sourceFile))){
     prevMatches <- read_csv(paste0(matchDir, sourceFile), col_types = cols(.default = "c"))
   } else {
-    prevMatches <- NULL
+    prevMatches <- tibble(label = character(), class = character(),
+                          id = character(), has_broader = character(),
+                          description = character(), has_broader_match = character(),
+                          has_close_match = character(), has_exact_match = character(),
+                          has_narrower_match = character())
   }
 
   filterClasses <- ontology@classes$harmonised %>%
@@ -91,38 +95,36 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
 
   temp <- get_concept(table = allAttribs[,selectedCols], ontology = ontology, mappings = TRUE)
 
-  # determine those concepts, that are not yet defined in the ontology
-  if(!is.null(prevMatches)){
-
+  # determine previous matches
+  if(dim(prevMatches)[1] != 1){
     prevMatchLabels <- prevMatches %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
       filter(!is.na(labels)) %>%
       distinct(labels) %>%
       pull(labels)
-
-    temp <- prevMatches %>%
-      filter(class %in% filterClasses) %>%
-      rename(harmLab = label) %>%
-      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
-                   names_to = "match", values_to = "label") %>%
-      separate_rows(label, sep = " \\| ") %>%
-      full_join(temp, by = c("label", "class", "id", "has_broader", "description")) %>%
-      filter(!(is.na(match) & !is.na(id))) %>%
-      mutate(harmLab = if_else(is.na(match), label, harmLab),
-             match = if_else(is.na(match), "sort_in", match),
-             label = if_else(is.na(match), NA_character_, label)) %>%
-      pivot_wider(id_cols = c(harmLab, class, id, has_broader, description), names_from = match,
-                  values_from = label, values_fn = ~paste0(.x, collapse = " | ")) %>%
-      na_if(y = "NA") %>%
-      rename(label = harmLab)
-
-    if("sort_in" %in% colnames(temp)){
-      temp <- temp %>%
-        select(-sort_in)
-    }
-
   } else {
     prevMatchLabels <- NULL
+  }
+
+  # determine those concepts, that are not yet defined in the ontology
+  temp <- prevMatches %>%
+    filter(class %in% filterClasses) %>%
+    rename(harmLab = label) %>%
+    pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
+                 names_to = "match", values_to = "label") %>%
+    separate_rows(label, sep = " \\| ") %>%
+    full_join(temp, by = c("label", "class", "id", "has_broader", "description")) %>%
+    mutate(harmLab = if_else(is.na(harmLab), label, harmLab),
+           label = if_else(is.na(match), if_else(!is.na(id), label, NA_character_), label),
+           match = if_else(is.na(match), if_else(!is.na(id), "has_close_match", "sort_in"), match)) %>%
+    pivot_wider(id_cols = c(harmLab, class, id, has_broader, description), names_from = match,
+                values_from = label, values_fn = ~paste0(.x, collapse = " | ")) %>%
+    na_if(y = "NA") %>%
+    rename(label = harmLab)
+
+  if("sort_in" %in% colnames(temp)){
+    temp <- temp %>%
+      select(-sort_in)
   }
 
   inclConcepts <- temp %>%
@@ -140,11 +142,11 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       filter(class %in% filterClasses)
 
     sortIn <- missingConcepts %>%
-      select(-colnames(attributes)[which(colnames(attributes) %in% colnames(missingConcepts))]) %>%
-      left_join(concepts %>% bind_cols(attributes), by = "label") %>%
+      # select(-colnames(attributes)[which(colnames(attributes) %in% colnames(missingConcepts))]) %>%
+      left_join(concepts, by = "label") %>%
       mutate(sort_in = label,
-        label = NA_character_,
-        class = NA_character_) %>%
+             label = NA_character_,
+             class = NA_character_) %>%
       select(sort_in, names(attributes), id, has_broader, label, class, everything())
 
     # put together the object that shall be edited by the user ...
