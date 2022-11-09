@@ -35,19 +35,7 @@ get_concept <- function(table = NULL, ontology = NULL, mappings = FALSE#, regex 
                         ){
 
   assertDataFrame(x = table, null.ok = FALSE)
-  # assertLogical(x = regex, len = 1, any.missing = FALSE)
   assertLogical(x = mappings, len = 1, any.missing = FALSE)
-  # assertLogical(x = na.rm, len = 1, any.missing = FALSE)
-  # assertSubset(x = mappings, choices = c("all", "none", "close", "broader", "narrower", "exact"))
-
-  # if("none" %in% mappings){
-  #   mappings <- NULL
-  # } else {
-  #   if("all" %in% mappings){
-  #     mappings <- c("close", "broader", "narrower", "exact")
-  #   }
-  #   mappings <- paste0("has_", mappings, "_match")
-  # }
 
   if(!inherits(x = ontology, what = "onto")){
     assertFileExists(x = ontology, access = "r", extension = "rds")
@@ -73,8 +61,10 @@ get_concept <- function(table = NULL, ontology = NULL, mappings = FALSE#, regex 
 
   if("label" %in% names(table)){
 
+    subsNames <- colnames(table)[colnames(table) %in% names(theConcepts$external)]
+
     extOut <- table %>%
-      left_join(theConcepts$external, by = colnames(table)) %>%
+      left_join(theConcepts$external, by = subsNames) %>%
       select(extid = id, extLabel = label, has_source) %>%
       filter(!is.na(extid))
 
