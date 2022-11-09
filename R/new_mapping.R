@@ -230,11 +230,11 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
       distinct()
 
     toOut <- toOut %>%
-      group_by(across(all_of(targetCols)), has_broader, match) %>%
+      group_by(across(all_of(c(targetCols, "match")))) %>%
       summarise(newid = paste0(na.omit(newid), collapse = " | ")) %>%
       ungroup() %>%
       mutate(newid = na_if(newid, "")) %>%
-      pivot_wider(id_cols = c(all_of(targetCols), has_broader), names_from = match, values_from = newid)
+      pivot_wider(id_cols = all_of(targetCols), names_from = match, values_from = newid)
 
     toOut <- toOut %>%
       na_if(y = "") %>%
