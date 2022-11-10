@@ -124,4 +124,8 @@ get_concept(table = tibble(label = "FRUIT"), ontology = crops) %>%
   make_tree(ontology = crops) %>% 
   select(1:6) %>% 
   kable()
+
+# and finally a list of all external concepts
+get_concept(external = TRUE, ontology = crops) %>% 
+  kable()
 ```
