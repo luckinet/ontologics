@@ -39,13 +39,13 @@ crops <- new_source(name = "externalDataset",
                     ontology = crops)
 
 # new concepts that occur in the external dataset, which should be harmonised with the ontology
-newConcepts <- tibble(label = c("Wheat", "NUTS", "Avocado"))
+externalConcepts <- tibble(label = c("Wheat", "NUTS", "Avocado"))
 ```
 
 The new concepts are from different conceptual levels, both 'Wheat' and 'Avocado' are the crop itself, while 'NUTS' is an aggregate of various crops (such as walnut, hazelnut, etc). Let's first find out whether these concepts are in fact new concepts because they are missing from the ontology.
 
 ```{r get_concepts missing}
-missingConcepts <- get_concept(table = newConcepts, ontology = crops)
+missingConcepts <- get_concept(table = externalConcepts, ontology = crops)
 kable(missingConcepts)
 ```
 
@@ -63,13 +63,13 @@ crops <- new_concept(new = c("wheat", "avocado"),
                      ontology = crops)
 ```
 
-Eventually, all new (external) concepts can be mapped to already harmonized concepts. Even though 'NUTS' already exists, this also applies to this new concept, because the already existing concept 'NUTS' doesn't necessarily have to be the same as the new concept 'NUTS'. This all depends on the respective description of the harmonized and external concepts. When setting a new mapping, the type and the certainty of the match have to be defined. For 'wheat' this is a *close* match, because the concepts are very related. for 'NUTS' this is, after checking the theoretical definitions also a *close* match. 'Avocado' is nested into 'Tropical Fruit' and thus has the match type *broad* (because Tropical Fruit is broader than Avocado).
+Eventually, all new (external) concepts can be mapped to already harmonized concepts. Even though 'NUTS' already exists, this also applies to this new concept, because the already existing concept 'NUTS' doesn't necessarily have to be the same as the new concept 'NUTS'. This all depends on the respective description of the harmonized and external concepts. When setting a new mapping, the type and the certainty of the match have to be defined. As we have defined the closely related concepts as new concepts, we can chose a *close* match for all external concepts. Certainty has the value 3, because it is *clear, assigned according to a given definition*.
 
 ```{r set_mapping}
 toMap <- get_concept(table = tibble(label = c("wheat", "NUTS", "avocado")),
                      ontology = crops)
 
-crops <- new_mapping(new = newConcepts %>% pull(label),
+crops <- new_mapping(new = externalConcepts %>% pull(label),
                      target = toMap,
                      match = c("close", "close", "close"),
                      source = "externalDataset",
@@ -93,8 +93,8 @@ crops <- new_concept(new = c("wheat1", "wheat2"),
 
 get_concept(table = tibble(label = "Wheat"), ontology = crops) %>%
   make_tree(ontology = crops) %>% 
-   select(1:5) %>% 
- kable()
+  select(1:5) %>% 
+  kable()
 
 # ... ok, then let's specify that class and re-run new_concept
 crops <- new_class(new = "cultivar", target = "crop", 
@@ -112,16 +112,16 @@ Now we can check whether the updated ontology is as we'd expect, for example by 
 ```{r new ontology}
 get_concept(table = tibble(label = "Wheat"), ontology = crops) %>%
   make_tree(ontology = crops) %>% 
-  select(1:5) %>% 
+  select(1:6) %>% 
   kable()
 
 get_concept(table = tibble(label = "NUTS"), ontology = crops) %>% 
   make_tree(ontology = crops) %>% 
-   select(1:5) %>% 
- kable()
+  select(1:6) %>% 
+  kable()
 
 get_concept(table = tibble(label = "FRUIT"), ontology = crops) %>% 
   make_tree(ontology = crops) %>% 
-   select(1:5) %>% 
- kable()
+  select(1:6) %>% 
+  kable()
 ```

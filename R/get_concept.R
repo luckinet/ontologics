@@ -1,12 +1,19 @@
 #' Get a concept in an ontology
 #'
-#' @param table [`character(1)`][character]\cr a table containing all columns of
-#'   the ontology that shall be filter by the values in those columns.
+#' @param table [`character(1)`][character]\cr a table containing all columns (a
+#'   subset of "id", "class", "label", "has_broader" and "has_source") of the
+#'   ontology that shall be filter by the values in those columns.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
 #'   stored, or an already loaded ontology.
+#' @param regex [`logical(1)`][logical]\cr if \code{regex = TRUE}, the columns
+#'   defined in \code{table} are filtered by \code{\link[stringr]{str_detect}}
+#'   on the column values, otherwise a \code{\link[dplyr]{left_join}} on the
+#'   ontology is carried out.
 #' @param mappings [`logical(1)`][logical]\cr whether or not to provide a table
 #'   that includes mappings. In this case, only unique items of the concepts in
 #'   \code{table} are included in the output table.
+#' @param external [`logical(1)`][logical]\cr whether or not to return merely
+#'   the table of external concepts.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
@@ -31,23 +38,14 @@
 #' @importFrom utils head
 #' @export
 
-get_concept <- function(table = NULL, ontology = NULL, mappings = FALSE#, regex = FALSE
+get_concept <- function(table = NULL, ontology = NULL, mappings = FALSE,
+                        regex = FALSE, external = FALSE
                         ){
 
   assertDataFrame(x = table, null.ok = FALSE)
-  # assertLogical(x = regex, len = 1, any.missing = FALSE)
   assertLogical(x = mappings, len = 1, any.missing = FALSE)
-  # assertLogical(x = na.rm, len = 1, any.missing = FALSE)
-  # assertSubset(x = mappings, choices = c("all", "none", "close", "broader", "narrower", "exact"))
-
-  # if("none" %in% mappings){
-  #   mappings <- NULL
-  # } else {
-  #   if("all" %in% mappings){
-  #     mappings <- c("close", "broader", "narrower", "exact")
-  #   }
-  #   mappings <- paste0("has_", mappings, "_match")
-  # }
+  assertLogical(x = regex, len = 1, any.missing = FALSE)
+  assertLogical(x = external, len = 1, any.missing = FALSE)
 
   if(!inherits(x = ontology, what = "onto")){
     assertFileExists(x = ontology, access = "r", extension = "rds")
@@ -88,17 +86,29 @@ get_concept <- function(table = NULL, ontology = NULL, mappings = FALSE#, regex 
     # }
 
   # } else {
+  if(external){
 
-    assertNames(x = names(table), subset.of = c("id", "has_broader", "source_id", "class", "label", "source_label", "external_label"))
+  } else {
+    assertNames(x = names(table), subset.of = c("id", "class", "label", "has_broader", "has_source"))
+    tab <- theConcepts$harmonised
+  }
+
 
     # get the already harmonised concepts
-    toOut <- table %>%
-      left_join(theConcepts$harmonised, by = colnames(table)) %>%
-      mutate(external = label,
-             match = "exact",
-             has_source = "1") %>%
-      select(external, match, label, class, id, has_broader, description, has_source) %>%
-      filter(!is.na(id))
+    if(!regex){
+
+      toOut <- table %>%
+        left_join(tab, by = colnames(table)) %>%
+        mutate(external = label,
+               match = "exact",
+               has_source = "1") %>%
+        select(external, match, label, class, id, has_broader, description, has_source) %>%
+        filter(!is.na(id))
+
+    } else {
+
+    }
+
 
     if("label" %in% names(table)){
 
@@ -135,7 +145,7 @@ get_concept <- function(table = NULL, ontology = NULL, mappings = FALSE#, regex 
         left_join(table, ., by = colnames(table))
     }
 
-    if(mappings){
+    if(mappings & !external){
 
       toOut <- toOut %>%
         distinct(external, class, id, has_broader) %>%

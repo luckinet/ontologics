@@ -4,11 +4,18 @@
 \alias{get_concept}
 \title{Get a concept in an ontology}
 \usage{
-get_concept(table = NULL, ontology = NULL, mappings = FALSE)
+get_concept(
+  table = NULL,
+  ontology = NULL,
+  mappings = FALSE,
+  regex = FALSE,
+  external = FALSE
+)
 }
 \arguments{
-\item{table}{\code{\link[=character]{character(1)}}\cr a table containing all columns of
-the ontology that shall be filter by the values in those columns.}
+\item{table}{\code{\link[=character]{character(1)}}\cr a table containing all columns (a
+subset of "id", "class", "label", "has_broader" and "has_source") of the
+ontology that shall be filter by the values in those columns.}
 
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
@@ -16,6 +23,14 @@ stored, or an already loaded ontology.}
 \item{mappings}{\code{\link[=logical]{logical(1)}}\cr whether or not to provide a table
 that includes mappings. In this case, only unique items of the concepts in
 \code{table} are included in the output table.}
+
+\item{regex}{\code{\link[=logical]{logical(1)}}\cr if \code{regex = TRUE}, the columns
+defined in \code{table} are filtered by \code{\link[stringr]{str_detect}}
+on the column values, otherwise a \code{\link[dplyr]{left_join}} on the
+ontology is carried out.}
+
+\item{external}{\code{\link[=logical]{logical(1)}}\cr whether or not to return merely
+the table of external concepts.}
 }
 \value{
 A table of a subset of the ontology according to the values in
