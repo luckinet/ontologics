@@ -28,6 +28,8 @@ reference:
   - title: extract information
     contents:
       - get_concept
+      - get_class
+      - get_source
   - title: helpers
     contents:
       - make_tree
