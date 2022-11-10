@@ -1,3 +1,7 @@
+# ontologics 0.5.4
+
+- reconstruct regex functionality and enable extracting of external concepts in `get_concept()`
+
 # ontologics 0.5.3
 
 - reconstruct extracting mappings in `get_concept()`
