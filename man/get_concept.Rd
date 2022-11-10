@@ -26,8 +26,9 @@ that includes mappings. In this case, only unique items of the concepts in
 
 \item{regex}{\code{\link[=logical]{logical(1)}}\cr if \code{regex = TRUE}, the columns
 defined in \code{table} are filtered by \code{\link[stringr]{str_detect}}
-on the column values, otherwise a \code{\link[dplyr]{left_join}} on the
-ontology is carried out.}
+on the column values (if you define several, they are combined with an AND
+operator), otherwise a \code{\link[dplyr]{left_join}} on the ontology is
+carried out.}
 
 \item{external}{\code{\link[=logical]{logical(1)}}\cr whether or not to return merely
 the table of external concepts.}
@@ -46,6 +47,11 @@ onto <- load_ontology(path = ontoDir)
 # exact matches from a loaded ontology ...
 get_concept(table = data.frame(label = "FODDER CROPS"), ontology = onto)
 
-# ... or one stored on the harddisc
-get_concept(table = data.frame(label = "FODDER CROPS"), ontology = ontoDir)
+# ... or one stored on the harddisc, with mappings (none available here)
+get_concept(table = data.frame(label = "FODDER CROPS"), ontology = ontoDir,
+            mappings = TRUE)
+
+# extract concepts based on regular expressions
+get_concept(table = data.frame(label = "crop", id = ".03$"),
+            regex = TRUE, ontology = ontoDir)
 }

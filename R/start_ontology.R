@@ -75,6 +75,7 @@ start_ontology <- function(name = NULL, version = NULL, path = NULL, code = ".xx
                         has_exact_match = character()),
     external = tibble(id = character(),
                       label = character(),
+                      has_broader = character(),
                       description = character(),
                       has_source = character())
   )

@@ -7,8 +7,9 @@
 #'   stored, or an already loaded ontology.
 #' @param regex [`logical(1)`][logical]\cr if \code{regex = TRUE}, the columns
 #'   defined in \code{table} are filtered by \code{\link[stringr]{str_detect}}
-#'   on the column values, otherwise a \code{\link[dplyr]{left_join}} on the
-#'   ontology is carried out.
+#'   on the column values (if you define several, they are combined with an AND
+#'   operator), otherwise a \code{\link[dplyr]{left_join}} on the ontology is
+#'   carried out.
 #' @param mappings [`logical(1)`][logical]\cr whether or not to provide a table
 #'   that includes mappings. In this case, only unique items of the concepts in
 #'   \code{table} are included in the output table.
@@ -21,8 +22,13 @@
 #' # exact matches from a loaded ontology ...
 #' get_concept(table = data.frame(label = "FODDER CROPS"), ontology = onto)
 #'
-#' # ... or one stored on the harddisc
-#' get_concept(table = data.frame(label = "FODDER CROPS"), ontology = ontoDir)
+#' # ... or one stored on the harddisc, with mappings (none available here)
+#' get_concept(table = data.frame(label = "FODDER CROPS"), ontology = ontoDir,
+#'             mappings = TRUE)
+#'
+#' # extract concepts based on regular expressions
+#' get_concept(table = data.frame(label = "crop", id = ".03$"),
+#'             regex = TRUE, ontology = ontoDir)
 #' @return A table of a subset of the ontology according to the values in
 #'   \code{...}
 #' @importFrom checkmate assertFileExists assertLogical testChoice
@@ -56,189 +62,126 @@ get_concept <- function(table = NULL, ontology = NULL, mappings = FALSE,
     ontology <- load_ontology(path = ontoPath)
   }
 
-  theConcepts <- ontology@concepts
 
-  # attrib <- quos(..., .named = TRUE)
-  # # return(attrib)
-  #
-  # # identify attributes that are not in the ontology
-  # if(!all(names(attrib) %in% colnames(theConcepts$harmonised))){
-  #   sbst <- names(attrib) %in% colnames(theConcepts$harmonised)
-  #   theName <- names(attrib)[!sbst]
-  #   warning(paste0("'", paste0(theName, collapse = ", "), "' is not a column in the ontology and is thus ignored."))
-  #   attrib <- attrib[sbst]
-  # }
-
-  # if(regex){
-
-    # if(!is.null(table)){
-    #   toOut <- ontology@concepts$harmonised %>%
-    #     filter(str_detect(label, table$label))
-    # } else {
-    #   toOut <- ontology@concepts$harmonised
-    # }
-
-    # for(i in seq_along(attrib)){
-    #
-    #   toOut <- toOut %>%
-    #     filter(str_detect(toOut[[names(attrib)[i]]], paste0(as_name(attrib[[i]]), collapse = "|")))
-    #
-    # }
-
-  # } else {
   if(external){
 
-  } else {
-    assertNames(x = names(table), subset.of = c("id", "class", "label", "has_broader", "has_source"))
-    tab <- theConcepts$harmonised
-  }
+    assertNames(x = names(table), subset.of = c("id", "label", "description", "has_broader", "has_source"))
 
-
-    # get the already harmonised concepts
     if(!regex){
 
       toOut <- table %>%
-        left_join(tab, by = colnames(table)) %>%
+        left_join(ontology@concepts$external, by = colnames(table)) %>%
         mutate(external = label,
                match = "exact",
                has_source = "1") %>%
-        select(external, match, label, class, id, has_broader, description, has_source) %>%
-        filter(!is.na(id))
+        select(external, match, label, id, has_broader, description, has_source)
 
     } else {
 
-    }
+      toOut <- ontology@concepts$external
 
-
-    if("label" %in% names(table)){
-
-      extOut <- table %>%
-        left_join(theConcepts$external, by = "label") %>%
-        select(extid = id, extLabel = label, has_source) %>%
-        filter(!is.na(extid))
-
-      if(dim(extOut)[1] != 0){
-
-        extOut <- theConcepts$harmonised %>%
-          pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
-          separate_rows(extid, sep = " \\| ") %>%
-          separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
-          filter(extid %in% extOut$extid) %>%
-          left_join(extOut, by = "extid") %>%
-          mutate(match = str_replace_all(match, "has_", ""),
-                 match = str_replace_all(match, "_match", "")) %>%
-          select(external = extLabel, match, label, class, id, has_broader, description, has_source)
-
-      } else {
-        extOut <- extOut %>%
-          select(external = extLabel, has_source)
+      for(j in seq_along(table)){
+        toOut <- toOut %>%
+          filter(str_detect(string = toOut[[colnames(table)[j]]],
+                            pattern = paste0(c(table %>% pull(j)), collapse = "|")))
       }
 
-      # rename for join
-      table <-  table %>%
-        select(external = label, everything()) %>%
-        distinct()
-
-      toOut <- toOut %>%
-        bind_rows(extOut) %>%
-        arrange(match) %>%
-        left_join(table, ., by = colnames(table))
     }
 
-    if(mappings & !external){
+  } else {
+
+    assertNames(x = names(table), subset.of = c("id", "class", "label", "description", "has_broader", "has_source"))
+
+    if(!regex){
+
+      toOut <- table %>%
+        left_join(ontology@concepts$harmonised, by = colnames(table)) %>%
+        mutate(external = label,
+               match = "exact",
+               has_source = "1") %>%
+        select(external, match, label, class, id, has_broader, description, has_source)
+
+      if("label" %in% names(table)){
+
+        subsNames <- colnames(table)[colnames(table) %in% names(ontology@concepts$external)]
+
+        extOut <- table %>%
+          left_join(ontology@concepts$external, by = subsNames) %>%
+          select(extid = id, extLabel = label, has_source) %>%
+          filter(!is.na(extid))
+
+        if(dim(extOut)[1] != 0){
+
+          extOut <- ontology@concepts$harmonised %>%
+            pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
+            separate_rows(extid, sep = " \\| ") %>%
+            separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
+            filter(extid %in% na.omit(extOut$extid)) %>%
+            left_join(extOut, ., by = "extid") %>%
+            mutate(match = str_replace_all(match, "has_", ""),
+                   match = str_replace_all(match, "_match", "")) %>%
+            select(external = extLabel, match, label, class, id, has_broader, description, has_source)
+
+        } else {
+          extOut <- extOut %>%
+            select(external = extLabel, has_source)
+        }
+
+        # rename for join
+        table <-  table %>%
+          select(external = label, everything()) %>%
+          distinct()
+
+        toOut <- toOut %>%
+          bind_rows(extOut) %>%
+          arrange(match) %>%
+          left_join(table, ., by = colnames(table))
+      }
+
+    } else {
+
+      toOut <- ontology@concepts$harmonised
+
+      for(j in seq_along(table)){
+        toOut <- toOut %>%
+          filter(str_detect(string = toOut[[colnames(table)[j]]],
+                            pattern = paste0(c(table %>% pull(j)), collapse = "|")))
+      }
+
+      regexpr <- paste0(paste0(names(table), "~", table), collapse = ",")
+      toOut <- toOut %>%
+        mutate(external = regexpr,
+               match = "regex",
+               has_source = "1") %>%
+        select(external, match, label, class, id, has_broader, description, has_source)
+    }
+
+    if(mappings){
 
       toOut <- toOut %>%
         distinct(external, class, id, has_broader) %>%
-        left_join(theConcepts$harmonised, by = c("class", "id", "has_broader"))
+        left_join(ontology@concepts$harmonised, by = c("class", "id", "has_broader"))
 
       toOut <- toOut %>%
         pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
         separate_rows(extid, sep = " \\| ") %>%
         separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
-        left_join(theConcepts$external %>% select(extid = id, external_label = label), by = "extid") %>%
+        left_join(ontology@concepts$external %>% select(extid = id, external_label = label), by = "extid") %>%
         group_by(label, class, id, description, has_broader, match) %>%
         summarise(external_label = paste0(unique(external_label), collapse = " | ")) %>%
         ungroup() %>%
         mutate(external_label = na_if(external_label, "NA")) %>%
         pivot_wider(id_cols = c(label, class, id, description, has_broader), names_from = match, values_from = external_label)
 
-      toOut <- toOut %>%
-        rename(external = label) %>%
-        left_join(table, ., by = colnames(table)) %>%
-        rename(label = external)
+      if(!regex){
+        toOut <- toOut %>%
+          rename(external = label) %>%
+          left_join(table, ., by = colnames(table)) %>%
+          rename(label = external)
+      }
+
     }
-
-    # if(!is.null(mappings)){
-    #
-    #   # and replace external IDs with the labels
-    #   toOut <- toOut %>%
-    #     pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
-    #     separate_rows(extid, sep = " \\| ") %>%
-    #     separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
-    #     left_join(theConcepts$external %>% select(extid = id, external_label = label), by = "extid") %>%
-    #     group_by(label, class, id, description, has_broader, match) %>%
-    #     summarise(external_label = paste0(external_label, collapse = " | ")) %>%
-    #     ungroup() %>%
-    #     mutate(external_label = na_if(external_label, "NA")) %>%
-    #     pivot_wider(id_cols = c(label, class, id, description, has_broader), names_from = match, values_from = external_label)
-    #
-    #   toOutCompl <- toOut %>%
-    #     filter(!is.na(id))
-    #
-    #   matchCols <- colnames(x)[colnames(x) %in% colnames(theConcepts$external)]
-    #   toMatch <- x %>%
-    #     left_join(theConcepts$external, matchCols) %>%
-    #     filter(!is.na(id)) %>%
-    #     filter(!label %in% toOutCompl$label)
-    #
-    #   if(dim(toMatch)[1] != 0){
-    #     temp <- theConcepts$harmonised %>%
-    #       pivot_longer(cols = mappings, names_to = "match", values_to = "extid") %>%
-    #       filter(!is.na(extid)) %>%
-    #       separate_rows(extid, sep = " \\| ") %>%
-    #       separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
-    #       left_join(toMatch %>% select(extid = id, external_label = label), by = "extid") %>%
-    #       filter(!is.na(external_label))
-    #
-    #     toOut <- toOut %>%
-    #       filter(!label %in% temp$external_label)
-    #
-    #     temp <- temp %>%
-    #       group_by(id, label, class, description, has_broader, match) %>%
-    #       summarise(external_label = paste0(external_label, collapse = " | ")) %>%
-    #       ungroup() %>%
-    #       arrange(external_label) %>%
-    #       pivot_wider(id_cols = c(id, label, class, description, has_broader), names_from = match, values_from = external_label)
-    #
-    #     toOut <- toOut %>%
-    #       bind_rows(temp)
-    #   }
-    #
-    # } else {
-    #   toOut <- toOut %>%
-    #     select(id, label, class, description, has_broader)
-    # }
-
-    # for(i in seq_along(attrib)){
-    #
-    #   toOut <- toOut %>%
-    #     filter(str_detect(toOut[[names(attrib)[i]]], paste0(eval_tidy(attrib[[i]]), collapse = "|")))
-    #
-    # }
-
-  # }
-
-    # if(tree){
-    #
-    #   topID <- toOut %>%
-    #     pull(id) %>%
-    #     unique()
-    #
-    #   out <- make_tree(theConcepts$harmonised, topID)
-    #
-    # } else {
-    #   out <- toOut
-    # }
+  }
 
   return(toOut)
 

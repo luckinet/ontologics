@@ -195,11 +195,11 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
   }
 
   extMps <- temp %>%
-    distinct(new, description, has_source) %>%
+    distinct(new, description, has_broader, has_source) %>%
     filter(new != "") %>%
     filter(!(new %in% theTable$external$label & has_source %in% theTable$external$has_source)) %>%
     mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
-    select(id = newid, label = new, description, has_source)
+    select(id = newid, label = new, has_broader, description, has_source)
 
   if(!all(is.na(description$desc)) & !dim(extMps)[1] == 0){
     extMps <- left_join(extMps, description, by = "label") %>%
@@ -215,7 +215,8 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
 
     toOut <- temp %>%
       select(-description) %>%
-      left_join(theTable$external %>% filter(has_source == srcID) %>% select(new = label, newid = id), by = "new") %>%
+      left_join(theTable$external %>% filter(has_source == srcID) %>% select(new = label, newid = id, has_broader),
+                by = c("new", "has_broader")) %>%
       filter(!is.na(newid)) %>%
       mutate(newid = if_else(!is.na(newid), paste0(newid, ".", certainty), NA_character_),
              match = paste0("has_", match, "_match")) %>%
@@ -229,11 +230,11 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
       distinct()
 
     toOut <- toOut %>%
-      group_by(across(all_of(targetCols)), has_broader, match) %>%
+      group_by(across(all_of(c(targetCols, "match")))) %>%
       summarise(newid = paste0(na.omit(newid), collapse = " | ")) %>%
       ungroup() %>%
       mutate(newid = na_if(newid, "")) %>%
-      pivot_wider(id_cols = c(all_of(targetCols), has_broader), names_from = match, values_from = newid)
+      pivot_wider(id_cols = all_of(targetCols), names_from = match, values_from = newid)
 
     toOut <- toOut %>%
       na_if(y = "") %>%
