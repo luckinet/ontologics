@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.4</span>
       </span>
     </div>
 
@@ -66,54 +66,44 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_concept</span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">...</span>,</span>
+<span>  table <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ontology <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  mappings <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  regex <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  mappings <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>  ontology <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  external <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> a table containing all columns of the
+    <dl><dt>table</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> a table containing all columns (a
+subset of "id", "class", "label", "has_broader" and "has_source") of the
 ontology that shall be filter by the values in those columns.</p></dd>
-
-
-<dt>...</dt>
-<dd><p>combination of column name and value to filter that column by. The
-value to filter by can be provided as regular expression.</p></dd>
-
-
-<dt>regex</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not the value in
-<code>...</code> shall be matched in full, or whether any partial match should be
-returned.</p></dd>
-
-
-<dt>tree</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not to output the whole
-ontology tree starting from the given search terms.</p></dd>
-
-
-<dt>na.rm</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not missing concepts are
-omitted or not.</p></dd>
-
-
-<dt>mappings</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the type of mappings within
-which to search for the concepts, possible values are <code>"none"</code>,
-<code>"all"</code>, <code>"close"</code>, <code>"broader"</code>, <code>"narrower"</code>,
-<code>"exact"</code> or any combination thereof.</p></dd>
 
 
 <dt>ontology</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">ontology(1)</a></code><br> either a path where the ontology is
 stored, or an already loaded ontology.</p></dd>
+
+
+<dt>mappings</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not to provide a table
+that includes mappings. In this case, only unique items of the concepts in
+<code>table</code> are included in the output table.</p></dd>
+
+
+<dt>regex</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> if <code>regex = TRUE</code>, the columns
+defined in <code>table</code> are filtered by <code><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></code>
+on the column values (if you define several, they are combined with an AND
+operator), otherwise a <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></code> on the ontology is
+carried out.</p></dd>
+
+
+<dt>external</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not to return merely
+the table of external concepts.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -132,55 +122,28 @@ stored, or an already loaded ontology.</p></dd>
 <span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_ontology.html">load_ontology</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># exact matches from a loaded ontology ...</span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FODDER CROPS"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          label class  id has_broader description</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 FODDER CROPS group .05        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FODDER CROPS"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       external match        label class  id has_broader description has_source</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 FODDER CROPS exact FODDER CROPS group .05        &lt;NA&gt;        &lt;NA&gt;          1</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># ... or one stored on the harddisc</span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FODDER CROPS"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          label class  id has_broader description</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 FODDER CROPS group .05        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-in"><span><span class="co"># ... or one stored on the harddisc, with mappings (none available here)</span></span></span>
+<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FODDER CROPS"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">ontoDir</span>,</span></span>
+<span class="r-in"><span>            mappings <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          label class  id description has_broader has_broader_match</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 FODDER CROPS group .05        &lt;NA&gt;        &lt;NA&gt;              &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   has_close_match has_exact_match has_narrower_match</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            &lt;NA&gt;            &lt;NA&gt;               &lt;NA&gt;</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># use regular expressions ...</span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"/*crops"</span><span class="op">)</span>, regex <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 12 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    label             class id    has_b…¹ descr…² has_c…³ has_n…⁴ has_b…⁵ has_e…⁶</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Other bioenergy … class .01.… .01     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Fibre crops       class .03.… .03     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Woody flower cro… class .04.… .04     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Grass crops       class .05.… .05     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Other fodder cro… class .05.… .05     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Leguminous crops  class .08.… .08     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Medicinal crops   class .09.… .09     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Oilseed crops     class .11.… .11     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Other crops       class .12.… .12     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Stimulant crops   class .14.… .14     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> Spice crops       class .14.… .14     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> Other sugar crops class .15.… .15     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​has_broader, ²​description,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ³​has_close_match, ⁴​has_narrower_match, ⁵​has_broader_match, ⁶​has_exact_match</span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"/*crops"</span><span class="op">)</span>, has_broader <span class="op">=</span> <span class="st">".05"</span>, regex <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   label              class id    has_b…¹ descr…² has_c…³ has_n…⁴ has_b…⁵ has_e…⁶</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Grass crops        class .05.… .05     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Other fodder crops class .05.… .05     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​has_broader, ²​description,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ³​has_close_match, ⁴​has_narrower_match, ⁵​has_broader_match, ⁶​has_exact_match</span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># get all concepts that are nested into another concept</span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FODDER CROPS"</span><span class="op">)</span>, tree <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   label              class id    has_b…¹ descr…² has_c…³ has_n…⁴ has_b…⁵ has_e…⁶</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> FODDER CROPS       group .05   <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Grass crops        class .05.… .05     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Fodder legumes     class .05.… .05     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Other fodder crops class .05.… .05     <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​has_broader, ²​description,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ³​has_close_match, ⁴​has_narrower_match, ⁵​has_broader_match, ⁶​has_exact_match</span></span>
+<span class="r-in"><span><span class="co"># extract concepts based on regular expressions</span></span></span>
+<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"crop"</span>, id <span class="op">=</span> <span class="st">".03$"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            regex <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   external           match label             class id    has_b…¹ descr…² has_s…³</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> label~crop,id~.03$ regex Other bioenergy … class .01.… .01     <span style="color: #BB0000;">NA</span>      1      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> label~crop,id~.03$ regex Other fodder cro… class .05.… .05     <span style="color: #BB0000;">NA</span>      1      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> label~crop,id~.03$ regex Other sugar crops class .15.… .15     <span style="color: #BB0000;">NA</span>      1      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​has_broader, ²​description, ³​has_source</span></span>
 </code></pre></div>
     </div>
   </div>

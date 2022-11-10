@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.4</span>
       </span>
     </div>
 
@@ -65,18 +65,19 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_tree</span><span class="op">(</span><span class="va">input</span>, <span class="va">top</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_tree</span><span class="op">(</span><span class="va">top</span>, ontology <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>input</dt>
-<dd><p><code>tibble(1)</code><br> the concepts table of an ontology.</p></dd>
+    <dl><dt>top</dt>
+<dd><p><code>tibble(1)</code><br> the concepts table that shall be at the
+top of the tree.</p></dd>
 
 
-<dt>top</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the ID from which to derive the
-tree.</p></dd>
+<dt>ontology</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">ontology(1)</a></code><br> either a path where the ontology is
+stored, or an already loaded ontology.</p></dd>
 
 </dl></div>
 
