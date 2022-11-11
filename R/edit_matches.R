@@ -63,17 +63,6 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     ontology <- load_ontology(path = ontoPath)
   }
 
-  # ... and store the newly defined matches as a source specific matching table
-  if(testFileExists(paste0(matchDir, sourceFile))){
-    prevMatches <- read_csv(paste0(matchDir, sourceFile), col_types = cols(.default = "c"))
-  } else {
-    prevMatches <- tibble(label = character(), class = character(),
-                          id = character(), has_broader = character(),
-                          description = character(), has_broader_match = character(),
-                          has_close_match = character(), has_exact_match = character(),
-                          has_narrower_match = character())
-  }
-
   filterClasses <- ontology@classes$harmonised %>%
     filter(label %in% attributes$class)
   if(dim(filterClasses)[1] == 0){
@@ -95,8 +84,22 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
 
   temp <- get_concept(table = allAttribs[,selectedCols], ontology = ontology, mappings = TRUE)
 
+  if(testFileExists(paste0(matchDir, sourceFile))){
+    prevMatches <- read_csv(paste0(matchDir, sourceFile), col_types = cols(.default = "c"))
+  } else {
+    # if no previous matches are present, match the new concepts with the already
+    # harmonised concepts in assumption that a match on the term is also a match on
+    # the underlying concept
+    tempMatch <- temp %>%
+      mutate(has_close_match = label) %>%
+      select(label, has_close_match)
+    prevMatches <- ontology@concepts$harmonised %>%
+      select(-has_close_match) %>%
+      left_join(tempMatch, ., by = "label")
+  }
+
   # determine previous matches
-  if(dim(prevMatches)[1] != 1){
+  if(dim(prevMatches)[1] != 0){
     prevMatchLabels <- prevMatches %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
       filter(!is.na(labels)) %>%
