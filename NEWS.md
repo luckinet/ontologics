@@ -1,3 +1,7 @@
+# ontologics 0.5.5
+
+- introduce function where a table with columns per classes in the ontology can be used to retrieve concepts. This table is matched with a flattened ontology. Currently, no mappings are attached to this table.
+
 # ontologics 0.5.4
 
 - reconstruct regex functionality and enable extracting of external concepts in `get_concept()`
