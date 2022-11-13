@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.5</span>
       </span>
     </div>
 
@@ -68,6 +68,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_concept</span><span class="op">(</span></span>
 <span>  table <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ontology <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  per_class <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  mappings <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  regex <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  external <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -85,6 +86,14 @@ ontology that shall be filter by the values in those columns.</p></dd>
 <dt>ontology</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">ontology(1)</a></code><br> either a path where the ontology is
 stored, or an already loaded ontology.</p></dd>
+
+
+<dt>per_class</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether ot not to flatten the
+ontology before matching <code>table</code> with the ontology, whereby
+<code>table</code> would contain columns of the classes in the ontology. This can
+be useful when concepts are unique only within their parent concepts, so
+that unique identification is only possible when they are matched together.</p></dd>
 
 
 <dt>mappings</dt>
