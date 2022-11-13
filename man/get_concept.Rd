@@ -7,6 +7,7 @@
 get_concept(
   table = NULL,
   ontology = NULL,
+  per_class = FALSE,
   mappings = FALSE,
   regex = FALSE,
   external = FALSE
@@ -19,6 +20,12 @@ ontology that shall be filter by the values in those columns.}
 
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
+
+\item{per_class}{\code{\link[=logical]{logical(1)}}\cr whether ot not to flatten the
+ontology before matching \code{table} with the ontology, whereby
+\code{table} would contain columns of the classes in the ontology. This can
+be useful when concepts are unique only within their parent concepts, so
+that unique identification is only possible when they are matched together.}
 
 \item{mappings}{\code{\link[=logical]{logical(1)}}\cr whether or not to provide a table
 that includes mappings. In this case, only unique items of the concepts in
