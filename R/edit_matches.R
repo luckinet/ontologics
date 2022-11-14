@@ -94,6 +94,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       mutate(has_close_match = label) %>%
       select(label, has_close_match)
     prevMatches <- ontology@concepts$harmonised %>%
+      filter(class %in% filterClasses) %>%
       select(-has_close_match) %>%
       left_join(tempMatch, ., by = "label")
   }

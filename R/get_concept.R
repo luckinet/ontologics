@@ -53,6 +53,8 @@ get_concept <- function(table = NULL, ontology = NULL, per_class = FALSE,
                         mappings = FALSE, regex = FALSE, external = FALSE
                         ){
 
+  # mappings = FALSE; regex = FALSE; external = FALSE
+
   assertDataFrame(x = table, null.ok = TRUE)
   assertLogical(x = mappings, len = 1, any.missing = FALSE)
   assertLogical(x = regex, len = 1, any.missing = FALSE)
@@ -146,14 +148,17 @@ get_concept <- function(table = NULL, ontology = NULL, per_class = FALSE,
           select(-id, -new_id) %>%
           select(contains(colnames(table)))
 
+        targetClass <- tail(colnames(table), 1)
+
         toOut <- table %>%
           left_join(flatOnto, by = colnames(table)) %>%
           distinct() %>%
-          select(label = tail(colnames(table), 1), id = paste0(tail(colnames(table), 1), "_id"))
+          select(label = targetClass, id = paste0(targetClass, "_id")) %>%
+          mutate(class = targetClass)
 
         toOut <- ontology@concepts$harmonised %>%
           filter(id %in% toOut$id) %>%
-          full_join(toOut, by = c("id", "label"))
+          full_join(toOut, by = c("id", "label", "class"))
 
       } else {
 
