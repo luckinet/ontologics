@@ -84,8 +84,15 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
 
   temp <- get_concept(table = allAttribs[,selectedCols], ontology = ontology, mappings = TRUE)
 
+  # determine previous matches
   if(testFileExists(paste0(matchDir, sourceFile))){
     prevMatches <- read_csv(paste0(matchDir, sourceFile), col_types = cols(.default = "c"))
+
+    prevMatchLabels <- prevMatches %>%
+      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
+      filter(!is.na(labels)) %>%
+      distinct(labels) %>%
+      pull(labels)
   } else {
     # if no previous matches are present, match the new concepts with the already
     # harmonised concepts in assumption that a match on the term is also a match on
@@ -96,18 +103,12 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     prevMatches <- ontology@concepts$harmonised %>%
       filter(class %in% filterClasses) %>%
       select(-has_close_match) %>%
-      left_join(tempMatch, ., by = "label")
-  }
+      left_join(tempMatch, ., by = "label") %>%
+      filter(!is.na(id))
 
-  # determine previous matches
-  if(dim(prevMatches)[1] != 0){
     prevMatchLabels <- prevMatches %>%
-      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
-      filter(!is.na(labels)) %>%
-      distinct(labels) %>%
-      pull(labels)
-  } else {
-    prevMatchLabels <- NULL
+      distinct(label) %>%
+      pull(label)
   }
 
   # determine those concepts, that are not yet defined in the ontology
@@ -194,12 +195,13 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     separate_rows(new_label, sep = " \\| ") %>%
     distinct() %>%
     group_by(id, has_broader, label, class, description, match) %>%
-    summarise(new_label = paste0(new_label, collapse = " | "), .groups = "keep") %>%
+    summarise(new_label = paste0(na.omit(new_label), collapse = " | "), .groups = "keep") %>%
     ungroup() %>%
-    mutate(new_label = na_if(x = new_label, y = "NA")) %>%
+    mutate(new_label = na_if(x = new_label, y = "")) %>%
     pivot_wider(id_cols = c(label, class, id, has_broader, description), names_from = match, values_from = new_label) %>%
     distinct() %>%
     filter(!is.na(has_broader_match) | !is.na(has_close_match) | !is.na(has_narrower_match) | !is.na(has_exact_match)) %>%
+    filter(!is.na(id)) %>%
     arrange(id)
 
   write_csv(x = out, file = paste0(matchDir, sourceFile), append = FALSE, na = "")
