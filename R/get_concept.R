@@ -153,7 +153,7 @@ get_concept <- function(table = NULL, ontology = NULL, per_class = FALSE,
         toOut <- table %>%
           left_join(flatOnto, by = colnames(table)) %>%
           distinct() %>%
-          select(label = targetClass, id = paste0(targetClass, "_id")) %>%
+          select(label = {{ targetClass }}, id = paste0(targetClass, "_id")) %>%
           mutate(class = targetClass)
 
         toOut <- ontology@concepts$harmonised %>%
