@@ -226,7 +226,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
       pivot_longer(cols = c(description, has_broader_match, has_close_match, has_exact_match, has_narrower_match),
                    names_to = "match", values_to = "newid") %>%
       separate_rows(newid, sep = " \\| ") %>%
-      full_join(toOut, by = c(all_of(targetCols), "match", "newid")) %>%
+      full_join(toOut, by = c({{ targetCols }}, "match", "newid")) %>%
       distinct()
 
     toOut <- toOut %>%
