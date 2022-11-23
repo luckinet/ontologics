@@ -71,7 +71,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
                         match = NULL, certainty = NULL, type = "concept",
                         ontology = NULL, matchDir = NULL, verbose = FALSE){
 
-  # match = NULL; type = "concept"; description = NULL
+  # match = NULL; type = "concept"; description = NULL; verbose = FALSE
 
   assertCharacter(x = new, all.missing = FALSE)
   assertDataFrame(x = target, nrows = length(new))
@@ -195,10 +195,13 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
 
   }
 
+  # identify concepts that are not yet in the external concepts
   extMps <- temp %>%
     distinct(new, description, has_broader, has_source) %>%
     filter(new != "") %>%
-    filter(!(new %in% theTable$external$label & has_source %in% theTable$external$has_source)) %>%
+    filter(!(new %in% theTable$external$label &
+               has_source %in% theTable$external$has_source &
+               has_broader %in% theTable$external$has_broader)) %>%
     mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
     select(id = newid, label = new, has_broader, description, has_source)
 
