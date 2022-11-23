@@ -157,6 +157,7 @@ new_mapping <- function(new = NULL, target, source = NULL, description = NULL,
   if(!"label" %in% colnames(target)){
     assertNames(x = colnames(target), must.include = "class")
 
+    # concepts = tibble(label = new); attributes = target
     related <- edit_matches(concepts = tibble(label = new), attributes = target, source = source,
                             ontology = ontology, matchDir = matchDir, verbose = verbose)
 
