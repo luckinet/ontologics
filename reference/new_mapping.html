@@ -71,7 +71,7 @@ external vocabularies and the harmonised classes and concepts.</p>
 <span>  new <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">target</span>,</span>
 <span>  source <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  lut <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  match <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"concept"</span>,</span>
@@ -98,9 +98,11 @@ label(s) to which the external labels shall be mapped.</p></dd>
 identifying the source dataset of the new label.</p></dd>
 
 
-<dt>description</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(.)</a></code><br> a verbatim description of
-the new label.</p></dd>
+<dt>lut</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(.)</a></code><br> in case the terms used for mapping
+are from a look up table (i.e. a standardised set of terms with a
+description), provide this table with column names 'label' and '
+description' here.</p></dd>
 
 
 <dt>match</dt>
