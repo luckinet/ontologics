@@ -8,7 +8,7 @@ new_mapping(
   new = NULL,
   target,
   source = NULL,
-  description = NULL,
+  lut = NULL,
   match = NULL,
   certainty = NULL,
   type = "concept",
@@ -27,8 +27,10 @@ label(s) to which the external labels shall be mapped.}
 \item{source}{\code{\link[=character]{character(1)}}\cr any character uniquely
 identifying the source dataset of the new label.}
 
-\item{description}{\code{\link[=character]{character(.)}}\cr a verbatim description of
-the new label.}
+\item{lut}{\code{\link[=character]{character(.)}}\cr in case the terms used for mapping
+are from a look up table (i.e. a standardised set of terms with a
+description), provide this table with column names 'label' and '
+description' here.}
 
 \item{match}{\code{\link[=character]{character(1)}}\cr the
 \href{https://www.w3.org/TR/skos-reference/#mapping}{skos mapping property}
