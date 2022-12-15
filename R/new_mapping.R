@@ -255,7 +255,7 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
       pivot_wider(id_cols = all_of(targetCols), names_from = match, values_from = newid)
 
     toOut <- toOut %>%
-      na_if(y = "") %>%
+      mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
       select(all_of(targetCols), description, has_close_match, has_broader_match, has_narrower_match, has_exact_match) %>%
       arrange(id)
 
@@ -282,3 +282,5 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
   return(out)
 
 }
+
+utils::globalVariables("where")
