@@ -1,3 +1,7 @@
+# ontologics 0.5.6
+
+- small fix that would not allow to match with an empty set of values.
+
 # ontologics 0.5.5
 
 - introduce function where a table with columns per classes in the ontology can be used to retrieve concepts. This table is matched with a flattened ontology. Currently, no mappings are attached to this table.
