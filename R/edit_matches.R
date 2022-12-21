@@ -109,6 +109,11 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     prevMatchLabels <- prevMatches %>%
       distinct(label) %>%
       pull(label)
+
+    if(dim(prevMatches)[1] == 0){
+      prevMatches[1,] <- "ignore"
+      prevMatches$class <- filterClasses[1]
+    }
   }
 
   # determine those concepts, that are not yet defined in the ontology
@@ -125,6 +130,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     pivot_wider(id_cols = c(harmLab, class, id, has_broader, description), names_from = match,
                 values_from = label, values_fn = ~paste0(.x, collapse = " | ")) %>%
     na_if(y = "NA") %>%
+    filter(harmLab != "ignore") %>%
     rename(label = harmLab)
 
   if("sort_in" %in% colnames(temp)){
@@ -147,7 +153,6 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       filter(class %in% filterClasses)
 
     sortIn <- missingConcepts %>%
-      # select(-colnames(attributes)[which(colnames(attributes) %in% colnames(missingConcepts))]) %>%
       left_join(concepts, by = "label") %>%
       mutate(sort_in = label,
              label = NA_character_,
