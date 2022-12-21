@@ -73,8 +73,6 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
                         match = NULL, certainty = NULL, type = "concept",
                         ontology = NULL, matchDir = NULL, verbose = FALSE){
 
-  # match = NULL; type = "concept"; lut = NULL; verbose = FALSE
-
   assertCharacter(x = new, all.missing = FALSE)
   assertDataFrame(x = target, nrows = length(new))
   assertDataFrame(x = lut, null.ok = TRUE)
