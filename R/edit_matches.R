@@ -174,12 +174,26 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
         select(-label.x, -label.y) %>%
         arrange(dist) %>%
         mutate(dist = paste0("dist_", dist)) %>%
-        pivot_wider(names_from = dist, values_from = label_harm) %>%
+        pivot_wider(names_from = dist, values_from = label_harm)
+      if(!"dist_0" %in% colnames(joined)){
+        joined <- joined %>%
+          add_column(dist_0 = NA_character_, .after = "description")
+      }
+      if(!"dist_1" %in% colnames(joined)){
+        joined <- joined %>%
+          add_column(dist_1 = NA_character_, .after = "dist_0")
+      }
+      if(!"dist_2" %in% colnames(joined)){
+        joined <- joined %>%
+          add_column(dist_2 = NA_character_, .after = "dist_1")
+      }
+
+      joined <- joined %>%
         group_by(label_new) %>%
         summarise(across(starts_with("dist_"), ~ paste0(na.omit(unique(.x)), collapse = " | "))) %>%
         na_if("") %>%
-        mutate(dist_1 = if_else(!is.na(dist_0), NA_character_, dist_1),
-               dist_2 = if_else(!is.na(dist_1) | !is.na(dist_0), NA_character_, dist_2)) %>%
+        # mutate(dist_1 = if_else(!is.na(dist_0), NA_character_, dist_1),
+        #        dist_2 = if_else(!is.na(dist_1) | !is.na(dist_0), NA_character_, dist_2)) %>%
         ungroup() %>%
         select(label = label_new, has_0_differences = dist_0, has_1_difference = dist_1, has_2_differences = dist_2)
 
