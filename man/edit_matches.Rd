@@ -55,4 +55,9 @@ necessary matches are finished, the function stores a specific "matching
 table" with the name \emph{match_SOURCE.csv} in the respective directory
 (\code{matchDir}), from where work can be picked up and continued at
 another time.
+
+Fuzzy matching is carried out and matches with 0, 1 or 2 differing
+charcters are presented in a respective column. For large tables the
+function \code{=IF(E_="alX";INDEX(A$2:A$_;MATCH(D_;K$2:K$_;0);1);"")} can
+be used. Replace '_' with the respective rows.
 }

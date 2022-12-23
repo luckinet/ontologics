@@ -158,9 +158,9 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
   if(!"label" %in% colnames(target)){
     assertNames(x = colnames(target), must.include = "class")
 
-    # concepts = tibble(label = new); attributes = target
     related <- edit_matches(concepts = tibble(label = new), attributes = target, source = source,
                             ontology = ontology, matchDir = matchDir, verbose = verbose)
+    # concepts = tibble(label = new); attributes = target
 
     temp <- related %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),

@@ -38,7 +38,8 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
-    rdflib
+    rdflib,
+    fuzzyjoin
 Suggests: 
     knitr,
     rmarkdown

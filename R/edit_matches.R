@@ -28,6 +28,11 @@
 #'   table" with the name \emph{match_SOURCE.csv} in the respective directory
 #'   (\code{matchDir}), from where work can be picked up and continued at
 #'   another time.
+#'
+#'   Fuzzy matching is carried out and matches with 0, 1 or 2 differing
+#'   charcters are presented in a respective column. For large tables the
+#'   function \code{=IF(E_="alX";INDEX(A$2:A$_;MATCH(D_;K$2:K$_;0);1);"")} can
+#'   be used. Replace '_' with the respective rows.
 #' @return A table that contains all new matches, or if none of the new concepts
 #'   weren't already in the ontology, a table of the already sucessful matches.
 #' @importFrom checkmate assertDataFrame assertNames assertCharacter
@@ -37,8 +42,9 @@
 #' @importFrom readr read_csv write_csv cols
 #' @importFrom dplyr filter rename full_join mutate if_else select left_join
 #'   bind_rows distinct arrange
-#' @importFrom tidyselect everything
+#' @importFrom tidyselect everything starts_with
 #' @importFrom tidyr pivot_longer pivot_wider
+#' @importFrom fuzzyjoin stringdist_left_join
 #' @export
 
 edit_matches <- function(concepts, attributes = NULL, source = NULL,
@@ -152,6 +158,35 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       filter(!is.na(class)) %>%
       filter(class %in% filterClasses)
 
+    toJoin <- relate %>%
+      rename(label_harm = label) %>%
+      mutate(label = tolower(label_harm)) %>%
+      filter(!is.na(label_harm) & class == tail(filterClasses, 1)) %>%
+      select(-has_broader_match, -has_close_match, -has_exact_match, -has_narrower_match)
+
+    joined <- missingConcepts %>%
+      select(label_new = label) %>%
+      mutate(label = tolower(label_new)) %>%
+      stringdist_left_join(toJoin, by = "label", distance_col = "dist", max_dist = 2)
+
+    if(!all(is.na(joined$dist))){
+      joined <- joined %>%
+        select(-label.x, -label.y) %>%
+        arrange(dist) %>%
+        mutate(dist = paste0("dist_", dist)) %>%
+        pivot_wider(names_from = dist, values_from = label_harm) %>%
+        group_by(label_new) %>%
+        summarise(across(starts_with("dist_"), ~ paste0(na.omit(unique(.x)), collapse = " | "))) %>%
+        na_if("") %>%
+        mutate(dist_1 = if_else(!is.na(dist_0), NA_character_, dist_1),
+               dist_2 = if_else(!is.na(dist_1) | !is.na(dist_0), NA_character_, dist_2)) %>%
+        ungroup() %>%
+        select(label = label_new, has_0_differences = dist_0, has_1_difference = dist_1, has_2_differences = dist_2)
+
+      missingConcepts <- missingConcepts %>%
+        left_join(joined, by = "label")
+    }
+
     sortIn <- missingConcepts %>%
       left_join(concepts, by = "label") %>%
       mutate(sort_in = label,
@@ -182,8 +217,13 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     done <- readline(" -> press any key when done: ")
 
     related <- read_csv(paste0(matchDir, "/matching.csv"), col_types = cols(.default = "c")) %>%
-      filter(!is.na(id)) %>%
-      select(-sort_in)
+      select(-sort_in) %>%
+      filter(!is.na(id))
+
+    if(!all(is.na(joined$dist))){
+      related <- related %>%
+        select(-has_0_differences, -has_1_difference, -has_2_differences)
+    }
 
     if(dim(related)[1] == 0){
       related <- NULL
