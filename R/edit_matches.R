@@ -98,6 +98,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
       filter(!is.na(labels)) %>%
       distinct(labels) %>%
+      separate_rows(labels, sep = " \\| ") %>%
       pull(labels)
   } else {
     # if no previous matches are present, match the new concepts with the already
@@ -114,6 +115,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
 
     prevMatchLabels <- prevMatches %>%
       distinct(label) %>%
+      separate_rows(label, sep = " \\| ") %>%
       pull(label)
 
     if(dim(prevMatches)[1] == 0){
@@ -218,15 +220,18 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     if(verbose){
       message("--- column description ---\n")
       message("sort_in             cut out these values and sort them either into 'has_broader_match', \n                    'has_exact_match', has_narrower_match or 'has_close_match'")
+      message("has_broader         the broader concept id of each of the already harmonised concepts")
       message("id                  filter by this column to jump to the subset you need to edit")
       message("label               concepts to which the new terms should be related")
       message("class               the class of harmonised concepts")
+      message("description         the description of each concept")
       message("has_close_match     in case a new concept is a close match to the harmonised concept, paste \n                    it here, delimit several concepts with a '|'")
       message("has_broader_match   in case a new concept is a broader match than the harmonised concept, \n                    paste it here, delimit several concepts with a '|'")
       message("has_narrower_match  in case a new concept is a narrower match than the harmonised concept, \n                    paste it here, delimit several concepts with a '|'")
       message("has_exact_match     in case a new concept is an exact match to the harmonised concept \n                    (which is only the case when it's from the same ontology), paste it \n                    here, delimit several concepts with a '|'")
+      message("has_x_differences   in case a new concepts matches via fuzzy matching with any of the already \n                    existing concepts, those concepts are shown in the columns with the \n                    respective number of character differences")
       message("\n--- some useful tips ---")
-      message("\n-> values that were already successfully matched by previous translations are listed here, \n   however, altering them here doesn't change the ontology. \n\n-> any row that doesn't contain a value in the column 'code' will be discarded. Hence, \n   if you want a value to be ignored, simply don't paste it anywhere. \n\n-> do not change the values in the columns 'code', 'harmonised' and 'class', as they \n   are important to insert the new matches into the ontology. \n\n-> if a term shall be nested into a position that doesn't have a class, (for example, \n   because that class occurrs the first time with this term) first create that nested \n   class with 'new_class()'.\n")
+      message("\n-> values that were already successfully matched by previous translations are listed, \n   however, altering already matched concepts doesn't change the ontology. \n\n-> any row that doesn't contain a value in the column 'id' will be discarded. Hence, \n   if you want a value to be ignored, simply don't paste it anywhere. \n\n-> do not change the values in the columns 'id', 'label' and 'class', as they are \n   important to insert the new matches into the ontology. \n\n-> if a term shall be nested into a position that doesn't have a class, (for example, \n   because that class occurrs the first time with this term) first create that nested \n   class with 'new_class()'.\n")
     }
     done <- readline(" -> press any key when done: ")
 
