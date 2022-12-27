@@ -44,6 +44,7 @@
 #'   bind_rows distinct arrange
 #' @importFrom tidyselect everything starts_with
 #' @importFrom tidyr pivot_longer pivot_wider
+#' @importFrom tibble add_column
 #' @importFrom fuzzyjoin stringdist_left_join
 #' @export
 
