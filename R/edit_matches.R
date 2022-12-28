@@ -146,6 +146,22 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     temp <- temp %>%
       select(-sort_in)
   }
+  if(!"has_close_match" %in% colnames(temp)){
+    temp <- temp %>%
+      add_column(has_close_match = NA_character_, .after = "description")
+  }
+  if(!"has_broader_match" %in% colnames(temp)){
+    temp <- temp %>%
+      add_column(has_broader_match = NA_character_, .after = "has_close_match")
+  }
+  if(!"has_exact_match" %in% colnames(temp)){
+    temp <- temp %>%
+      add_column(has_exact_match = NA_character_, .after = "has_broader_match")
+  }
+  if(!"has_narrower_match" %in% colnames(temp)){
+    temp <- temp %>%
+      add_column(has_narrower_match = NA_character_, .after = "has_exact_match")
+  }
 
   inclConcepts <- temp %>%
     filter(!is.na(id))
