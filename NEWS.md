@@ -1,3 +1,7 @@
+# ontologics 0.6.1
+
+- when matching a new dataseries with old concepts, give a message and ignore non-close matches.
+
 # ontologics 0.6.0 - fuzzy matching
 
 - fuzzy matching implemented. When concepts that are new for mapping do not match exactly, fuzzy matching is carried out and three new columns are offered for assigning the new concepts to harmonised concepts
