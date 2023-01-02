@@ -93,6 +93,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
 
   # determine previous matches
   if(testFileExists(paste0(matchDir, sourceFile))){
+    prevAvail <- TRUE
     prevMatches <- read_csv(paste0(matchDir, sourceFile), col_types = cols(.default = "c"))
 
     prevMatchLabels <- prevMatches %>%
@@ -102,6 +103,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       separate_rows(labels, sep = " \\| ") %>%
       pull(labels)
   } else {
+    prevAvail <- FALSE
     # if no previous matches are present, match the new concepts with the already
     # harmonised concepts in assumption that a match on the term is also a match on
     # the underlying concept
@@ -112,7 +114,10 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       filter(class %in% filterClasses) %>%
       select(-has_close_match) %>%
       left_join(tempMatch, ., by = "label") %>%
-      filter(!is.na(id))
+      filter(!is.na(id)) %>%
+      mutate(has_broader_match = NA_character_,
+             has_exact_match = NA_character_,
+             has_narrower_match = NA_character_)
 
     prevMatchLabels <- prevMatches %>%
       distinct(label) %>%
@@ -233,7 +238,12 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       write_csv(file = paste0(matchDir, "/matching.csv"), quote = "all", na = "")
 
     # ... and make them aware of their duty
-    message("please edit the file '", paste0(matchDir, "/matching.csv"), "' \n")
+    if(prevAvail){
+      message("previous matches found for this dataseries, only previously not matched terms are presented")
+    } else {
+      message("no previous matches found for this dataseries, close match with other potentially available terms is presented")
+    }
+    message("-> please edit the file '", paste0(matchDir, "/matching.csv"), "' \n")
     if(verbose){
       message("--- column description ---\n")
       message("sort_in             cut out these values and sort them either into 'has_broader_match', \n                    'has_exact_match', has_narrower_match or 'has_close_match'")
