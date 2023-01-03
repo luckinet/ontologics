@@ -200,8 +200,12 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
     distinct(new, has_broader, has_source) %>%
     filter(new != "") %>%
     filter(!(new %in% theTable$external$label &
-               has_source %in% theTable$external$has_source &
-               has_broader %in% theTable$external$has_broader))
+               has_source %in% theTable$external$has_source))
+
+  if("has_broader" %in% names(theTable$external)){
+    extMps <- extMps %>%
+      filter(has_broader %in% theTable$external$has_broader)
+  }
 
   if(!is.null(lut) & !dim(extMps)[1] == 0){
     extMps <- extMps %>%
