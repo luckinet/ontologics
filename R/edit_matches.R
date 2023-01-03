@@ -30,9 +30,7 @@
 #'   another time.
 #'
 #'   Fuzzy matching is carried out and matches with 0, 1 or 2 differing
-#'   charcters are presented in a respective column. For large tables the
-#'   function \code{=IF(E_="alX";INDEX(A$2:A$_;MATCH(D_;K$2:K$_;0);1);"")} can
-#'   be used. Replace '_' with the respective rows.
+#'   charcters are presented in a respective column.
 #' @return A table that contains all new matches, or if none of the new concepts
 #'   weren't already in the ontology, a table of the already sucessful matches.
 #' @importFrom checkmate assertDataFrame assertNames assertCharacter
@@ -239,9 +237,9 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
 
     # ... and make them aware of their duty
     if(prevAvail){
-      message("previous matches found for this dataseries, only previously not matched terms are presented")
+      message("\nprevious matches found for this dataseries, only previously not matched terms are presented")
     } else {
-      message("no previous matches found for this dataseries, close match with other potentially available terms is presented")
+      message("\nno previous matches found for this dataseries, close match with other potentially available terms is presented")
     }
     message("-> please edit the file '", paste0(matchDir, "/matching.csv"), "' \n")
     if(verbose){
