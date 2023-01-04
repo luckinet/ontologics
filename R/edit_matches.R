@@ -262,12 +262,13 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
 
     related <- read_csv(paste0(matchDir, "/matching.csv"), col_types = cols(.default = "c")) %>%
       select(-sort_in) %>%
-      filter(!is.na(id))
+      filter(!is.na(id)) %>%
+      select(-has_0_differences, -has_1_difference, -has_2_differences)
 
-    if(!all(is.na(joined$dist))){
-      related <- related %>%
-        select(-has_0_differences, -has_1_difference, -has_2_differences)
-    }
+    # if(!all(is.na(joined$dist))){
+    #   related <- related %>%
+    #     select(-has_0_differences, -has_1_difference, -has_2_differences)
+    # }
 
     if(dim(related)[1] == 0){
       related <- NULL
