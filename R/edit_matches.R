@@ -271,6 +271,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       }
     }
 
+
     if(dim(related)[1] == 0){
       related <- NULL
     }
