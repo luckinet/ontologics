@@ -1,3 +1,7 @@
+# ontologics 0.6.2
+
+- fix a little bug located in `new_mapping()`.
+
 # ontologics 0.6.1
 
 - when matching a new dataseries with old concepts, give a message and ignore non-close matches.
