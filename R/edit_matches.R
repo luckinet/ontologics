@@ -282,6 +282,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   }
 
   out <- prevMatches %>%
+    filter(!id == "ignore") %>%
     bind_rows(related) %>%
     pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
                  names_to = "match", values_to = "new_label") %>%
