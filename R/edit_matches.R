@@ -264,9 +264,11 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       select(-sort_in) %>%
       filter(!is.na(id))
 
-    if(!all(is.na(joined$dist))){
-      related <- related %>%
-        select(-has_0_differences, -has_1_difference, -has_2_differences)
+    if("dist" %in% names(joined)){
+      if(!all(is.na(joined$dist))){
+        related <- related %>%
+          select(-has_0_differences, -has_1_difference, -has_2_differences)
+      }
     }
 
     if(dim(related)[1] == 0){
