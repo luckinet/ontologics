@@ -198,13 +198,17 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
   # identify concepts that are not yet in the external concepts
   extMps <- temp %>%
     distinct(new, has_broader, has_source) %>%
-    filter(new != "") %>%
-    filter(!(new %in% theTable$external$label &
-               has_source %in% theTable$external$has_source))
+    filter(new != "")
 
   if("has_broader" %in% names(theTable$external)){
     extMps <- extMps %>%
-      filter(has_broader %in% theTable$external$has_broader)
+      filter(!(new %in% theTable$external$label &
+                 has_source %in% theTable$external$has_source &
+                 has_broader %in% theTable$external$has_broader))
+  } else {
+    extMps <- extMps %>%
+      filter(!(new %in% theTable$external$label &
+                 has_source %in% theTable$external$has_source))
   }
 
   if(!is.null(lut) & !dim(extMps)[1] == 0){
