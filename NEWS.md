@@ -1,3 +1,7 @@
+# ontologics 0.6.3
+
+- include matches with 0 difference already as close match, for convinience.
+
 # ontologics 0.6.2
 
 - fix a little bug located in `new_mapping()`.
