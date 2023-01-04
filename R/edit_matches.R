@@ -93,7 +93,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   if(testFileExists(paste0(matchDir, sourceFile))){
     prevAvail <- TRUE
     prevMatches <- read_csv(paste0(matchDir, sourceFile), col_types = cols(.default = "c")) %>%
-      filter(class %in% filterClasses)
+      filter(class %in% tail(filterClasses, 1))
 
     prevMatchLabels <- prevMatches %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
@@ -220,8 +220,25 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
         ungroup() %>%
         select(label = label_new, has_0_differences = dist_0, has_1_difference = dist_1, has_2_differences = dist_2)
 
+      hits <- joined %>%
+        filter(!is.na(has_0_differences)) %>%
+        mutate(class = tail(filterClasses, 1),
+               has_new_close_match = label,
+               label = has_0_differences) %>%
+        select(label, class, has_new_close_match)
+      relate <- relate %>%
+        left_join(hits, by = c("label", "class")) %>%
+        unite(col = "has_close_match", has_close_match, has_new_close_match, sep = " | ", na.rm = TRUE) %>%
+        na_if(y = "")
+
+      # missingConcepts <- missingConcepts %>%
+      #   left_join(joined, by = "label")
+      missingJoined <- joined %>%
+        filter(is.na(has_0_differences))
       missingConcepts <- missingConcepts %>%
-        left_join(joined, by = "label")
+        filter(label %in% missingJoined$label) %>%
+        left_join(joined %>% select(-has_0_differences), by = "label")
+
     }
 
     sortIn <- missingConcepts %>%
