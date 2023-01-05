@@ -92,10 +92,10 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   # determine previous matches
   if(testFileExists(paste0(matchDir, sourceFile))){
     prevAvail <- TRUE
-    prevMatches <- read_csv(paste0(matchDir, sourceFile), col_types = cols(.default = "c")) %>%
-      filter(class %in% tail(filterClasses, 1))
+    prevMatches <- read_csv(paste0(matchDir, sourceFile), col_types = cols(.default = "c"))
 
     prevMatchLabels <- prevMatches %>%
+      filter(class %in% tail(filterClasses, 1)) %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
       filter(!is.na(labels)) %>%
       distinct(labels) %>%
