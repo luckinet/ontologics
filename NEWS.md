@@ -1,6 +1,10 @@
+# ontologics 0.6.4
+
+- implement better filtering on parent concepts to simplify editing matches.
+
 # ontologics 0.6.3
 
-- include matches with 0 difference already as close match, for convinience.
+- include matches with 0 difference already as close match, for convenience.
 
 # ontologics 0.6.2
 
