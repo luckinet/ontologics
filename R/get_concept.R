@@ -149,6 +149,7 @@ get_concept <- function(table = NULL, ontology = NULL, per_class = FALSE,
           select(contains(colnames(table)))
 
         targetClass <- tail(colnames(table), 1)
+        parentClass <- tail(colnames(table), 2)[1]
 
         toOut <- table %>%
           left_join(flatOnto, by = colnames(table)) %>%
@@ -156,9 +157,20 @@ get_concept <- function(table = NULL, ontology = NULL, per_class = FALSE,
           select(label = {{ targetClass }}, id = paste0(targetClass, "_id")) %>%
           mutate(class = targetClass)
 
+        parentOut <- table %>%
+          left_join(flatOnto %>% distinct(!!sym(parentClass), !!sym(paste0(parentClass, "_id"))), by = all_of(parentClass)) %>%
+          select(label = all_of(targetClass), has_broader = paste0(parentClass, "_id"))
+
         toOut <- ontology@concepts$harmonised %>%
           filter(id %in% toOut$id) %>%
           full_join(toOut, by = c("id", "label", "class"))
+
+        if(all(is.na(toOut$has_broader))){
+          toOut <- toOut %>%
+            select(-has_broader) %>%
+            left_join(parentOut, by = "label") %>%
+            select(id, label, class, has_broader, everything())
+        }
 
       } else {
 

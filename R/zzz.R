@@ -12,5 +12,6 @@ globalVariables(c("id", "label_en", "new_id", "has_broader", "external",
                   "items", "items_1", "def1", "def2", "len", "out", "id_group",
                   "extLabel", "dist", "dist_0", "dist_1", "dist_2", "label.x",
                   "label.y", "label_harm", "label_new", "has_2_differences",
-                  "has_1_difference", "has_0_differences", "has_new_close_match"
+                  "has_1_difference", "has_0_differences", "has_new_close_match",
+                  "lvl"
                   ))
