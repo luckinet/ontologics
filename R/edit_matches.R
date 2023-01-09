@@ -234,8 +234,6 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
         group_by(label_new, has_broader) %>%
         summarise(across(starts_with("dist_"), ~ paste0(na.omit(unique(.x)), collapse = " | "))) %>%
         na_if("") %>%
-        # mutate(dist_1 = if_else(!is.na(dist_0), NA_character_, dist_1),
-        #        dist_2 = if_else(!is.na(dist_1) | !is.na(dist_0), NA_character_, dist_2)) %>%
         ungroup() %>%
         select(label = label_new, has_broader, has_0_differences = dist_0, has_1_difference = dist_1, has_2_differences = dist_2)
 
@@ -245,13 +243,19 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
                has_new_close_match = label,
                label = has_0_differences) %>%
         select(label, all_of(withBroader), class, has_new_close_match)
+
+      numbers <- relate %>%
+        group_by(label) %>%
+        summarise(n = n())
+
       relate <- relate %>%
         left_join(hits, by = c("label", "class", withBroader)) %>%
+        left_join(numbers, by = "label") %>%
+        mutate(has_new_close_match = if_else(n > 1, NA_character_, has_new_close_match)) %>%
         unite(col = "has_close_match", has_close_match, has_new_close_match, sep = " | ", na.rm = TRUE) %>%
-        na_if(y = "")
+        na_if(y = "") %>%
+        select(-n)
 
-      # missingConcepts <- missingConcepts %>%
-      #   left_join(joined, by = "label")
       missingJoined <- joined %>%
         filter(is.na(has_0_differences))
       missingConcepts <- missingConcepts %>%
