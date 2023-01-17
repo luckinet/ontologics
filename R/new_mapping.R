@@ -27,6 +27,9 @@
 #'   source-specific matching tables.
 #' @param verbose [`logical(1)`][logical]\cr whether or not to give detailed
 #'   information on the process of this function.
+#' @param beep [`integerish(1)`][integer]\cr Number specifying what sound to be
+#'   played to signal the user that a point of interaction is reached by the
+#'   program, see \code{\link[beepr]{beep}}.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
 #'   stored, or an already loaded ontology.
 #' @examples
@@ -66,12 +69,14 @@
 #' @importFrom stringr str_detect str_split str_replace
 #' @importFrom readr read_rds write_rds
 #' @importFrom methods new
+#' @importFrom beepr beep
 #' @importFrom stats na.omit
 #' @export
 
 new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
                         match = NULL, certainty = NULL, type = "concept",
-                        ontology = NULL, matchDir = NULL, verbose = FALSE){
+                        ontology = NULL, matchDir = NULL, verbose = FALSE,
+                        beep = NULL){
 
   assertCharacter(x = new, all.missing = FALSE)
   assertDataFrame(x = target, nrows = length(new))
@@ -157,6 +162,10 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
   # assign the new terms to the already existing labels in the ontology
   if(!"label" %in% colnames(target)){
     assertNames(x = colnames(target), must.include = "class")
+
+    if(!is.null(beep)){
+      beep(sound = beep)
+    }
 
     related <- edit_matches(concepts = tibble(label = new), attributes = target, source = source,
                             ontology = ontology, matchDir = matchDir, verbose = verbose)
