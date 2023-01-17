@@ -163,6 +163,10 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
   if(!"label" %in% colnames(target)){
     assertNames(x = colnames(target), must.include = "class")
 
+    if(!is.null(beep)){
+      beep(sound = beep)
+    }
+
     related <- edit_matches(concepts = tibble(label = new), attributes = target, source = source,
                             ontology = ontology, matchDir = matchDir, verbose = verbose, beep = beep)
     # concepts = tibble(label = new); attributes = target
