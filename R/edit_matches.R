@@ -17,6 +17,9 @@
 #'   source-specific matching tables.
 #' @param verbose [`logical(1)`][logical]\cr whether or not to give detailed
 #'   information on the process of this function.
+#' @param beep [`integerish(1)`][integer]\cr Number specifying what sound to be
+#'   played to signal the user that a point of interaction is reached by the
+#'   program, see \code{\link[beepr]{beep}}.
 #' @details In order to match new concepts into an already existing ontology, it
 #'   may become necessary to carry out manual matches of the new concepts with
 #'   already harmonised concepts, for example, when the new concepts are

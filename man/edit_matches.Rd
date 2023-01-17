@@ -33,6 +33,10 @@ source-specific matching tables.}
 
 \item{verbose}{\code{\link[=logical]{logical(1)}}\cr whether or not to give detailed
 information on the process of this function.}
+
+\item{beep}{\code{\link[=integer]{integerish(1)}}\cr Number specifying what sound to be
+played to signal the user that a point of interaction is reached by the
+program, see \code{\link[beepr]{beep}}.}
 }
 \value{
 A table that contains all new matches, or if none of the new concepts

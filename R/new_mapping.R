@@ -63,7 +63,7 @@
 #'   assertChoice assertIntegerish assertFileExists assertNames
 #' @importFrom tibble tibble
 #' @importFrom dplyr left_join filter pull mutate bind_rows arrange if_else
-#'   bind_cols full_join na_if across
+#'   bind_cols full_join na_if across anti_join
 #' @importFrom tidyr unite pivot_wider
 #' @importFrom tidyselect all_of
 #' @importFrom stringr str_detect str_split str_replace
@@ -207,17 +207,15 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
   # identify concepts that are not yet in the external concepts
   extMps <- temp %>%
     distinct(new, has_broader, has_source) %>%
-    filter(new != "")
+    filter(new != "") %>%
+    rename(label = new)
 
   if("has_broader" %in% names(theTable$external)){
     extMps <- extMps %>%
-      filter(!(new %in% theTable$external$label &
-                 has_source %in% theTable$external$has_source &
-                 has_broader %in% theTable$external$has_broader))
+      anti_join(theTable$external, by = c("label", "has_source", "has_broader"))
   } else {
     extMps <- extMps %>%
-      filter(!(new %in% theTable$external$label &
-                 has_source %in% theTable$external$has_source))
+      anti_join(theTable$external, by = c("label", "has_source"))
   }
 
   if(!is.null(lut) & !dim(extMps)[1] == 0){
@@ -226,11 +224,11 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
       mutate(newid = paste0(source, "_", row_number() + prevID),
              has_broader = NA_character_) %>%
       left_join(lut, by = c("new" = "label")) %>%
-      select(id = newid, label = new, has_broader, has_source, description)
+      select(id = newid, label, has_broader, has_source, description)
   } else {
     extMps <- extMps %>%
       mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
-      select(id = newid, label = new, has_broader, has_source) %>%
+      select(id = newid, label, has_broader, has_source) %>%
       mutate(description = NA_character_)
   }
 
