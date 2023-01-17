@@ -39,7 +39,8 @@ Imports:
     tidyr,
     tidyselect,
     rdflib,
-    fuzzyjoin
+    fuzzyjoin,
+    beepr
 Suggests: 
     knitr,
     rmarkdown

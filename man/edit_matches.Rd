@@ -10,7 +10,8 @@ edit_matches(
   source = NULL,
   ontology = NULL,
   matchDir = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  beep = NULL
 )
 }
 \arguments{

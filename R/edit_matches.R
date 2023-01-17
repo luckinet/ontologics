@@ -47,7 +47,8 @@
 #' @export
 
 edit_matches <- function(concepts, attributes = NULL, source = NULL,
-                         ontology = NULL, matchDir = NULL, verbose = TRUE){
+                         ontology = NULL, matchDir = NULL, verbose = TRUE,
+                         beep = NULL){
 
   assertDataFrame(x = concepts, min.cols = 1)
   assertNames(x = names(concepts), must.include = c("label"))
@@ -275,6 +276,10 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     sortIn %>%
       bind_rows(relate) %>%
       write_csv(file = paste0(matchDir, "/matching.csv"), quote = "all", na = "")
+
+    if(!is.null(beep)){
+      beep(sound = beep)
+    }
 
     # ... and make them aware of their duty
     if(prevAvail){
