@@ -42,7 +42,7 @@
 #' @importFrom stringr str_split
 #' @importFrom readr read_csv write_csv cols
 #' @importFrom dplyr filter rename full_join mutate if_else select left_join
-#'   bind_rows distinct arrange
+#'   bind_rows distinct arrange any_of
 #' @importFrom tidyselect everything starts_with
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom tibble add_column
@@ -309,14 +309,16 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     }
     done <- readline(" -> press any key when done: ")
 
-    related <- read_csv(paste0(matchDir, "/matching.csv"), col_types = cols(.default = "c")) %>%
+    related <- read_csv(paste0(matchDir, "/matching.csv"), col_types = cols(.default = "c"))
+    assertNames(x = names(related), must.include = c("sort_in", "has_broader", "id", "label", "class", "description", "has_broader_match", "has_close_match", "has_exact_match", "has_narrower_match"))
+    related <- related %>%
       select(-sort_in) %>%
       filter(!is.na(id))
 
     if("dist" %in% names(joined)){
       if(!all(is.na(joined$dist))){
         related <- related %>%
-          select(-has_0_differences, -has_1_difference, -has_2_differences)
+          select(-any_of("has_0_differences", "has_1_difference", "has_2_differences"))
       }
     }
 
