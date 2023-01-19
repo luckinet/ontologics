@@ -276,77 +276,87 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       select(sort_in, names(attributes), id, has_broader, label, class, everything())
 
     # put together the object that shall be edited by the user ...
-    sortIn %>%
-      bind_rows(relate) %>%
-      write_csv(file = paste0(matchDir, "/matching.csv"), quote = "all", na = "")
+    if(dim(sortIn)[1] != 0){
 
-    if(!is.null(beep)){
-      beep(sound = beep)
-    }
+      sortIn %>%
+        bind_rows(relate) %>%
+        write_csv(file = paste0(matchDir, "/matching.csv"), quote = "all", na = "")
 
-    # ... and make them aware of their duty
-    if(prevAvail){
-      message("\nprevious matches found for this dataseries, only previously not matched terms are presented")
-    } else {
-      message("\nno previous matches found for this dataseries, close match with other potentially available terms is presented")
-    }
-    message("-> please edit the file '", paste0(matchDir, "/matching.csv"), "' \n")
-    if(verbose){
-      message("--- column description ---\n")
-      message("sort_in             cut out these values and sort them either into 'has_broader_match', \n                    'has_exact_match', has_narrower_match or 'has_close_match'")
-      message("has_broader         the broader concept id of each of the already harmonised concepts")
-      message("id                  filter by this column to jump to the subset you need to edit")
-      message("label               concepts to which the new terms should be related")
-      message("class               the class of harmonised concepts")
-      message("description         the description of each concept")
-      message("has_close_match     in case a new concept is a close match to the harmonised concept, paste \n                    it here, delimit several concepts with a '|'")
-      message("has_broader_match   in case a new concept is a broader match than the harmonised concept, \n                    paste it here, delimit several concepts with a '|'")
-      message("has_narrower_match  in case a new concept is a narrower match than the harmonised concept, \n                    paste it here, delimit several concepts with a '|'")
-      message("has_exact_match     in case a new concept is an exact match to the harmonised concept \n                    (which is only the case when it's from the same ontology), paste it \n                    here, delimit several concepts with a '|'")
-      message("has_x_differences   in case a new concepts matches via fuzzy matching with any of the already \n                    existing concepts, those concepts are shown in the columns with the \n                    respective number of character differences")
-      message("\n--- some useful tips ---")
-      message("\n-> values that were already successfully matched by previous translations are listed, \n   however, altering already matched concepts doesn't change the ontology. \n\n-> any row that doesn't contain a value in the column 'id' will be discarded. Hence, \n   if you want a value to be ignored, simply don't paste it anywhere. \n\n-> do not change the values in the columns 'id', 'label' and 'class', as they are \n   important to insert the new matches into the ontology. \n\n-> if a term shall be nested into a position that doesn't have a class, (for example, \n   because that class occurrs the first time with this term) first create that nested \n   class with 'new_class()'.\n")
-    }
-    done <- readline(" -> press any key when done: ")
-
-    related <- read_csv(paste0(matchDir, "/matching.csv"), col_types = cols(.default = "c"))
-    assertNames(x = names(related), must.include = c("sort_in", "has_broader", "id", "label", "class", "description", "has_broader_match", "has_close_match", "has_exact_match", "has_narrower_match"))
-    related <- related %>%
-      select(-sort_in) %>%
-      filter(!is.na(id))
-
-    if("dist" %in% names(joined)){
-      if(!all(is.na(joined$dist))){
-        related <- related %>%
-          select(-any_of("has_0_differences", "has_1_difference", "has_2_differences"))
+      if(!is.null(beep)){
+        beep(sound = beep)
       }
-    }
 
+      # ... and make them aware of their duty
+      if(prevAvail){
+        message("\nprevious matches found for this dataseries, only previously not matched terms are presented")
+      } else {
+        message("\nno previous matches found for this dataseries, close match with other potentially available terms is presented")
+      }
 
-    if(dim(related)[1] == 0){
-      related <- NULL
+      message("-> please edit the file '", paste0(matchDir, "/matching.csv"), "' \n")
+      if(verbose){
+        message("--- column description ---\n")
+        message("sort_in             cut out these values and sort them either into 'has_broader_match', \n                    'has_exact_match', has_narrower_match or 'has_close_match'")
+        message("has_broader         the broader concept id of each of the already harmonised concepts")
+        message("id                  filter by this column to jump to the subset you need to edit")
+        message("label               concepts to which the new terms should be related")
+        message("class               the class of harmonised concepts")
+        message("description         the description of each concept")
+        message("has_close_match     in case a new concept is a close match to the harmonised concept, paste \n                    it here, delimit several concepts with a '|'")
+        message("has_broader_match   in case a new concept is a broader match than the harmonised concept, \n                    paste it here, delimit several concepts with a '|'")
+        message("has_narrower_match  in case a new concept is a narrower match than the harmonised concept, \n                    paste it here, delimit several concepts with a '|'")
+        message("has_exact_match     in case a new concept is an exact match to the harmonised concept \n                    (which is only the case when it's from the same ontology), paste it \n                    here, delimit several concepts with a '|'")
+        message("has_x_differences   in case a new concepts matches via fuzzy matching with any of the already \n                    existing concepts, those concepts are shown in the columns with the \n                    respective number of character differences")
+        message("\n--- some useful tips ---")
+        message("\n-> values that were already successfully matched by previous translations are listed, \n   however, altering already matched concepts doesn't change the ontology. \n\n-> any row that doesn't contain a value in the column 'id' will be discarded. Hence, \n   if you want a value to be ignored, simply don't paste it anywhere. \n\n-> do not change the values in the columns 'id', 'label' and 'class', as they are \n   important to insert the new matches into the ontology. \n\n-> if a term shall be nested into a position that doesn't have a class, (for example, \n   because that class occurrs the first time with this term) first create that nested \n   class with 'new_class()'.\n")
+      }
+      done <- readline(" -> press any key when done: ")
+
+      related <- read_csv(paste0(matchDir, "/matching.csv"), col_types = cols(.default = "c"))
+      assertNames(x = names(related), must.include = c("sort_in", "has_broader", "id", "label", "class", "description", "has_broader_match", "has_close_match", "has_exact_match", "has_narrower_match"))
+      related <- related %>%
+        select(-sort_in) %>%
+        filter(!is.na(id))
+
+      if("dist" %in% names(joined)){
+        if(!all(is.na(joined$dist))){
+          related <- related %>%
+            select(-any_of("has_0_differences", "has_1_difference", "has_2_differences"))
+        }
+      }
+
+      if(dim(related)[1] == 0){
+        related <- NULL
+      }
+
+    } else {
+      related <- prevMatches
     }
 
   } else {
     related <- inclConcepts
   }
 
-  out <- prevMatches %>%
-    filter(!id == "ignore") %>%
-    bind_rows(related) %>%
-    pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
-                 names_to = "match", values_to = "new_label") %>%
-    separate_rows(new_label, sep = " \\| ") %>%
-    distinct() %>%
-    group_by(id, has_broader, label, class, description, match) %>%
-    summarise(new_label = paste0(na.omit(new_label), collapse = " | "), .groups = "keep") %>%
-    ungroup() %>%
-    mutate(new_label = na_if(x = new_label, y = "")) %>%
-    pivot_wider(id_cols = c(label, class, id, has_broader, description), names_from = match, values_from = new_label) %>%
-    distinct() %>%
-    filter(!is.na(has_broader_match) | !is.na(has_close_match) | !is.na(has_narrower_match) | !is.na(has_exact_match)) %>%
-    filter(!is.na(id)) %>%
-    arrange(id)
+  if(!is.null(related)){
+
+    out <- prevMatches %>%
+      filter(!id == "ignore") %>%
+      bind_rows(related) %>%
+      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
+                   names_to = "match", values_to = "new_label") %>%
+      separate_rows(new_label, sep = " \\| ") %>%
+      distinct() %>%
+      group_by(id, has_broader, label, class, description, match) %>%
+      summarise(new_label = paste0(na.omit(new_label), collapse = " | "), .groups = "keep") %>%
+      ungroup() %>%
+      mutate(new_label = na_if(x = new_label, y = "")) %>%
+      pivot_wider(id_cols = c(label, class, id, has_broader, description), names_from = match, values_from = new_label) %>%
+      distinct() %>%
+      filter(!is.na(has_broader_match) | !is.na(has_close_match) | !is.na(has_narrower_match) | !is.na(has_exact_match)) %>%
+      filter(!is.na(id)) %>%
+      arrange(id)
+
+  }
 
   write_csv(x = out, file = paste0(matchDir, sourceFile), append = FALSE, na = "")
 
