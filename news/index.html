@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
       </span>
     </div>
 
@@ -60,16 +60,43 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="0.6.4" id="ontologics-064">ontologics 0.6.4<a class="anchor" aria-label="anchor" href="#ontologics-064"></a></h2>
+<ul><li>implement better filtering on parent concepts to simplify editing matches.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.6.3" id="ontologics-063">ontologics 0.6.3<a class="anchor" aria-label="anchor" href="#ontologics-063"></a></h2>
+<ul><li>include matches with 0 difference already as close match, for convenience.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.6.2" id="ontologics-062">ontologics 0.6.2<a class="anchor" aria-label="anchor" href="#ontologics-062"></a></h2>
+<ul><li>fix a little bug located in <code><a href="../reference/new_mapping.html">new_mapping()</a></code>.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.6.1" id="ontologics-061">ontologics 0.6.1<a class="anchor" aria-label="anchor" href="#ontologics-061"></a></h2>
+<ul><li>when matching a new dataseries with old concepts, give a message and ignore non-close matches.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.6.0" id="ontologics-060---fuzzy-matching">ontologics 0.6.0 - fuzzy matching<a class="anchor" aria-label="anchor" href="#ontologics-060---fuzzy-matching"></a></h2>
+<ul><li>fuzzy matching implemented. When concepts that are new for mapping do not match exactly, fuzzy matching is carried out and three new columns are offered for assigning the new concepts to harmonised concepts</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.5.6" id="ontologics-056">ontologics 0.5.6<a class="anchor" aria-label="anchor" href="#ontologics-056"></a></h2>
+<ul><li>small fix that would not allow to match with an empty set of values.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.5" id="ontologics-055">ontologics 0.5.5<a class="anchor" aria-label="anchor" href="#ontologics-055"></a></h2>
-<ul><li>introduce function where a table with columns per classes in the ontology can be used to retrieve concepts. This table is matched with a flattened ontology. Currently, no mappings are attached to this table.</li></ul></div>
+<ul><li>introduce function where a table with columns per classes in the ontology can be used to retrieve concepts. This table is matched with a flattened ontology. Currently, no mappings are attached to this table.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.4" id="ontologics-054">ontologics 0.5.4<a class="anchor" aria-label="anchor" href="#ontologics-054"></a></h2>
 <ul><li>reconstruct regex functionality and enable extracting of external concepts in <code><a href="../reference/get_concept.html">get_concept()</a></code>
-</li></ul></div>
+</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.3" id="ontologics-053">ontologics 0.5.3<a class="anchor" aria-label="anchor" href="#ontologics-053"></a></h2>
 <ul><li>reconstruct extracting mappings in <code><a href="../reference/get_concept.html">get_concept()</a></code>
-</li></ul></div>
+</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.2" id="ontologics-052">ontologics 0.5.2<small>2022-10-19</small><a class="anchor" aria-label="anchor" href="#ontologics-052"></a></h2>
 <ul><li>write the getters <code><a href="../reference/get_class.html">get_class()</a></code> and <code><a href="../reference/get_source.html">get_source()</a></code>
@@ -83,14 +110,17 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.0" id="ontologics-050">ontologics 0.5.0<a class="anchor" aria-label="anchor" href="#ontologics-050"></a></h2>
-<ul><li>include functions <code><a href="../reference/export_as_rdf.html">export_as_rdf()</a></code> for being able to explort any ontology in other, semantic-web based, formats.</li></ul></div>
+<ul><li>include functions <code><a href="../reference/export_as_rdf.html">export_as_rdf()</a></code> for being able to explort any ontology in other, semantic-web based, formats.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.2" id="ontologics-042">ontologics 0.4.2<a class="anchor" aria-label="anchor" href="#ontologics-042"></a></h2>
 <ul><li>various fixes of convenience and to make ontologics work smoothly together with <code>arealDB</code>
-</li></ul></div>
+</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.1" id="ontologics-041">ontologics 0.4.1<a class="anchor" aria-label="anchor" href="#ontologics-041"></a></h2>
-<ul><li>allow it that also classes are handled with the <code><a href="../reference/new_mapping.html">new_mapping()</a></code> function, which also means that <code><a href="../reference/new_class.html">new_class()</a></code> can now only set harmonised classes.</li></ul></div>
+<ul><li>allow it that also classes are handled with the <code><a href="../reference/new_mapping.html">new_mapping()</a></code> function, which also means that <code><a href="../reference/new_class.html">new_class()</a></code> can now only set harmonised classes.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.0" id="ontologics-040">ontologics 0.4.0<a class="anchor" aria-label="anchor" href="#ontologics-040"></a></h2>
 <ul><li>adapt the onto-class structure according to issue <a href="https://github.com/luckinet/ontologics/issues/6" class="external-link uri">https://github.com/luckinet/ontologics/issues/6</a>; this entails that concepts and classes are summarised into their respective slot, with sub-tables “harmonised” and “external”, featuring specific columns.</li>
@@ -105,7 +135,8 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3.1" id="ontologics-031">ontologics 0.3.1<a class="anchor" aria-label="anchor" href="#ontologics-031"></a></h2>
-<ul><li>adapt <code><a href="../reference/new_concept.html">new_concept()</a></code> so that also concepts can be defined that have no class (for various reasons). This now gives a warning, and inserts the concepts with an “undefined” class.</li></ul></div>
+<ul><li>adapt <code><a href="../reference/new_concept.html">new_concept()</a></code> so that also concepts can be defined that have no class (for various reasons). This now gives a warning, and inserts the concepts with an “undefined” class.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3.0" id="ontologics-030">ontologics 0.3.0<a class="anchor" aria-label="anchor" href="#ontologics-030"></a></h2>
 <ul><li>revise all functions that access an ontology to work either in the <code>.GlobalEnv</code>, or at the given path. The argument <code>path =</code> was therefore changed to <code>ontology =</code>.</li>
@@ -113,10 +144,12 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.0" id="ontologics-020">ontologics 0.2.0<a class="anchor" aria-label="anchor" href="#ontologics-020"></a></h2>
-<ul><li>revise <code><a href="../reference/get_concept.html">get_concept()</a></code> so that it’s faster.</li></ul></div>
+<ul><li>revise <code><a href="../reference/get_concept.html">get_concept()</a></code> so that it’s faster.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.1.0" id="ontologics-010">ontologics 0.1.0<small>2022-06-16</small><a class="anchor" aria-label="anchor" href="#ontologics-010"></a></h2>
-<ul><li>Initial commit</li></ul></div>
+<ul><li>Initial commit</li>
+</ul></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -131,7 +164,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

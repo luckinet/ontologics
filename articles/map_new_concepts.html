@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
       </span>
     </div>
 
@@ -82,7 +82,7 @@
 
       
 
-      </header><script src="map_new_concepts_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Map new concepts</h1>
@@ -98,11 +98,16 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/luckinet/ontologics" class="external-link">ontologics</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>When an ontology exists already, it can be used either by looking up which concepts exist in it, which relations the concepts have among each other, by adding and linking new concepts to the already existing concepts or by extending the harmonised concepts based on external ontologies.</p>
+<p>When an ontology exists already, it can be used either by looking up
+which concepts exist in it, which relations the concepts have among each
+other, by adding and linking new concepts to the already existing
+concepts or by extending the harmonised concepts based on external
+ontologies.</p>
 <div class="section level2">
 <h2 id="relate-an-external-ontology-to-harmonized-concepts">Relate an external ontology to harmonized concepts<a class="anchor" aria-label="anchor" href="#relate-an-external-ontology-to-harmonized-concepts"></a>
 </h2>
-<p>When adding (or mapping) new concepts, we first have to define the source of the new concepts.</p>
+<p>When adding (or mapping) new concepts, we first have to define the
+source of the new concepts.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># already existing ontology for some project about crops</span></span>
 <span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_ontology.html">load_ontology</a></span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"crops.rds"</span>, package <span class="op">=</span> <span class="st">"ontologics"</span><span class="op">)</span><span class="op">)</span></span>
@@ -117,11 +122,25 @@
 <span></span>
 <span><span class="co"># new concepts that occur in the external dataset, which should be harmonised with the ontology</span></span>
 <span><span class="va">externalConcepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Wheat"</span>, <span class="st">"NUTS"</span>, <span class="st">"Avocado"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>The new concepts are from different conceptual levels, both ‘Wheat’ and ‘Avocado’ are the crop itself, while ‘NUTS’ is an aggregate of various crops (such as walnut, hazelnut, etc). Let’s first find out whether these concepts are in fact new concepts because they are missing from the ontology.</p>
+<p>The new concepts are from different conceptual levels, both ‘Wheat’
+and ‘Avocado’ are the crop itself, while ‘NUTS’ is an aggregate of
+various crops (such as walnut, hazelnut, etc). Let’s first find out
+whether these concepts are in fact new concepts because they are missing
+from the ontology.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">missingConcepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>table <span class="op">=</span> <span class="va">externalConcepts</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
 <span><span class="fu">kable</span><span class="op">(</span><span class="va">missingConcepts</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="12%">
+<col width="8%">
+<col width="11%">
+<col width="8%">
+<col width="9%">
+<col width="16%">
+<col width="16%">
+<col width="15%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">external</th>
 <th align="left">match</th>
@@ -165,8 +184,20 @@
 </tr>
 </tbody>
 </table>
-<p>This tells us that that both ‘NUTS’ and ‘Wheat’ don’t seem to be missing from the ontology. Moreover, we see that ‘Wheat’ is a <em>class</em> and not a <em>crop</em> and ‘NUTS’ also isn’t <em>crop</em> and doesn’t have any <em>broader</em> concept. While Avocado is missing from the ontology entirely, the crop Wheat is also missing, hence both have to be defined as new concept.</p>
-<p>By studying the ontology (not shown here), we can identify the semantic relation between the new concepts and some of the already harmonized concepts. First of all, to assign new concepts from an external ontology, a harmonised concept must already exist in the harmonised ontology. For the new harmonized concepts, we chose the lower capital letter words to show the difference between those and the external concepts and we assign them as narrower concepts to the respective already existing, harmonized (broader) concepts.</p>
+<p>This tells us that that both ‘NUTS’ and ‘Wheat’ don’t seem to be
+missing from the ontology. Moreover, we see that ‘Wheat’ is a
+<em>class</em> and not a <em>crop</em> and ‘NUTS’ also isn’t
+<em>crop</em> and doesn’t have any <em>broader</em> concept. While
+Avocado is missing from the ontology entirely, the crop Wheat is also
+missing, hence both have to be defined as new concept.</p>
+<p>By studying the ontology (not shown here), we can identify the
+semantic relation between the new concepts and some of the already
+harmonized concepts. First of all, to assign new concepts from an
+external ontology, a harmonised concept must already exist in the
+harmonised ontology. For the new harmonized concepts, we chose the lower
+capital letter words to show the difference between those and the
+external concepts and we assign them as narrower concepts to the
+respective already existing, harmonized (broader) concepts.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">broaderConcepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>table <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Wheat"</span>, <span class="st">"Tropical and subtropical Fruit"</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>                               ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
@@ -175,7 +206,16 @@
 <span>                     broader <span class="op">=</span> <span class="va">broaderConcepts</span>,</span>
 <span>                     class <span class="op">=</span> <span class="st">"crop"</span>,</span>
 <span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span></code></pre></div>
-<p>Eventually, all new (external) concepts can be mapped to already harmonized concepts. Even though ‘NUTS’ already exists, this also applies to this new concept, because the already existing concept ‘NUTS’ doesn’t necessarily have to be the same as the new concept ‘NUTS’. This all depends on the respective description of the harmonized and external concepts. When setting a new mapping, the type and the certainty of the match have to be defined. As we have defined the closely related concepts as new concepts, we can chose a <em>close</em> match for all external concepts. Certainty has the value 3, because it is <em>clear, assigned according to a given definition</em>.</p>
+<p>Eventually, all new (external) concepts can be mapped to already
+harmonized concepts. Even though ‘NUTS’ already exists, this also
+applies to this new concept, because the already existing concept ‘NUTS’
+doesn’t necessarily have to be the same as the new concept ‘NUTS’. This
+all depends on the respective description of the harmonized and external
+concepts. When setting a new mapping, the type and the certainty of the
+match have to be defined. As we have defined the closely related
+concepts as new concepts, we can chose a <em>close</em> match for all
+external concepts. Certainty has the value 3, because it is <em>clear,
+assigned according to a given definition</em>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">toMap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>table <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wheat"</span>, <span class="st">"NUTS"</span>, <span class="st">"avocado"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
@@ -185,13 +225,19 @@
 <span>                     match <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"close"</span>, <span class="st">"close"</span>, <span class="st">"close"</span><span class="op">)</span>,</span>
 <span>                     source <span class="op">=</span> <span class="st">"externalDataset"</span>,</span>
 <span>                     certainty <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Unknown or uninitialised column: `has_broader`.</span></span></code></pre></div>
+<span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="extend-the-classes">Extend the classes<a class="anchor" aria-label="anchor" href="#extend-the-classes"></a>
 </h2>
-<p>It may be, moreover, that we want to (or have to) add new concepts, that do not have a class defined yet. This can be the case when we have to nest new concepts, out of a range of concepts that do have a valid class, into concepts that are already at the lowest possible hierarchical level. These concepts are, when specified with <code>class = NA</code>, <code>class = c(bla, blubb, NA)</code>, or <code>class = NULL</code>, assigned the actual class <code>undefined</code> and you are informed about how to proceed.</p>
+<p>It may be, moreover, that we want to (or have to) add new concepts,
+that do not have a class defined yet. This can be the case when we have
+to nest new concepts, out of a range of concepts that do have a valid
+class, into concepts that are already at the lowest possible
+hierarchical level. These concepts are, when specified with
+<code>class = NA</code>, <code>class = c(bla, blubb, NA)</code>, or
+<code>class = NULL</code>, assigned the actual class
+<code>undefined</code> and you are informed about how to proceed.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">broaderConcepts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>table <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wheat"</span>, <span class="st">"wheat"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                               ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
@@ -259,13 +305,24 @@
 <span>                     broader <span class="op">=</span> <span class="va">broaderConcepts</span>,</span>
 <span>                     class <span class="op">=</span> <span class="st">"cultivar"</span>,</span>
 <span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span></code></pre></div>
-<p>Now we can check whether the updated ontology is as we’d expect, for example by looking at the tree of the respective items again. We should expect that the new harmonized concepts now appear in the ontology and that they have some link to an external concept defined.</p>
+<p>Now we can check whether the updated ontology is as we’d expect, for
+example by looking at the tree of the respective items again. We should
+expect that the new harmonized concepts now appear in the ontology and
+that they have some link to an external concept defined.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>table <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="17%">
+<col width="9%">
+<col width="16%">
+<col width="12%">
+<col width="16%">
+<col width="27%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
 <th align="left">label</th>
@@ -316,6 +373,14 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="10%">
+<col width="16%">
+<col width="17%">
+<col width="8%">
+<col width="17%">
+<col width="29%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
 <th align="left">label</th>
@@ -358,6 +423,14 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="10%">
+<col width="34%">
+<col width="13%">
+<col width="6%">
+<col width="13%">
+<col width="21%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
 <th align="left">label</th>
@@ -498,7 +571,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

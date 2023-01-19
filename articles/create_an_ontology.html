@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
       </span>
     </div>
 
@@ -82,7 +82,7 @@
 
       
 
-      </header><script src="create_an_ontology_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Create an ontology</h1>
@@ -98,8 +98,17 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/luckinet/ontologics" class="external-link">ontologics</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>Any work with an ontology would either start by reading it in from an already existing database, or by creating a new ontology from scratch.</p>
-<p>Even though this package is still under development, we do already provide a function that can read in an ontology from an <code>*.rds</code> file (one that is optimized for the usage within R), and can write to any format that is useful for triplestores or the semantic web. This vignette focuses on the basic building blocks for creating a new ontology and you can find more on how to <a href="map_new_concepts.html">map new concepts</a> from external ontologies, and how to <a href="conversion_to_rdf.html">export an ontology</a> so that it’s interoperable with the semantic web.</p>
+<p>Any work with an ontology would either start by reading it in from an
+already existing database, or by creating a new ontology from
+scratch.</p>
+<p>Even though this package is still under development, we do already
+provide a function that can read in an ontology from an
+<code>*.rds</code> file (one that is optimized for the usage within R),
+and can write to any format that is useful for triplestores or the
+semantic web. This vignette focuses on the basic building blocks for
+creating a new ontology and you can find more on how to <a href="map_new_concepts.html">map new concepts</a> from external
+ontologies, and how to <a href="conversion_to_rdf.html">export an
+ontology</a> so that it’s interoperable with the semantic web.</p>
 <div class="section level2">
 <h2 id="an-existing-ontology">An existing ontology<a class="anchor" aria-label="anchor" href="#an-existing-ontology"></a>
 </h2>
@@ -120,13 +129,30 @@
 <span><span class="co">#&gt;     -&gt; 'CEREALS' (10), 'FRUIT' (8), 'VEGETABLES' (6), 'UNGULATES' (5), 'BIOENERGY CROPS' (4), ...</span></span>
 <span><span class="co">#&gt;     -&gt; 'Bioenergy herbaceous' (20), 'Barley' (20), 'Fibre crops' (20), 'Flower herbs' (20), 'Grass crops' (20), ...</span></span>
 <span><span class="co">#&gt;     -&gt;</span></span></code></pre></div>
-<p>The <code>onto</code> class is an S3 class with the 3 slots <code>@sources</code>, <code>@classes</code> and <code>@concepts</code>, each of which are reflected by an entry in the show-method. Often the classes in an ontology have a hierarchical order, but this is not obligatory. In any case, the first three levels of the hierarchical structure together with the number of concepts of each level and the description is shown here. Moreover, the five most frequent concepts are shown together with a visual representation of the frequency distribution of all concepts at the first three levels.</p>
-<p>The three main slots are represented by a function that allows to add new items to this slot (<code>new_source</code>, <code>new_class</code> and <code>new_concept</code>) and an additional function allows to create mappings between your focal ontology and any external ontology (<code>new_mappings</code>). There is more detailed information about the architecture of the <code>onto</code>-class in the vignette <a href="ontology_database_description.html">Ontology database description</a>.</p>
+<p>The <code>onto</code> class is an S3 class with the 3 slots
+<code>@sources</code>, <code>@classes</code> and <code>@concepts</code>,
+each of which are reflected by an entry in the show-method. Often the
+classes in an ontology have a hierarchical order, but this is not
+obligatory. In any case, the first three levels of the hierarchical
+structure together with the number of concepts of each level and the
+description is shown here. Moreover, the five most frequent concepts are
+shown together with a visual representation of the frequency
+distribution of all concepts at the first three levels.</p>
+<p>The three main slots are represented by a function that allows to add
+new items to this slot (<code>new_source</code>, <code>new_class</code>
+and <code>new_concept</code>) and an additional function allows to
+create mappings between your focal ontology and any external ontology
+(<code>new_mappings</code>). There is more detailed information about
+the architecture of the <code>onto</code>-class in the vignette <a href="ontology_database_description.html">Ontology database
+description</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="new-ontology">New ontology<a class="anchor" aria-label="anchor" href="#new-ontology"></a>
 </h2>
-<p>A new ontology is built by calling the function <code><a href="../reference/start_ontology.html">start_ontology()</a></code>. This requires a bunch of meta-data that will be stored in the ontology and which serve the purpose of properly linking also this ontology to other <em>linked open data</em>.</p>
+<p>A new ontology is built by calling the function
+<code><a href="../reference/start_ontology.html">start_ontology()</a></code>. This requires a bunch of meta-data that
+will be stored in the ontology and which serve the purpose of properly
+linking also this ontology to other <em>linked open data</em>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/start_ontology.html">start_ontology</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"land_surface_properties"</span>,</span>
 <span>                       version <span class="op">=</span> <span class="st">"0.0.1"</span>,</span>
@@ -143,7 +169,12 @@
 <span><span class="co">#&gt;   classes : 0 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   concepts: 0</span></span></code></pre></div>
-<p>These information are stored in the <code>@sources</code> slot, just like any other external data source. It is recommended to always set the <code>code</code> for building IDs with a leading symbol that can’t be transformed into a numeric/integer, to avoid problems in case the ontology is opened in a spreadsheet program that may automatically do this transformation without asking or informing the author.</p>
+<p>These information are stored in the <code>@sources</code> slot, just
+like any other external data source. It is recommended to always set the
+<code>code</code> for building IDs with a leading symbol that can’t be
+transformed into a numeric/integer, to avoid problems in case the
+ontology is opened in a spreadsheet program that may automatically do
+this transformation without asking or informing the author.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">sources</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -171,14 +202,20 @@
 <td align="left">1</td>
 <td align="left">harmonised</td>
 <td align="left">0.0.1</td>
-<td align="left">2022-11-30</td>
+<td align="left">2023-01-19</td>
 <td align="left">showcase of the ontologics R-package</td>
 <td align="left"><a href="https://www.idiv.de/luckinet" class="external-link uri">https://www.idiv.de/luckinet</a></td>
 <td align="left">CC-BY-4.0</td>
 <td align="left"></td>
 </tr></tbody>
 </table>
-<p>Next, classes and their hierarchy need to be defined. Each concept is always a combination of a code, a label and a class. The code must be unique for each unique concept, but the label or the class can have the same value for two concepts. For instance, the concept <code>football</code> can have the class <code>game</code> or the class <code>object</code> and then mean two different things, despite having the same label.</p>
+<p>Next, classes and their hierarchy need to be defined. Each concept is
+always a combination of a code, a label and a class. The code must be
+unique for each unique concept, but the label or the class can have the
+same value for two concepts. For instance, the concept
+<code>football</code> can have the class <code>game</code> or the class
+<code>object</code> and then mean two different things, despite having
+the same label.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># currently it is only possible to set one class at a time</span></span>
 <span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span></span>
@@ -196,6 +233,14 @@
 <span><span class="co"># the class IDs are derived from the code that was previously specified </span></span>
 <span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">classes</span><span class="op">$</span><span class="va">harmonised</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="7%">
+<col width="10%">
+<col width="32%">
+<col width="12%">
+<col width="16%">
+<col width="20%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
 <th align="left">label</th>
@@ -223,7 +268,8 @@
 </tr>
 </tbody>
 </table>
-<p>Then, new concepts that have these classes can be defined. In case classes are chosen that are not yet defined, you’ll get a warning.</p>
+<p>Then, new concepts that have these classes can be defined. In case
+classes are chosen that are not yet defined, you’ll get a warning.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Urban fabric"</span>, <span class="st">"Industrial, commercial and transport units"</span>,</span>
@@ -242,6 +288,13 @@
 <span></span>
 <span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">concepts</span><span class="op">$</span><span class="va">harmonised</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="4%">
+<col width="54%">
+<col width="14%">
+<col width="12%">
+<col width="14%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
 <th align="left">label</th>
@@ -371,7 +424,10 @@
 </tr>
 </tbody>
 </table>
-<p>An ontology is different from a vocabulary in that concepts that are contained in an ontology are related semantically to one another. For example, concepts can be nested into other concepts. Hence, let’s create also a second level of concepts that depend on the first level.</p>
+<p>An ontology is different from a vocabulary in that concepts that are
+contained in an ontology are related semantically to one another. For
+example, concepts can be nested into other concepts. Hence, let’s create
+also a second level of concepts that depend on the first level.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lu</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
 <span>  concept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -398,6 +454,13 @@
 <span></span>
 <span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">concepts</span><span class="op">$</span><span class="va">harmonised</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
+<colgroup>
+<col width="8%">
+<col width="52%">
+<col width="13%">
+<col width="11%">
+<col width="13%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
 <th align="left">label</th>
@@ -639,7 +702,10 @@
 </tr>
 </tbody>
 </table>
-<p>Here we see that <code><a href="../reference/get_concept.html">get_concept()</a></code> was used to extract those broader concepts, into which the new level is nested. This is to ensure that a valid concept is provided, i.e., one that has already been included into the ontology.</p>
+<p>Here we see that <code><a href="../reference/get_concept.html">get_concept()</a></code> was used to extract those
+broader concepts, into which the new level is nested. This is to ensure
+that a valid concept is provided, i.e., one that has already been
+included into the ontology.</p>
 </div>
   </div>
 
@@ -660,7 +726,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
