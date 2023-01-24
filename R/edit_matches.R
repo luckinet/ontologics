@@ -124,11 +124,11 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     # the underlying concept
     tempMatch <- temp %>%
       mutate(has_close_match = label) %>%
-      select(label, has_close_match)
+      select(label, has_close_match, has_broader)
     prevMatches <- ontology@concepts$harmonised %>%
       filter(class %in% filterClasses) %>%
       select(-has_close_match) %>%
-      left_join(tempMatch, ., by = "label") %>%
+      left_join(tempMatch, ., by = c("label", "has_broader")) %>%
       filter(!is.na(id)) %>%
       mutate(has_broader_match = NA_character_,
              has_exact_match = NA_character_,
