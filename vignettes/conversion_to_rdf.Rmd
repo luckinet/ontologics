@@ -55,7 +55,7 @@ In RDF every information is stored as a sentence like structure called triple. A
 luckinet:.08.02 skos:prefLabel "Naturally Regenerating Forest" .
 ```
 
-In this case `luckinet:.08.02` is the subject, `skos:prefLabel` is the predicate and `"Naturally Regenerating Forest"` is the object. Every subject and predicate in an RDF triple have to be resources (that means they are represented by an IRI); whilst object can be either a resource or a literal value (as in the example above). The definition of the IRI `skos:prefLabel` (<http://www.w3.org/2004/02/skos/core#prefLabel>) is given by the triple:
+In this case `luckinet:.08.02` is the subject, `skos:prefLabel` is the predicate and `"Naturally Regenerating Forest"` is the object. Every subject and predicate in an RDF triple have to be resources (that means they are represented by an IRI); whilst object can be either a resource or a literal value (as in the example above). The definition of the IRI `skos:prefLabel` (<https://www.w3.org/2004/02/skos/core#prefLabel>) is given by the triple:
 
 ```
 skos:prefLabel skos:definition "The preferred lexical label for a resource, in a given language." .
