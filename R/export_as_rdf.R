@@ -108,7 +108,7 @@ export_as_rdf <- function(ontology, filename) {
                 object = make_resource(namespaces["skos"], "ConceptScheme")
             )
             # ignore if Obj == NULL or ""
-            if (!is.na(na_if(sources[i, "label"], ""))) {
+            if (!is.na(na_if(sources[[i, "label"]], ""))) {
                 rdf %>% rdf_add(
                     subject = make_resource(sources[i, "uri_prefix"], ""),
                     predicate = make_resource(namespaces["skos"], "prefLabel"),
@@ -117,7 +117,7 @@ export_as_rdf <- function(ontology, filename) {
                 )
             }
             # ignore if Obj == NULL or ""
-            if (!is.na(na_if(sources[i, "description"], ""))) {
+            if (!is.na(na_if(sources[[i, "description"]], ""))) {
                 rdf %>% rdf_add(
                     subject = make_resource(sources[i, "uri_prefix"], ""),
                     predicate = make_resource(namespaces["skos"], "definition"),
@@ -126,7 +126,7 @@ export_as_rdf <- function(ontology, filename) {
                 )
             }
             # ignore if Obj == NULL or ""
-            if (!is.na(na_if(sources[i, "notes"], ""))) {
+            if (!is.na(na_if(sources[[i, "notes"]], ""))) {
                 rdf %>% rdf_add(
                     subject = make_resource(sources[i, "uri_prefix"], ""),
                     predicate = make_resource(namespaces["skos"], "note"),
@@ -135,7 +135,7 @@ export_as_rdf <- function(ontology, filename) {
                 )
             }
             # ignore if Obj == NULL or ""
-            if (!is.na(na_if(sources[i, "license"], ""))) {
+            if (!is.na(na_if(sources[[i, "license"]], ""))) {
                 rdf %>% rdf_add(
                     subject = make_resource(sources[i, "uri_prefix"], ""),
                     predicate = make_resource(namespaces["dct"], "license"),
@@ -191,7 +191,7 @@ export_as_rdf <- function(ontology, filename) {
             objectType = "uri"
         )
         # ignore if Obj == NULL or ""
-        if (!is.na(na_if(harmonised_classes[i, "label"], ""))) {
+        if (!is.na(na_if(harmonised_classes[[i, "label"]], ""))) {
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "prefLabel"),
@@ -199,7 +199,7 @@ export_as_rdf <- function(ontology, filename) {
                 objectType = "literal"
             )
         }
-        if (!is.na(na_if(harmonised_classes[i, "description"], ""))) {
+        if (!is.na(na_if(harmonised_classes[[i, "description"]], ""))) {
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "definition"),
@@ -208,7 +208,7 @@ export_as_rdf <- function(ontology, filename) {
             )
         }
         # semantic relations (skos:broader & skos:narrower)
-        if (!is.na(na_if(harmonised_classes[i, "has_broader"], ""))) {
+        if (!is.na(na_if(harmonised_classes[[i, "has_broader"]], ""))) {
             broader <- paste0("class-", URLencode(harmonised_classes[i, "has_broader"], FALSE))
             rdf %>% rdf_add(
                 subject = sub,
@@ -241,7 +241,7 @@ export_as_rdf <- function(ontology, filename) {
 
         # skos mapping relations
         for (mapping_relation in names(mapping_relations)) {
-            if (!is.na(na_if(harmonised_classes[i, mapping_relations[mapping_relation]], ""))) {
+            if (!is.na(na_if(harmonised_classes[[i, mapping_relations[mapping_relation]]], ""))) {
                 mappings_certainty <- str_split(pull(ontology@classes$harmonised[i, mapping_relations[mapping_relation]]), pattern = " [|] ")
                 for (mapping in mappings_certainty[[1]]) {
                     matched_class_id <- URLencode(str_split(mapping, pattern = "[.]")[[1]][1], FALSE)
@@ -285,7 +285,7 @@ export_as_rdf <- function(ontology, filename) {
                 objectType = "uri"
             )
             # ignore if Obj == NULL or ""
-            if (!is.na(na_if(external_classes[i, "label"], ""))) {
+            if (!is.na(na_if(external_classes[[i, "label"]], ""))) {
                 rdf %>% rdf_add(
                     subject = sub,
                     predicate = make_resource(namespaces["skos"], "prefLabel"),
@@ -293,7 +293,7 @@ export_as_rdf <- function(ontology, filename) {
                     objectType = "literal"
                 )
             }
-            if (!is.na(na_if(external_classes[i, "description"], ""))) {
+            if (!is.na(na_if(external_classes[[i, "description"]], ""))) {
                 rdf %>% rdf_add(
                     subject = sub,
                     predicate = make_resource(namespaces["skos"], "definition"),
@@ -321,7 +321,7 @@ export_as_rdf <- function(ontology, filename) {
             objectType = "uri"
         )
         # ignore if Obj == NULL or ""
-        if (!is.na(na_if(ontology@concepts$harmonised[i, "label"], ""))) {
+        if (!is.na(na_if(ontology@concepts$harmonised[[i, "label"]], ""))) {
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "prefLabel"),
@@ -329,7 +329,7 @@ export_as_rdf <- function(ontology, filename) {
                 objectType = "literal"
             )
         }
-        if (!is.na(na_if(ontology@concepts$harmonised[i, "description"], ""))) {
+        if (!is.na(na_if(ontology@concepts$harmonised[[i, "description"]], ""))) {
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["skos"], "definition"),
@@ -337,7 +337,7 @@ export_as_rdf <- function(ontology, filename) {
                 objectType = "literal"
             )
         }
-        if (!is.na(na_if(ontology@concepts$harmonised[i, "class"], ""))) {
+        if (!is.na(na_if(ontology@concepts$harmonised[[i, "class"]], ""))) {
             rdf %>% rdf_add(
                 subject = sub,
                 predicate = make_resource(namespaces["rdf"], "type"),
@@ -346,7 +346,7 @@ export_as_rdf <- function(ontology, filename) {
             )
         }
         # semantic relations (skos:broader and skos:narrower)
-        if (!is.na(na_if(ontology@concepts$harmonised[i, "has_broader"], ""))) {
+        if (!is.na(na_if(ontology@concepts$harmonised[[i, "has_broader"]], ""))) {
             broader <- paste0("concept-", ontology@concepts$harmonised[i, "has_broader"])
             rdf %>% rdf_add(
                 subject = sub,
@@ -378,7 +378,7 @@ export_as_rdf <- function(ontology, filename) {
         }
         # skos mapping relations
         for (mapping_relation in names(mapping_relations)) {
-            if (!is.na(na_if(ontology@concepts$harmonised[i, mapping_relations[mapping_relation]], ""))) {
+            if (!is.na(na_if(ontology@concepts$harmonised[[i, mapping_relations[mapping_relation]]], ""))) {
                 mappings_certainty <- str_split(pull(ontology@concepts$harmonised[i, mapping_relations[mapping_relation]]), pattern = " [|] ")
                 for (mapping in mappings_certainty[[1]]) {
                     matched_concept_id <- str_split(mapping, pattern = "[.]")[[1]][1]
@@ -423,7 +423,7 @@ export_as_rdf <- function(ontology, filename) {
             # ignore if Obj == NULL or ""
             # the label col contains the external concept id, whcih is used to build the `sub`.
             # -> effectively there is no label, currently.
-            # if (!is.na(na_if(ontology@concepts$external[i, "label"], ""))) {
+            # if (!is.na(na_if(ontology@concepts$external[[i, "label"]], ""))) {
             #     rdf %>% rdf_add(
             #         subject = sub,
             #         predicate = make_resource(namespaces["skos"], "prefLabel"),
@@ -431,7 +431,7 @@ export_as_rdf <- function(ontology, filename) {
             #         objectType = "literal"
             #     )
             # }
-            if (!is.na(na_if(ontology@concepts$external[i, "description"], ""))) {
+            if (!is.na(na_if(ontology@concepts$external[[i, "description"]], ""))) {
                 rdf %>% rdf_add(
                     subject = sub,
                     predicate = make_resource(namespaces["skos"], "definition"),
