@@ -1,3 +1,7 @@
+# ontologics 0.6.5
+
+- fix acknowledgement and adapt to update of dplyr
+
 # ontologics 0.6.4
 
 - implement better filtering on parent concepts to simplify editing matches.
