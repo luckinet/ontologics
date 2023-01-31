@@ -55,4 +55,6 @@ devtools::install_github("luckinet/ontologics")
 
 Read the vignettes [Create an ontology](https://luckinet.github.io/ontologics/articles/create_an_ontology.html), [Map new concepts](https://luckinet.github.io/ontologics/articles/map_new_concepts.html) and [Convert Ontology to RDF](https://luckinet.github.io/ontologics/articles/conversion_to_rdf.html).
 
+## Acknowledgement
 
+This work was supported by funding to Carsten Meyer through the Flexpool mechanism of the German Centre for Integrative Biodiversity Research (iDiv) (FZT-118, DFG) and members working on it were additionally supported by Freigeist funding of the Volkswagenstiftung and the BMBF GeoKur project.
