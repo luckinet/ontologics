@@ -83,6 +83,7 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
   assertDataFrame(x = lut, null.ok = TRUE)
   assertIntegerish(x = certainty, lower = 1, upper = 4)
   assertChoice(x = type, choices = c("concept", "class"))
+  assertCharacter(x = matchDir, null.ok = TRUE)
   assertLogical(x = verbose, len = 1)
 
   if(inherits(x = ontology, what = "onto")){

@@ -9,7 +9,11 @@ Authors@R: c(
     person("Arne", "Rümmler", 
            role = c("aut", "ctb"),
            email = "arne.ruemmler@tu-dresden.de",
-           comment = c(ORCID = "0000-0001-8637-9071"))
+           comment = c(ORCID = "0000-0001-8637-9071")),
+    person("Carsten", "Meyer",
+           role = c("ctb"), 
+           email = "carsten.meyer@idiv.de", 
+           comment = c(ORCID = "0000-0003-3927-5856"))
     )
 Description: Provides tools to build and work with an ontology of linked (open) 
     data in a tidy workflow. It is inspired by the Food and Agrilculture 
