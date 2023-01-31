@@ -159,7 +159,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
            match = if_else(is.na(match), if_else(!is.na(id), "has_close_match", "sort_in"), match)) %>%
     pivot_wider(id_cols = c(harmLab, class, id, has_broader, description), names_from = match,
                 values_from = label, values_fn = ~paste0(na.omit(.x), collapse = " | ")) %>%
-    na_if(y = "") %>%
+    mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
     filter(harmLab != "ignore") %>%
     rename(label = harmLab)
 
@@ -237,7 +237,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
       joined <- joined %>%
         group_by(label_new, has_broader) %>%
         summarise(across(starts_with("dist_"), ~ paste0(na.omit(unique(.x)), collapse = " | "))) %>%
-        na_if("") %>%
+        mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
         ungroup() %>%
         select(label = label_new, has_broader, has_0_differences = dist_0, has_1_difference = dist_1, has_2_differences = dist_2)
 
@@ -257,7 +257,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
         left_join(numbers, by = "label") %>%
         mutate(has_new_close_match = if_else(n > 1, NA_character_, has_new_close_match)) %>%
         unite(col = "has_close_match", has_close_match, has_new_close_match, sep = " | ", na.rm = TRUE) %>%
-        na_if(y = "") %>%
+        mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
         select(-n)
 
       missingJoined <- joined %>%
