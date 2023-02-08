@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
       </span>
     </div>
 
@@ -65,7 +65,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_tree</span><span class="op">(</span><span class="va">top</span>, ontology <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_tree</span><span class="op">(</span><span class="va">top</span>, reverse <span class="op">=</span> <span class="cn">FALSE</span>, ontology <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -73,6 +73,11 @@
     <dl><dt>top</dt>
 <dd><p><code>tibble(1)</code><br> the concepts table that shall be at the
 top of the tree.</p></dd>
+
+
+<dt>reverse</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not to make a tree that
+gives the parents, instead of the children, of target concepts.</p></dd>
 
 
 <dt>ontology</dt>
