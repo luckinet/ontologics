@@ -65,7 +65,7 @@
 #' @importFrom dplyr left_join filter pull mutate bind_rows arrange if_else
 #'   bind_cols full_join na_if across anti_join
 #' @importFrom tidyr unite pivot_wider
-#' @importFrom tidyselect all_of
+#' @importFrom tidyselect all_of where
 #' @importFrom stringr str_detect str_split str_replace
 #' @importFrom readr read_rds write_rds
 #' @importFrom methods new
