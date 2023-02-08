@@ -1,3 +1,7 @@
+# ontologics 0.6.6
+
+- also allow building trees of the parents, not only the children in `make_tree()`
+
 # ontologics 0.6.5
 
 - fix acknowledgement and adapt to update of dplyr
