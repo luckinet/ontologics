@@ -91,9 +91,8 @@ crops <- new_concept(new = c("wheat1", "wheat2"),
                      class = NA_character_,
                      ontology = crops)
 
-get_concept(table = tibble(label = "Wheat"), ontology = crops) %>%
-  make_tree(ontology = crops) %>% 
-  select(1:5) %>% 
+make_tree(label = "Wheat", ontology = crops) %>%
+  select(1:5) %>%
   kable()
 
 # ... ok, then let's specify that class and re-run new_concept
@@ -110,19 +109,16 @@ crops <- new_concept(new = c("wheat1", "wheat2"),
 Now we can check whether the updated ontology is as we'd expect, for example by looking at the tree of the respective items again. We should expect that the new harmonized concepts now appear in the ontology and that they have some link to an external concept defined.
 
 ```{r new ontology}
-get_concept(table = tibble(label = "Wheat"), ontology = crops) %>%
-  make_tree(ontology = crops) %>% 
-  select(1:6) %>% 
+make_tree(label = "Wheat", ontology = crops) %>%
+  select(1:6) %>%
   kable()
 
-get_concept(table = tibble(label = "NUTS"), ontology = crops) %>% 
-  make_tree(ontology = crops) %>% 
-  select(1:6) %>% 
+make_tree(label = "NUTS", ontology = crops) %>%
+  select(1:6) %>%
   kable()
 
-get_concept(table = tibble(label = "FRUIT"), ontology = crops) %>% 
-  make_tree(ontology = crops) %>% 
-  select(1:6) %>% 
+make_tree(label = "FRUIT", ontology = crops) %>%
+  select(1:6) %>%
   kable()
 
 # and finally a list of all external concepts
