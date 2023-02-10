@@ -193,8 +193,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   if(dim(missingConcepts)[1] != 0){
 
     if(!is.null(parentFilter)){
-      toRelate <- make_tree(get_concept(table = tibble(id = parentFilter), ontology = ontology),
-                            ontology = ontology)
+      toRelate <- make_tree(id = parentFilter, ontology = ontology)
     } else {
       toRelate <- ontology@concepts$harmonised
     }

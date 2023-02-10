@@ -50,8 +50,7 @@
 #' @export
 
 get_concept <- function(table = NULL, ontology = NULL, per_class = FALSE,
-                        mappings = FALSE, regex = FALSE, external = FALSE
-                        ){
+                        mappings = FALSE, regex = FALSE, external = FALSE){
 
   # mappings = FALSE; regex = FALSE; external = FALSE
 

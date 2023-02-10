@@ -4,11 +4,11 @@
 \alias{make_tree}
 \title{Make a tree of an ontology}
 \usage{
-make_tree(top, reverse = FALSE, ontology = NULL)
+make_tree(..., reverse = FALSE, ontology = NULL)
 }
 \arguments{
-\item{top}{\code{\link[=tibble]{tibble(1)}}\cr the concepts table that shall be at the
-top of the tree.}
+\item{...}{\code{\link[=character]{character(1)}}\cr the concepts that shall be the
+target, combination of \emph{'column name = value'}.}
 
 \item{reverse}{\code{\link[=logical]{logical(1)}}\cr whether or not to make a tree that
 gives the parents, instead of the children, of target concepts.}
