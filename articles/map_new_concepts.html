@@ -251,9 +251,8 @@ hierarchical level. These concepts are, when specified with
 <span><span class="co">#&gt; this with 'new_class()' and re-run 'new_concept()' with these concepts and the</span></span>
 <span><span class="co">#&gt; new class.</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>table <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -310,9 +309,8 @@ example by looking at the tree of the respective items again. We should
 expect that the new harmonized concepts now appear in the ontology and
 that they have some link to an external concept defined.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>table <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -368,9 +366,8 @@ that they have some link to an external concept defined.</p>
 </table>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>table <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"NUTS"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"NUTS"</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -418,9 +415,8 @@ that they have some link to an external concept defined.</p>
 </table>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>table <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FRUIT"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FRUIT"</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
