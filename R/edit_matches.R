@@ -101,7 +101,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
 
   allAttribs <- concepts %>%
     bind_cols(attributes)
-  selectedCols <- which(colnames(allAttribs) %in% c("id", "has_broader", "source_id", "class", "label", "source_label", "external_label"))
+  selectedCols <- which(colnames(allAttribs) %in% c("id", "has_broader", "source_id", "class", "label", "description", "source_label", "external_label"))
 
   temp <- get_concept(table = allAttribs[,selectedCols], ontology = ontology, mappings = TRUE)
 
