@@ -162,7 +162,7 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
   # in case target doesn't contain labels, call the function edit_matches, to
   # assign the new terms to the already existing labels in the ontology
   if(!"label" %in% colnames(target)){
-    assertNames(x = colnames(target), must.include = "class")
+    assertNames(x = colnames(target), must.include = c("class", "has_broader"))
 
     related <- edit_matches(concepts = tibble(label = new), attributes = target, source = source,
                             ontology = ontology, matchDir = matchDir, verbose = verbose, beep = beep)
@@ -217,10 +217,10 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
 
   if(!is.null(lut) & !dim(extMps)[1] == 0){
     extMps <- extMps %>%
-      distinct(new, has_source) %>%
+      distinct(label, has_source) %>%
       mutate(newid = paste0(source, "_", row_number() + prevID),
              has_broader = NA_character_) %>%
-      left_join(lut, by = c("new" = "label")) %>%
+      left_join(lut, by = "label") %>%
       select(id = newid, label, has_broader, has_source, description)
   } else {
     extMps <- extMps %>%
