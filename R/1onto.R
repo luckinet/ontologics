@@ -202,6 +202,7 @@ setMethod(f = "show",
               classList <- paste0(paste0(classList, collapse = "\n"), "\n\n")
 
               conceptList <- conceptChart <- ""
+              conceptClass <- theClasses$harmonised$label[1:3]
               for(i in 1:3){
 
                 itemsPerGroup <- theConceptsHarm %>%
@@ -216,9 +217,9 @@ setMethod(f = "show",
                   arrange(desc(items))
 
                 if(dim(temp)[1] > 5){
-                  conceptList <- paste0(conceptList, "    -> ", paste0(temp$temp[1:5], collapse = ", "), ", ...\n")
+                  conceptList <- paste0(conceptList, "    -> ", conceptClass[i], ": ", paste0(temp$temp[1:5], collapse = ", "), ", ...\n")
                 } else {
-                  conceptList <- paste0(conceptList, "    -> ", paste0(temp$temp, collapse = ", "), "\n")
+                  conceptList <- paste0(conceptList, "    -> ", conceptClass[i], ": ", paste0(temp$temp, collapse = ", "), "\n")
                 }
 
                 # ticks <- map(seq_along(temp$prop), function(ix){
@@ -245,7 +246,7 @@ setMethod(f = "show",
             cat(sourceList)
             cat("  classes :", nrClasses, "\n")
             cat(classList)
-            cat("  concepts:", nrConcepts, "\n")
+            cat("  top concepts:", nrConcepts, "\n")
             cat(conceptList)
 
           }
