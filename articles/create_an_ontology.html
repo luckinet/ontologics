@@ -125,10 +125,10 @@ ontology</a> so that it’s interoperable with the semantic web.</p>
 <span><span class="co">#&gt;     ∟ class   53   Classes of crop or livestock commodi...</span></span>
 <span><span class="co">#&gt;      ∟ crop    0   Crop or livestock commodities</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   concepts: 73 </span></span>
-<span><span class="co">#&gt;     -&gt; 'CEREALS' (10), 'FRUIT' (8), 'VEGETABLES' (6), 'UNGULATES' (5), 'BIOENERGY CROPS' (4), ...</span></span>
-<span><span class="co">#&gt;     -&gt; 'Bioenergy herbaceous' (20), 'Barley' (20), 'Fibre crops' (20), 'Flower herbs' (20), 'Grass crops' (20), ...</span></span>
-<span><span class="co">#&gt;     -&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt;   top concepts: 73 </span></span>
+<span><span class="co">#&gt;     -&gt; group: 'CEREALS' (10), 'FRUIT' (8), 'VEGETABLES' (6), 'UNGULATES' (5), 'BIOENERGY CROPS' (4), ...</span></span>
+<span><span class="co">#&gt;     -&gt; class: 'Bioenergy herbaceous' (20), 'Barley' (20), 'Fibre crops' (20), 'Flower herbs' (20), 'Grass crops' (20), ...</span></span>
+<span><span class="co">#&gt;     -&gt; crop:</span></span></code></pre></div>
 <p>The <code>onto</code> class is an S3 class with the 3 slots
 <code>@sources</code>, <code>@classes</code> and <code>@concepts</code>,
 each of which are reflected by an entry in the show-method. Often the
@@ -168,7 +168,7 @@ linking also this ontology to other <em>linked open data</em>.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   classes : 0 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   concepts: 0</span></span></code></pre></div>
+<span><span class="co">#&gt;   top concepts: 0</span></span></code></pre></div>
 <p>These information are stored in the <code>@sources</code> slot, just
 like any other external data source. It is recommended to always set the
 <code>code</code> for building IDs with a leading symbol that can’t be
@@ -202,7 +202,7 @@ this transformation without asking or informing the author.</p>
 <td align="left">1</td>
 <td align="left">harmonised</td>
 <td align="left">0.0.1</td>
-<td align="left">2023-02-17</td>
+<td align="left">2023-02-23</td>
 <td align="left">showcase of the ontologics R-package</td>
 <td align="left"><a href="https://www.idiv.de/luckinet" class="external-link uri">https://www.idiv.de/luckinet</a></td>
 <td align="left">CC-BY-4.0</td>
