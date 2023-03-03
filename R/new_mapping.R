@@ -14,8 +14,8 @@
 #'   identifying the source dataset of the new label.
 #' @param lut [`character(.)`][character]\cr in case the terms used for mapping
 #'   are from a look up table (i.e. a standardised set of terms with a
-#'   description), provide this table with column names 'label' and '
-#'   description' here.
+#'   description), provide this table with column names 'label' and
+#'   'description' here.
 #' @param certainty [`integerish(1)`][integer]\cr the certainty of the match.
 #'   Possible values are between 1 and 4, with meaning \itemize{\item 1 =
 #'   probably unreliable \item 2 = unclear, assigned according to a given
@@ -63,7 +63,7 @@
 #'   assertChoice assertIntegerish assertFileExists assertNames
 #' @importFrom tibble tibble
 #' @importFrom dplyr left_join filter pull mutate bind_rows arrange if_else
-#'   bind_cols full_join na_if across anti_join
+#'   bind_cols full_join na_if across anti_join right_join
 #' @importFrom tidyr unite pivot_wider
 #' @importFrom tidyselect all_of where
 #' @importFrom stringr str_detect str_split str_replace
@@ -220,7 +220,7 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
       distinct(label, has_source) %>%
       mutate(newid = paste0(source, "_", row_number() + prevID),
              has_broader = NA_character_) %>%
-      left_join(lut, by = "label") %>%
+      right_join(lut, by = "label") %>%
       select(id = newid, label, has_broader, has_source, description)
   } else {
     extMps <- extMps %>%

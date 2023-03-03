@@ -30,8 +30,8 @@ identifying the source dataset of the new label.}
 
 \item{lut}{\code{\link[=character]{character(.)}}\cr in case the terms used for mapping
 are from a look up table (i.e. a standardised set of terms with a
-description), provide this table with column names 'label' and '
-description' here.}
+description), provide this table with column names 'label' and
+'description' here.}
 
 \item{match}{\code{\link[=character]{character(1)}}\cr the
 \href{https://www.w3.org/TR/skos-reference/#mapping}{skos mapping property}
