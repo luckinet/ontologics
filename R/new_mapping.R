@@ -218,9 +218,10 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
   if(!is.null(lut) & !dim(extMps)[1] == 0){
     extMps <- extMps %>%
       distinct(label, has_source) %>%
-      mutate(newid = paste0(source, "_", row_number() + prevID),
-             has_broader = NA_character_) %>%
       right_join(lut, by = "label") %>%
+      mutate(newid = paste0(source, "_", row_number() + prevID),
+             has_broader = NA_character_,
+             has_source = srcID) %>%
       select(id = newid, label, has_broader, has_source, description)
   } else {
     extMps <- extMps %>%
