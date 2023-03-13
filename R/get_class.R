@@ -54,7 +54,6 @@ get_class <- function(..., regex = FALSE, external = FALSE, ontology = NULL){
   }
 
   attrib <- quos(..., .named = TRUE)
-  # return(attrib)
 
   # identify attributes that are not in the ontology
   if(!all(names(attrib) %in% colnames(toOut))){

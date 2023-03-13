@@ -39,13 +39,13 @@ crops <- new_source(name = "externalDataset",
                     ontology = crops)
 
 # new concepts that occur in the external dataset, which should be harmonised with the ontology
-externalConcepts <- tibble(label = c("Wheat", "NUTS", "Avocado"))
+externalConcepts <- c("Wheat", "NUTS", "Avocado")
 ```
 
 The new concepts are from different conceptual levels, both 'Wheat' and 'Avocado' are the crop itself, while 'NUTS' is an aggregate of various crops (such as walnut, hazelnut, etc). Let's first find out whether these concepts are in fact new concepts because they are missing from the ontology.
 
 ```{r get_concepts missing}
-missingConcepts <- get_concept(table = externalConcepts, ontology = crops)
+missingConcepts <- get_concept(label = externalConcepts, ontology = crops)
 kable(missingConcepts)
 ```
 
@@ -54,7 +54,7 @@ This tells us that that both 'NUTS' and 'Wheat' don't seem to be missing from th
 By studying the ontology (not shown here), we can identify the semantic relation between the new concepts and some of the already harmonized concepts. First of all, to assign new concepts from an external ontology, a harmonised concept must already exist in the harmonised ontology. For the new harmonized concepts, we chose the lower capital letter words to show the difference between those and the external concepts and we assign them as narrower concepts to the respective already existing, harmonized (broader) concepts.
 
 ```{r set_concept}
-broaderConcepts <- get_concept(table = tibble(label = c("Wheat", "Tropical and subtropical Fruit")), 
+broaderConcepts <- get_concept(label = c("Wheat", "Tropical and subtropical Fruit"), 
                                ontology = crops)
 
 crops <- new_concept(new = c("wheat", "avocado"),
@@ -66,7 +66,7 @@ crops <- new_concept(new = c("wheat", "avocado"),
 Eventually, all new (external) concepts can be mapped to already harmonized concepts. Even though 'NUTS' already exists, this also applies to this new concept, because the already existing concept 'NUTS' doesn't necessarily have to be the same as the new concept 'NUTS'. This all depends on the respective description of the harmonized and external concepts. When setting a new mapping, the type and the certainty of the match have to be defined. As we have defined the closely related concepts as new concepts, we can chose a *close* match for all external concepts. Certainty has the value 3, because it is *clear, assigned according to a given definition*.
 
 ```{r set_mapping}
-toMap <- get_concept(table = tibble(label = c("wheat", "NUTS", "avocado")),
+toMap <- get_concept(label = c("wheat", "NUTS", "avocado"),
                      ontology = crops)
 
 crops <- new_mapping(new = externalConcepts %>% pull(label),
@@ -82,7 +82,7 @@ crops <- new_mapping(new = externalConcepts %>% pull(label),
 It may be, moreover, that we want to (or have to) add new concepts, that do not have a class defined yet. This can be the case when we have to nest new concepts, out of a range of concepts that do have a valid class, into concepts that are already at the lowest possible hierarchical level. These concepts are, when specified with `class = NA`, `class = c(bla, blubb, NA)`, or `class = NULL`, assigned the actual class `undefined` and you are informed about how to proceed.
 
 ```{r}
-broaderConcepts <- get_concept(table = tibble(label = c("wheat", "wheat")),
+broaderConcepts <- get_concept(label = c("wheat", "wheat"),
                                ontology = crops)
 
 # for (some of) these concepts we do not know the class ...
