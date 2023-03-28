@@ -93,7 +93,7 @@ __Concept table:__
 |ID |label|description|class|has_broader|
 |:---|:---|:---|:---|:---|
 |.08 | Forests | NA | landcover | NA|
-|.08.02 | Naturally Regenerating Forest | Forest that regenerates naturally (this description needs revision) | land-use | .08|
+|.08.02 | Naturally Regenerating Forest | Forest that regenerates naturally | land-use | .08|
 
 __Class table:__
 

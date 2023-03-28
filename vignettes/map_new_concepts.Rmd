@@ -22,7 +22,7 @@ library(dplyr, warn.conflicts = FALSE)
 
 When an ontology exists already, it can be used either by looking up which concepts exist in it, which relations the concepts have among each other, by adding and linking new concepts to the already existing concepts or by extending the harmonised concepts based on external ontologies.
 
-## Relate an external ontology to harmonized concepts 
+## Relate an external dataset to harmonized concepts 
 
 When adding (or mapping) new concepts, we first have to define the source of the new concepts.
 
@@ -46,10 +46,12 @@ The new concepts are from different conceptual levels, both 'Wheat' and 'Avocado
 
 ```{r get_concepts missing}
 missingConcepts <- get_concept(label = externalConcepts, ontology = crops)
-kable(missingConcepts)
+missingConcepts %>% 
+  select(1:5) %>% 
+  kable()
 ```
 
-This tells us that that both 'NUTS' and 'Wheat' don't seem to be missing from the ontology. Moreover, we  see that 'Wheat' is a *class* and not a *crop* and 'NUTS' also isn't *crop* and doesn't have any *broader* concept. While Avocado is missing from the ontology entirely, the crop Wheat is also missing, hence both have to be defined as new concept.
+This tells us that that both 'NUTS' and 'Wheat' don't seem to be missing from the ontology. Moreover, we  see that 'Wheat' is a *class* and not a *crop* and 'NUTS' also isn't *crop* and doesn't have any *broader* concept. While Avocado is missing from the ontology entirely, the crop Wheat is also missing so that both have to be defined as new concept.
 
 By studying the ontology (not shown here), we can identify the semantic relation between the new concepts and some of the already harmonized concepts. First of all, to assign new concepts from an external ontology, a harmonised concept must already exist in the harmonised ontology. For the new harmonized concepts, we chose the lower capital letter words to show the difference between those and the external concepts and we assign them as narrower concepts to the respective already existing, harmonized (broader) concepts.
 
@@ -69,7 +71,7 @@ Eventually, all new (external) concepts can be mapped to already harmonized conc
 toMap <- get_concept(label = c("wheat", "NUTS", "avocado"),
                      ontology = crops)
 
-crops <- new_mapping(new = externalConcepts %>% pull(label),
+crops <- new_mapping(new = externalConcepts,
                      target = toMap,
                      match = c("close", "close", "close"),
                      source = "externalDataset",
@@ -110,17 +112,14 @@ Now we can check whether the updated ontology is as we'd expect, for example by 
 
 ```{r new ontology}
 make_tree(label = "Wheat", ontology = crops) %>%
-  select(1:6) %>%
+  select(1:5) %>%
   kable()
-
 make_tree(label = "NUTS", ontology = crops) %>%
-  select(1:6) %>%
+  select(1:5) %>%
   kable()
-
 make_tree(label = "FRUIT", ontology = crops) %>%
-  select(1:6) %>%
+  select(1:5) %>%
   kable()
-
 # and finally a list of all external concepts
 get_concept(external = TRUE, ontology = crops) %>% 
   kable()
