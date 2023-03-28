@@ -6,11 +6,12 @@
 #' @param regex [`logical(1)`][logical]\cr if \code{regex = TRUE}, the columns
 #'   defined in \code{table} are filtered by \code{\link[stringr]{str_detect}}
 #'   on the column values (if you define several, they are combined with an AND
-#'   operator), otherwise a \code{\link[dplyr]{left_join}} on the ontology is
-#'   carried out.
+#'   operator), otherwise a \code{\link[dplyr]{filter}} is carried out.
 #' @param external [`logical(1)`][logical]\cr whether or not to return merely
 #'   the table of external concepts.
-#' @param match.input [`logical(1)`][logical]\cr whether or not to return a table that reflects all
+#' @param match.input [`logical(1)`][logical]\cr whether or not to return a
+#'   table that reflects the first input parameter exactly (default), or provides
+#'   the unique items.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
 #'   stored, or an already loaded ontology.
 #' @examples
