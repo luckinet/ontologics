@@ -1,3 +1,7 @@
+# ontologics 0.7.0 - simpler interface
+
+- simplify `get_concept()`. Search parameters are now not provided via a table anymore, but as a combination of column name and value to search for in that column. They can also be provided as a string that represents a query that would be used in `dplyr::filter()`, where several search conditions can be combined arbitrarily.
+
 # ontologics 0.6.6
 
 - also allow building trees of the parents, not only the children in `make_tree()`
