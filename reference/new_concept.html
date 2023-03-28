@@ -18,7 +18,7 @@ thus harmonise it with the already existing ontology."><meta property="og:image"
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -135,10 +135,7 @@ added to the ontology, or a message that nothing new was added.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu">new_concept</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  new <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">new</span>,</span></span>
-<span class="r-in"><span>  broader <span class="op">=</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>              table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              ontology <span class="op">=</span> <span class="va">onto</span></span></span>
-<span class="r-in"><span>            <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  broader <span class="op">=</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  class <span class="op">=</span> <span class="st">"crop"</span>,</span></span>
 <span class="r-in"><span>  ontology <span class="op">=</span> <span class="va">onto</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
@@ -151,10 +148,7 @@ added to the ontology, or a message that nothing new was added.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu">new_concept</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  new <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">new</span>,</span></span>
-<span class="r-in"><span>  broader <span class="op">=</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>              table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              ontology <span class="op">=</span> <span class="va">onto</span></span></span>
-<span class="r-in"><span>            <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  broader <span class="op">=</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  ontology <span class="op">=</span> <span class="va">onto</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>all new concepts don't have a class; please define this with 'new_class()' and re-run 'new_concept()' with these concepts and the new class.</span>
@@ -168,10 +162,7 @@ added to the ontology, or a message that nothing new was added.</p>
 <span class="r-in"><span><span class="co"># ... and set the concepts again</span></span></span>
 <span class="r-in"><span><span class="va">onto</span> <span class="op">&lt;-</span> <span class="fu">new_concept</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  new <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">new</span>,</span></span>
-<span class="r-in"><span>  broader <span class="op">=</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>              table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              ontology <span class="op">=</span> <span class="va">onto</span></span></span>
-<span class="r-in"><span>            <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  broader <span class="op">=</span> <span class="fu"><a href="get_concept.html">get_concept</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">concepts</span><span class="op">$</span><span class="va">old</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  class <span class="op">=</span> <span class="st">"use type"</span>,</span></span>
 <span class="r-in"><span>  ontology <span class="op">=</span> <span class="va">onto</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>

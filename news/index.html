@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -59,6 +59,10 @@
       <small>Source: <a href="https://github.com/luckinet/ontologics/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.7.0" id="ontologics-070---simpler-interface">ontologics 0.7.0 - simpler interface<a class="anchor" aria-label="anchor" href="#ontologics-070---simpler-interface"></a></h2>
+<ul><li>simplify <code><a href="../reference/get_concept.html">get_concept()</a></code>. Search parameters are now not provided via a table anymore, but as a combination of column name and value to search for in that column. They can also be provided as a string that represents a query that would be used in <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">dplyr::filter()</a></code>, where several search conditions can be combined arbitrarily.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.6" id="ontologics-066">ontologics 0.6.6<a class="anchor" aria-label="anchor" href="#ontologics-066"></a></h2>
 <ul><li>also allow building trees of the parents, not only the children in <code><a href="../reference/make_tree.html">make_tree()</a></code>

@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -159,7 +159,7 @@ linking also this ontology to other <em>linked open data</em>.</p>
 <span>                       path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, </span>
 <span>                       code <span class="op">=</span> <span class="st">".xx"</span>,</span>
 <span>                       description <span class="op">=</span> <span class="st">"showcase of the ontologics R-package"</span>, </span>
-<span>                       homepage <span class="op">=</span> <span class="st">"https://www.idiv.de/luckinet"</span>, </span>
+<span>                       homepage <span class="op">=</span> <span class="st">"https://github.com/luckinet/ontologics"</span>, </span>
 <span>                       license <span class="op">=</span> <span class="st">"CC-BY-4.0"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lulc</span></span>
@@ -180,13 +180,13 @@ this transformation without asking or informing the author.</p>
 <table class="table">
 <colgroup>
 <col width="2%">
-<col width="9%">
-<col width="6%">
-<col width="9%">
-<col width="32%">
-<col width="25%">
 <col width="8%">
-<col width="5%">
+<col width="6%">
+<col width="8%">
+<col width="29%">
+<col width="31%">
+<col width="8%">
+<col width="4%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
@@ -202,9 +202,9 @@ this transformation without asking or informing the author.</p>
 <td align="left">1</td>
 <td align="left">harmonised</td>
 <td align="left">0.0.1</td>
-<td align="left">2023-03-06</td>
+<td align="left">2023-03-28</td>
 <td align="left">showcase of the ontologics R-package</td>
-<td align="left"><a href="https://www.idiv.de/luckinet" class="external-link uri">https://www.idiv.de/luckinet</a></td>
+<td align="left"><a href="https://github.com/luckinet/ontologics" class="external-link uri">https://github.com/luckinet/ontologics</a></td>
 <td align="left">CC-BY-4.0</td>
 <td align="left"></td>
 </tr></tbody>
@@ -227,7 +227,7 @@ the same label.</p>
 <span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span></span>
 <span>    new <span class="op">=</span> <span class="st">"land-use"</span>, </span>
 <span>    target <span class="op">=</span> <span class="st">"landcover"</span>, </span>
-<span>    description <span class="op">=</span> <span class="st">"A good definition of land-use"</span>,</span>
+<span>    description <span class="op">=</span> <span class="st">"A good definition of land use"</span>,</span>
 <span>    ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># the class IDs are derived from the code that was previously specified </span></span>
@@ -261,7 +261,7 @@ the same label.</p>
 <tr class="even">
 <td align="left">.xx.xx</td>
 <td align="left">land-use</td>
-<td align="left">A good definition of land-use</td>
+<td align="left">A good definition of land use</td>
 <td align="left">landcover</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
@@ -447,7 +447,7 @@ also a second level of concepts that depend on the first level.</p>
 <span></span>
 <span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span></span>
 <span>  new <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">concept</span>,</span>
-<span>  broader <span class="op">=</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>table <span class="op">=</span> <span class="va">lu</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">broader</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span>,</span>
+<span>  broader <span class="op">=</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">broader</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span>,</span>
 <span>  class <span class="op">=</span> <span class="st">"land-use"</span>,</span>
 <span>  ontology <span class="op">=</span> <span class="va">lulc</span></span>
 <span><span class="op">)</span></span>
