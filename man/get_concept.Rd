@@ -4,7 +4,13 @@
 \alias{get_concept}
 \title{Get a concept in an ontology}
 \usage{
-get_concept(..., regex = FALSE, external = FALSE, ontology = NULL)
+get_concept(
+  ...,
+  regex = FALSE,
+  external = FALSE,
+  match.input = TRUE,
+  ontology = NULL
+)
 }
 \arguments{
 \item{...}{combination of column name and value to filter that column by. The
@@ -20,18 +26,10 @@ carried out.}
 \item{external}{\code{\link[=logical]{logical(1)}}\cr whether or not to return merely
 the table of external concepts.}
 
+\item{match.input}{\code{\link[=logical]{logical(1)}}\cr whether or not to return a table that reflects all}
+
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
-
-\item{table}{\code{\link[=character]{character(1)}}\cr a table containing all columns (a
-subset of "id", "class", "label", "has_broader" and "has_source") of the
-ontology that shall be filter by the values in those columns.}
-
-\item{per_class}{\code{\link[=logical]{logical(1)}}\cr whether ot not to flatten the
-ontology before matching \code{table} with the ontology, whereby
-\code{table} would contain columns of the classes in the ontology. This can
-be useful when concepts are unique only within their parent concepts, so
-that unique identification is only possible when they are matched together.}
 }
 \value{
 A table of a subset of the ontology according to the values in
@@ -46,6 +44,12 @@ onto <- load_ontology(path = ontoDir)
 
 # exact matches from a loaded ontology ...
 get_concept(label = "FODDER CROPS", ontology = onto)
+
+# ... or a path
+get_concept(label = c("FODDER CROPS", "CEREALS"), ontology = ontoDir)
+
+# ignore querries that would not be valid in filter()
+get_concept("label != 'Bioenergy woody' & has_broader == '.01'", "other", ontology = onto)
 
 # extract concepts based on regular expressions
 get_concept(label = "crop", id = ".03$", regex = TRUE, ontology = ontoDir)

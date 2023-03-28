@@ -27,7 +27,7 @@ make_tree <- function(..., reverse = FALSE, ontology = NULL){
   # assertCharacter(x = top)
   # assertSubset(x = top, choices = ontology@concepts$harmonised)
 
-  top <- get_concept(table = tibble(!!names(attrib) := attrib[[1]]), ontology = ontology) %>%
+  top <- get_concept(!!names(attrib) := attrib[[1]], ontology = ontology) %>%
     pull(id)
   # return(top)
 

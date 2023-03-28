@@ -35,10 +35,7 @@
 #'
 #' onto <- new_concept(
 #'   new = concepts$new,
-#'   broader = get_concept(
-#'               table = data.frame(label = concepts$old),
-#'               ontology = onto
-#'             ),
+#'   broader = get_concept(label = concepts$old, ontology = onto),
 #'   class = "crop",
 #'   ontology = onto
 #' )
@@ -51,10 +48,7 @@
 #'
 #' onto <- new_concept(
 #'   new = concepts$new,
-#'   broader = get_concept(
-#'               table = data.frame(label = concepts$old),
-#'               ontology = onto
-#'             ),
+#'   broader = get_concept(label = concepts$old, ontology = onto),
 #'   ontology = onto
 #' )
 #'
@@ -67,10 +61,7 @@
 #' # ... and set the concepts again
 #' onto <- new_concept(
 #'   new = concepts$new,
-#'   broader = get_concept(
-#'               table = data.frame(label = concepts$old),
-#'               ontology = onto
-#'             ),
+#'   broader = get_concept(label = concepts$old, ontology = onto),
 #'   class = "use type",
 #'   ontology = onto
 #' )

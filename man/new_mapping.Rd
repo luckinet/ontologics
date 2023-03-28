@@ -85,7 +85,7 @@ onto <- new_source(name = "externalDataset",
                    license = "CC-BY-0",
                    ontology = onto)
 
-onto <- get_concept(table = data.frame(label = mapping$old), ontology = onto) \%>\%
+onto <- get_concept(label = mapping$old, ontology = onto) \%>\%
   new_mapping(new = mapping$new,
               target = .,
               match = mapping$type,

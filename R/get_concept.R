@@ -10,16 +10,9 @@
 #'   carried out.
 #' @param external [`logical(1)`][logical]\cr whether or not to return merely
 #'   the table of external concepts.
+#' @param match.input [`logical(1)`][logical]\cr whether or not to return a table that reflects all
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
 #'   stored, or an already loaded ontology.
-#' @param table [`character(1)`][character]\cr a table containing all columns (a
-#'   subset of "id", "class", "label", "has_broader" and "has_source") of the
-#'   ontology that shall be filter by the values in those columns.
-#' @param per_class [`logical(1)`][logical]\cr whether ot not to flatten the
-#'   ontology before matching \code{table} with the ontology, whereby
-#'   \code{table} would contain columns of the classes in the ontology. This can
-#'   be useful when concepts are unique only within their parent concepts, so
-#'   that unique identification is only possible when they are matched together.
 #' @examples
 #' ontoDir <- system.file("extdata", "crops.rds", package = "ontologics")
 #' onto <- load_ontology(path = ontoDir)
@@ -27,26 +20,28 @@
 #' # exact matches from a loaded ontology ...
 #' get_concept(label = "FODDER CROPS", ontology = onto)
 #'
+#' # ... or a path
+#' get_concept(label = c("FODDER CROPS", "CEREALS"), ontology = ontoDir)
+#'
+#' # ignore querries that would not be valid in filter()
+#' get_concept("label != 'Bioenergy woody' & has_broader == '.01'", "other", ontology = onto)
+#'
 #' # extract concepts based on regular expressions
 #' get_concept(label = "crop", id = ".03$", regex = TRUE, ontology = ontoDir)
 #'
 #' @return A table of a subset of the ontology according to the values in
 #'   \code{...}
-#' @importFrom checkmate assertFileExists assertLogical testChoice
-#' @importFrom tibble as_tibble
-#' @importFrom readr read_rds
+#' @importFrom checkmate assertLogical
 #' @importFrom tidyselect everything contains
 #' @importFrom tidyr separate_rows separate pivot_longer pivot_wider
-#' @importFrom rlang quos eval_tidy := sym as_name
+#' @importFrom rlang quos eval_tidy := sym as_name parse_expr
 #' @importFrom dplyr filter pull select rename inner_join
-#' @importFrom purrr map map_dfc
-#' @importFrom stringr str_which str_sub
-#' @importFrom magrittr set_names
 #' @importFrom utils head
 #' @export
 
-get_concept <- function(..., regex = FALSE, external = FALSE, ontology = NULL){
-  # table = NULL, per_class = FALSE){
+get_concept <- function(..., regex = FALSE, external = FALSE, match.input = TRUE,
+                        ontology = NULL){
+  # table = NULL, per_class = FALSE
 
   assertLogical(x = regex, len = 1, any.missing = FALSE)
   assertLogical(x = external, len = 1, any.missing = FALSE)
@@ -78,31 +73,54 @@ get_concept <- function(..., regex = FALSE, external = FALSE, ontology = NULL){
     outCols <- c("id", "label", "description", "class", "has_broader")
   }
 
-  attrib <- quos(..., .named = TRUE)
+  attrib <- quos(...)
+  # return(attrib)
+
+  if(length(regex) != length(attrib)){
+    regex <- rep(regex, length(attrib))
+  }
 
   # identify attributes that are not in the ontology
-  if(!all(names(attrib) %in% colnames(toOut))){
+  if(!all(names(attrib) %in% colnames(toOut)) & all(names(attrib) != "")){
     sbst <- names(attrib) %in% colnames(toOut)
     theName <- names(attrib)[!sbst]
     warning(paste0("'", paste0(theName, collapse = ", "), "' is not a column in the ontology and is thus ignored."))
     attrib <- attrib[sbst]
   }
 
-  if(regex){
+  for(i in seq_along(attrib)){
 
-    for(i in seq_along(attrib)){
+    theName <- names(attrib)[i]
+    theVar <- eval_tidy(attrib[[i]])
 
-      toOut <- toOut %>%
-        filter(str_detect(toOut[[names(attrib)[i]]], paste0(as_name(attrib[[i]]), collapse = "|")))
-
-    }
-
-  } else {
-
-    for(i in seq_along(attrib)){
+    if(regex[i]){
 
       toOut <- toOut %>%
-        filter(toOut[[names(attrib)[i]]] %in% eval_tidy(attrib[[i]]))
+        filter(str_detect(toOut[[theName]], paste0(as_name(attrib[[i]]), collapse = "|")))
+
+    } else {
+
+      if(all(theName == "")){
+
+        if(!str_detect(string = theVar, pattern = "==|&|\\|")) next
+
+        toOut <- toOut %>%
+          filter(!!parse_expr(theVar))
+        match.input <- FALSE
+
+      } else {
+
+        toOut <- toOut %>%
+          filter(toOut[[theName]] %in% theVar)
+
+      }
+
+      if(i == 1 & match.input){
+
+        toOut <- tibble(!!theName := theVar) %>%
+          left_join(toOut, by = theName)
+
+      }
 
     }
 
