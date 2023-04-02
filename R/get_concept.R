@@ -89,9 +89,16 @@ get_concept <- function(..., regex = FALSE, external = FALSE, match.input = TRUE
     attrib <- attrib[sbst]
   }
 
+  if(length(attrib) == 0){
+    match.input <- FALSE
+  }
+
+  theNames <- tempInput <- NULL
   for(i in seq_along(attrib)){
+    query <- FALSE
 
     theName <- names(attrib)[i]
+    theNames <- c(theNames, theName)
     theVar <- eval_tidy(attrib[[i]])
 
     if(regex[i]){
@@ -108,6 +115,7 @@ get_concept <- function(..., regex = FALSE, external = FALSE, match.input = TRUE
         toOut <- toOut %>%
           filter(!!parse_expr(theVar))
         match.input <- FALSE
+        query <- TRUE
 
       } else {
 
@@ -116,14 +124,20 @@ get_concept <- function(..., regex = FALSE, external = FALSE, match.input = TRUE
 
       }
 
-      if(i == 1 & match.input){
-
-        toOut <- tibble(!!theName := theVar) %>%
-          left_join(toOut, by = theName)
-
-      }
-
     }
+
+    if(!query){
+      tempInput <- tibble(!!theName := theVar) %>%
+        bind_cols(tempInput, .)
+    }
+
+
+  }
+
+  if(match.input){
+
+    toOut <- tempInput %>%
+      left_join(toOut, by = theNames)
 
   }
 
