@@ -76,7 +76,6 @@ external vocabularies and the harmonised classes and concepts.</p>
 <span>  certainty <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"concept"</span>,</span>
 <span>  ontology <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  matchDir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  beep <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -91,7 +90,7 @@ shall be mapped to labels that do already exist in the ontology.</p></dd>
 
 <dt>target</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame(.)</a></code><br> the already harmonised English
-label(s) to which the external labels shall be mapped.</p></dd>
+label(s) to which the external labels shall be mapped; derive with get_concept().</p></dd>
 
 
 <dt>source</dt>
@@ -130,11 +129,6 @@ to a <code>"concept"</code>, or to a <code>"class"</code>.</p></dd>
 <dt>ontology</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/list.html" class="external-link">ontology(1)</a></code><br> either a path where the ontology is
 stored, or an already loaded ontology.</p></dd>
-
-
-<dt>matchDir</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character(1)</a></code><br> the directory where to store
-source-specific matching tables.</p></dd>
 
 
 <dt>verbose</dt>
