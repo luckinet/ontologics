@@ -5,8 +5,8 @@
 \title{Edit matches manually in a csv-table}
 \usage{
 edit_matches(
-  concepts,
-  attributes = NULL,
+  new,
+  target = NULL,
   source = NULL,
   ontology = NULL,
   matchDir = NULL,
@@ -15,12 +15,12 @@ edit_matches(
 )
 }
 \arguments{
-\item{concepts}{\code{\link[=data.frame]{data.frame(.)}}\cr the new concepts that shall
-be manually matched.}
+\item{new}{\code{\link[=data.frame]{data.frame(.)}}\cr the new concepts that shall be
+manually matched.}
 
-\item{attributes}{\code{\link[=data.frame]{data.frame(.)}}\cr the attributes of new
-concepts that help to match new and target concepts manually (must contain
-at least the column 'class').}
+\item{target}{\code{\link[=data.frame]{data.frame(.)}}\cr the attributes, in terms of
+columns in the ontology, of new concepts that help to match new and target
+concepts manually.}
 
 \item{source}{\code{\link[=character]{character(1)}}\cr any character uniquely
 identifying the source dataset of the new concepts.}
@@ -45,8 +45,7 @@ weren't already in the ontology, a table of the already sucessful matches.
 \description{
 Allows the user to match concepts with an already existing ontology, without
 actually writing into the ontology, but instead storing the resulting
-matching table as csv. This function is used in the function
-\code{\link{new_mapping}} and is not primarily intended for use on its own.
+matching table as csv.
 }
 \details{
 In order to match new concepts into an already existing ontology, it

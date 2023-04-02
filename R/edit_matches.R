@@ -2,13 +2,12 @@
 #'
 #' Allows the user to match concepts with an already existing ontology, without
 #' actually writing into the ontology, but instead storing the resulting
-#' matching table as csv. This function is used in the function
-#' \code{\link{new_mapping}} and is not primarily intended for use on its own.
-#' @param concepts [`data.frame(.)`][data.frame]\cr the new concepts that shall
-#'   be manually matched.
-#' @param attributes [`data.frame(.)`][data.frame]\cr the attributes of new
-#'   concepts that help to match new and target concepts manually (must contain
-#'   at least the column 'class').
+#' matching table as csv.
+#' @param new [`data.frame(.)`][data.frame]\cr the new concepts that shall be
+#'   manually matched.
+#' @param target [`data.frame(.)`][data.frame]\cr the attributes, in terms of
+#'   columns in the ontology, of new concepts that help to match new and target
+#'   concepts manually.
 #' @param source [`character(1)`][character]\cr any character uniquely
 #'   identifying the source dataset of the new concepts.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
@@ -49,13 +48,12 @@
 #' @importFrom fuzzyjoin stringdist_left_join
 #' @export
 
-edit_matches <- function(concepts, attributes = NULL, source = NULL,
+edit_matches <- function(new, target = NULL, source = NULL,
                          ontology = NULL, matchDir = NULL, verbose = TRUE,
                          beep = NULL){
 
-  assertDataFrame(x = concepts, min.cols = 1)
-  assertNames(x = names(concepts), must.include = c("label"))
-  assertDataFrame(x = attributes, nrows = nrow(concepts))
+  assertCharacter(x = new)
+  assertNames(x = names(target), must.include = c("class", "has_broader"))
   assertCharacter(x = source, len = 1, any.missing = FALSE)
 
   intPaths <- getOption(x = "adb_path")
@@ -72,8 +70,9 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     ontology <- load_ontology(path = ontoPath)
   }
 
+  # get the classes within which to search
   filterClasses <- ontology@classes$harmonised %>%
-    filter(label %in% attributes$class)
+    filter(label %in% target$class)
   filterClassLevel <- length(str_split(string = filterClasses$id, pattern = "[.]")[[1]])
   if(dim(filterClasses)[1] == 0){
     stop("no classes are matched in the ontology.")
@@ -85,25 +84,20 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
   filterClasses <- filterClasses %>%
     pull(label) %>%
     unique()
-  attributes <- attributes %>%
+
+  #
+  target <- target %>%
     mutate(lvl = length(str_split(has_broader, "[.]")[[1]]))
-  if(all(attributes$lvl < filterClassLevel-1)){
-    parentFilter <- unique(attributes$has_broader)
+
+  if(all(target$lvl < filterClassLevel-1)){
+    parentFilter <- unique(target$has_broader)
     withBroader <- NULL
-    attributes <- attributes %>%
-      select(-class, -has_broader, -lvl)
   } else {
     parentFilter <- NULL
     withBroader <- "has_broader"
-    attributes <- attributes %>%
-      select(-class, -lvl)
   }
 
-  allAttribs <- concepts %>%
-    bind_cols(attributes)
-  selectedCols <- which(colnames(allAttribs) %in% c("id", "has_broader", "source_id", "class", "label", "description", "source_label", "external_label"))
-
-  temp <- get_concept(table = allAttribs[,selectedCols], ontology = ontology, mappings = TRUE)
+  temp <- get_concept(label = new, class = target$class, has_broader = target$has_broader, ontology = ontology)
 
   # determine previous matches
   if(testFileExists(paste0(matchDir, sourceFile))){
@@ -159,7 +153,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
            match = if_else(is.na(match), if_else(!is.na(id), "has_close_match", "sort_in"), match)) %>%
     pivot_wider(id_cols = c(harmLab, class, id, has_broader, description), names_from = match,
                 values_from = label, values_fn = ~paste0(na.omit(.x), collapse = " | ")) %>%
-    mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
+    mutate(across(where(is.character), ~na_if(x = ., y = ""))) %>%
     filter(harmLab != "ignore") %>%
     rename(label = harmLab)
 
@@ -272,7 +266,7 @@ edit_matches <- function(concepts, attributes = NULL, source = NULL,
     }
 
     sortIn <- missingConcepts %>%
-      left_join(concepts, by = "label") %>%
+      left_join(new, by = "label") %>%
       mutate(sort_in = label,
              label = NA_character_,
              class = NA_character_) %>%
