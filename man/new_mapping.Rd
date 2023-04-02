@@ -13,7 +13,6 @@ new_mapping(
   certainty = NULL,
   type = "concept",
   ontology = NULL,
-  matchDir = NULL,
   verbose = FALSE,
   beep = NULL
 )
@@ -23,7 +22,7 @@ new_mapping(
 shall be mapped to labels that do already exist in the ontology.}
 
 \item{target}{\code{\link[=data.frame]{data.frame(.)}}\cr the already harmonised English
-label(s) to which the external labels shall be mapped.}
+label(s) to which the external labels shall be mapped; derive with get_concept().}
 
 \item{source}{\code{\link[=character]{character(1)}}\cr any character uniquely
 identifying the source dataset of the new label.}
@@ -49,9 +48,6 @@ to a \code{"concept"}, or to a \code{"class"}.}
 
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
-
-\item{matchDir}{\code{\link[=character]{character(1)}}\cr the directory where to store
-source-specific matching tables.}
 
 \item{verbose}{\code{\link[=logical]{logical(1)}}\cr whether or not to give detailed
 information on the process of this function.}
