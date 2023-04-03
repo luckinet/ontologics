@@ -35,9 +35,10 @@ get_concept(label = "FODDER CROPS", ontology = onto)
 get_concept(label = c("FODDER CROPS", "CEREALS"), ontology = ontoDir)
 
 # ignore querries that would not be valid in filter()
-get_concept("label != 'Bioenergy woody' & has_broader == '.01'", "other", ontology = onto)
+get_concept(label != 'Bioenergy woody' & has_broader == '.01', ontology = onto)
 
 # extract concepts based on regular expressions
-get_concept(label = "crop", id = ".03$", regex = TRUE, ontology = ontoDir)
+library(stringr)
+get_concept(str_detect(label, "crop") & str_detect(id, ".03$"), ontology = ontoDir)
 
 }

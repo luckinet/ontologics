@@ -18,10 +18,11 @@
 #' get_concept(label = c("FODDER CROPS", "CEREALS"), ontology = ontoDir)
 #'
 #' # ignore querries that would not be valid in filter()
-#' get_concept("label != 'Bioenergy woody' & has_broader == '.01'", "other", ontology = onto)
+#' get_concept(label != 'Bioenergy woody' & has_broader == '.01', ontology = onto)
 #'
 #' # extract concepts based on regular expressions
-#' get_concept(label = "crop", id = ".03$", regex = TRUE, ontology = ontoDir)
+#' library(stringr)
+#' get_concept(str_detect(label, "crop") & str_detect(id, ".03$"), ontology = ontoDir)
 #'
 #' @return A table of a subset of the ontology according to the values in
 #'   \code{...}
@@ -33,9 +34,7 @@
 #' @importFrom utils head
 #' @export
 
-get_concept <- function(..., external = FALSE, #match.input = TRUE,
-                        ontology = NULL){
-  # table = NULL, per_class = FALSE
+get_concept <- function(..., external = FALSE, ontology = NULL){
 
   assertLogical(x = external, len = 1, any.missing = FALSE)
 
@@ -52,27 +51,12 @@ get_concept <- function(..., external = FALSE, #match.input = TRUE,
     toOut <- ontology@concepts$external
     outCols <- c("id", "label", "description")
   } else {
-    toOut <- ontology@concepts$harmonised #%>%
-      # pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
-      # separate_rows(extid, sep = " \\| ") %>%
-      # separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
-      # left_join(ontology@concepts$external %>% select(extid = id, external_label = label), by = "extid") %>%
-      # group_by(id, label, description, class, has_broader, match) %>%
-      # summarise(external_label = paste0(unique(external_label), collapse = " | ")) %>%
-      # ungroup() %>%
-      # mutate(extid = na_if(extid, "NA")) %>%
-      # pivot_wider(id_cols = c(id, label, description, class, has_broader), names_from = match, values_from = extid)
-
+    toOut <- ontology@concepts$harmonised
     outCols <- c("id", "label", "description", "class", "has_broader")
   }
 
   attrib <- quos(...)
-  # attrib <- exprs(...)
   # return(attrib)
-
-  # if(length(regex) != length(attrib)){
-  #   regex <- rep(regex, length(attrib))
-  # }
 
   # identify attributes that are not in the ontology
   if(!all(names(attrib) %in% colnames(toOut)) & all(names(attrib) != "")){
@@ -82,244 +66,27 @@ get_concept <- function(..., external = FALSE, #match.input = TRUE,
     attrib <- attrib[sbst]
   }
 
-  # if(length(attrib) == 0){
-  #   match.input <- FALSE
-  # }
-
   for(k in seq_along(attrib)){
-    # query <- FALSE
 
     theName <- names(attrib)[k]
-    # theNames <- c(theNames, theName)
 
-    # if(regex[k]){
-    #
-    #   toOut <- toOut %>%
-    #     filter(str_detect(toOut[[theName]], paste0(theVar, collapse = "|")))
-    #
-    # } else {
+    if(theName == ""){
 
-      if(theName == ""){
+      toOut <- toOut %>%
+        filter(eval_tidy(attrib[[k]], data = toOut))
 
-        # if(!str_detect(string = theVar, pattern = "==|&|\\|")) next
+    } else {
 
-        # toOut <- toOut %>%
-        #   filter(!!parse_expr(attrib[[k]]))
+      toOut <- toOut %>%
+        filter(toOut[[theName]] %in% eval_tidy(attrib[[k]]))
 
-        toOut <- toOut %>%
-          filter(eval_tidy(attrib[[k]], data = toOut))
-        # match.input <- FALSE
-        # query <- TRUE
-
-      } else {
-
-        toOut <- toOut %>%
-          filter(toOut[[theName]] %in% eval_tidy(attrib[[k]]))
-
-      }
-
-    # }
-
-    # if(!query){
-    #   tempInput <- tibble(!!theName := theVar) %>%
-    #     bind_cols(tempInput, .)
-    # }
-
+    }
 
   }
-
-  # if(match.input){
-  #
-  #   toOut <- tempInput %>%
-  #     left_join(toOut, by = theNames)
-  #
-  # }
 
   out <- toOut %>%
     select(all_of(outCols), everything())
 
   return(out)
-
-
-
-  # assertDataFrame(x = table, null.ok = TRUE)
-  # assertLogical(x = per_class, len = 1, any.missing = FALSE)
-  #
-  #
-  # if(external){
-  #
-  #   if(is.null(table)){
-  #     toOut <- ontology@concepts$external
-  #   } else {
-  #
-  #     assertNames(x = names(table), subset.of = c("id", "label", "description", "has_broader", "has_source"))
-  #
-  #     if(!regex){
-  #
-  #       toOut <- table %>%
-  #         left_join(ontology@concepts$external, by = colnames(table)) %>%
-  #         mutate(external = label,
-  #                match = "exact",
-  #                has_source = "1") %>%
-  #         select(external, match, label, id, has_broader, description, has_source)
-  #
-  #     } else {
-  #
-  #       toOut <- ontology@concepts$external
-  #
-  #       for(j in seq_along(table)){
-  #         toOut <- toOut %>%
-  #           filter(str_detect(string = toOut[[colnames(table)[j]]],
-  #                             pattern = paste0(c(table %>% pull(j)), collapse = "|")))
-  #       }
-  #
-  #     }
-  #   }
-  #
-  #
-  # } else {
-  #
-  #   if(is.null(table)){
-  #     toOut <- ontology@concepts$harmonised
-  #   } else {
-  #
-  #     if(per_class){
-  #
-  #       theClasses <- unique(ontology@concepts$harmonised$class)
-  #       assertNames(x = names(table), subset.of = theClasses)
-  #
-  #       flatOnto <- ontology@concepts$harmonised %>%
-  #         filter(class == theClasses[1])
-  #
-  #       for(i in seq_along(theClasses)){
-  #         if(i == length(theClasses)) break
-  #
-  #         temp <- ontology@concepts$harmonised %>%
-  #           filter(class == theClasses[i]) %>%
-  #           select(id, !!theClasses[i] := label)
-  #
-  #         child <- ontology@concepts$harmonised %>%
-  #           filter(class == theClasses[i + 1]) %>%
-  #           select(!!theClasses[i + 1] := label, id = has_broader, new_id = id)
-  #
-  #         temp <- temp %>%
-  #           left_join(child, by = "id")
-  #
-  #         if(i == 1){
-  #           flatOnto <- temp %>%
-  #             mutate(!!paste0(theClasses[i], "_id") := id,
-  #                    !!paste0(theClasses[i + 1], "_id") := new_id) %>%
-  #             select(theClasses[i], paste0(theClasses[i], "_id"), theClasses[i + 1], paste0(theClasses[i + 1], "_id"), new_id)
-  #         } else {
-  #           flatOnto <- flatOnto %>%
-  #             mutate(id = new_id) %>%
-  #             select(-new_id) %>%
-  #             left_join(temp %>% select(id, theClasses[i + 1], new_id), by = "id") %>%
-  #             mutate(!!paste0(theClasses[i + 1], "_id") := new_id)
-  #         }
-  #       }
-  #
-  #       flatOnto <- flatOnto %>%
-  #         select(-id, -new_id) %>%
-  #         select(contains(colnames(table)))
-  #
-  #       targetClass <- tail(colnames(table), 1)
-  #       parentClass <- tail(colnames(table), 2)[1]
-  #
-  #       toOut <- table %>%
-  #         left_join(flatOnto, by = colnames(table)) %>%
-  #         distinct() %>%
-  #         select(label = {{ targetClass }}, id = paste0(targetClass, "_id")) %>%
-  #         mutate(class = targetClass)
-  #
-  #       parentOut <- table %>%
-  #         left_join(flatOnto %>% distinct(!!sym(parentClass), !!sym(paste0(parentClass, "_id"))), by = all_of(parentClass)) %>%
-  #         select(label = all_of(targetClass), has_broader = paste0(parentClass, "_id"))
-  #
-  #       toOut <- ontology@concepts$harmonised %>%
-  #         filter(id %in% toOut$id) %>%
-  #         full_join(toOut, by = c("id", "label", "class"))
-  #
-  #       if(all(is.na(toOut$has_broader))){
-  #         toOut <- toOut %>%
-  #           select(-has_broader) %>%
-  #           left_join(parentOut, by = "label") %>%
-  #           select(id, label, class, has_broader, everything())
-  #       }
-  #
-  #     } else {
-  #
-  #       assertNames(x = names(table), subset.of = c("id", "class", "label", "description", "has_broader", "has_source"))
-  #
-  #       if(!regex){
-  #
-  #         toOut <- table %>%
-  #           left_join(ontology@concepts$harmonised, by = colnames(table)) %>%
-  #           mutate(external = label,
-  #                  match = "exact",
-  #                  has_source = "1") %>%
-  #           select(external, match, label, class, id, has_broader, description, has_source)
-  #
-  #         if("label" %in% names(table)){
-  #
-  #           subsNames <- colnames(table)[colnames(table) %in% names(ontology@concepts$external)]
-  #
-  #           extOut <- table %>%
-  #             left_join(ontology@concepts$external, by = subsNames) %>%
-  #             select(extid = id, extLabel = label, has_source) %>%
-  #             filter(!is.na(extid))
-  #
-  #           if(dim(extOut)[1] != 0){
-  #
-  #             extOut <- ontology@concepts$harmonised %>%
-  #               pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
-  #               separate_rows(extid, sep = " \\| ") %>%
-  #               separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
-  #               filter(extid %in% na.omit(extOut$extid)) %>%
-  #               left_join(extOut, ., by = "extid") %>%
-  #               mutate(match = str_replace_all(match, "has_", ""),
-  #                      match = str_replace_all(match, "_match", "")) %>%
-  #               select(external = extLabel, match, label, class, id, has_broader, description, has_source)
-  #
-  #           } else {
-  #             extOut <- extOut %>%
-  #               select(external = extLabel, has_source)
-  #           }
-  #
-  #           # rename for join
-  #           table <-  table %>%
-  #             select(external = label, everything()) %>%
-  #             distinct()
-  #
-  #           toOut <- toOut %>%
-  #             bind_rows(extOut) %>%
-  #             arrange(match) %>%
-  #             left_join(table, ., by = colnames(table))
-  #         }
-  #
-  #       } else {
-  #
-  #         toOut <- ontology@concepts$harmonised
-  #
-  #         for(j in seq_along(table)){
-  #           toOut <- toOut %>%
-  #             filter(str_detect(string = toOut[[colnames(table)[j]]],
-  #                               pattern = paste0(c(table %>% pull(j)), collapse = "|")))
-  #         }
-  #
-  #         regexpr <- paste0(paste0(names(table), "~", table), collapse = ",")
-  #         toOut <- toOut %>%
-  #           mutate(external = regexpr,
-  #                  match = "regex",
-  #                  has_source = "1") %>%
-  #           select(external, match, label, class, id, has_broader, description, has_source)
-  #       }
-  #
-  #     }
-  #
-  #   }
-  # }
-#
-#   return(toOut)
 
 }
