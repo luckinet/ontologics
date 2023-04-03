@@ -290,5 +290,3 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
   return(out)
 
 }
-
-utils::globalVariables("where")
