@@ -40,7 +40,7 @@
 #' @importFrom utils head
 #' @export
 
-get_concept <- function(..., regex = FALSE, external = FALSE, match.input = TRUE,
+get_concept <- function(..., regex = FALSE, external = FALSE, #match.input = TRUE,
                         ontology = NULL){
   # table = NULL, per_class = FALSE
 
@@ -60,26 +60,27 @@ get_concept <- function(..., regex = FALSE, external = FALSE, match.input = TRUE
     toOut <- ontology@concepts$external
     outCols <- c("id", "label", "description")
   } else {
-    toOut <- ontology@concepts$harmonised %>%
-      pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
-      separate_rows(extid, sep = " \\| ") %>%
-      separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
-      left_join(ontology@concepts$external %>% select(extid = id, external_label = label), by = "extid") %>%
-      group_by(id, label, description, class, has_broader, match) %>%
-      summarise(external_label = paste0(unique(external_label), collapse = " | ")) %>%
-      ungroup() %>%
-      mutate(external_label = na_if(external_label, "NA")) %>%
-      pivot_wider(id_cols = c(id, label, description, class, has_broader), names_from = match, values_from = external_label)
+    toOut <- ontology@concepts$harmonised #%>%
+      # pivot_longer(cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), names_to = "match", values_to = "extid") %>%
+      # separate_rows(extid, sep = " \\| ") %>%
+      # separate(col = extid, into = c("extid", "certainty"), sep = "[.]") %>%
+      # left_join(ontology@concepts$external %>% select(extid = id, external_label = label), by = "extid") %>%
+      # group_by(id, label, description, class, has_broader, match) %>%
+      # summarise(external_label = paste0(unique(external_label), collapse = " | ")) %>%
+      # ungroup() %>%
+      # mutate(extid = na_if(extid, "NA")) %>%
+      # pivot_wider(id_cols = c(id, label, description, class, has_broader), names_from = match, values_from = extid)
 
     outCols <- c("id", "label", "description", "class", "has_broader")
   }
 
   attrib <- quos(...)
+  # attrib <- exprs(...)
   # return(attrib)
 
-  if(length(regex) != length(attrib)){
-    regex <- rep(regex, length(attrib))
-  }
+  # if(length(regex) != length(attrib)){
+  #   regex <- rep(regex, length(attrib))
+  # }
 
   # identify attributes that are not in the ontology
   if(!all(names(attrib) %in% colnames(toOut)) & all(names(attrib) != "")){
@@ -89,57 +90,58 @@ get_concept <- function(..., regex = FALSE, external = FALSE, match.input = TRUE
     attrib <- attrib[sbst]
   }
 
-  if(length(attrib) == 0){
-    match.input <- FALSE
-  }
+  # if(length(attrib) == 0){
+  #   match.input <- FALSE
+  # }
 
-  theNames <- tempInput <- NULL
-  for(i in seq_along(attrib)){
-    query <- FALSE
+  for(k in seq_along(attrib)){
+    # query <- FALSE
 
-    theName <- names(attrib)[i]
-    theNames <- c(theNames, theName)
-    theVar <- eval_tidy(attrib[[i]])
+    theName <- names(attrib)[k]
+    # theNames <- c(theNames, theName)
 
-    if(regex[i]){
+    # if(regex[k]){
+    #
+    #   toOut <- toOut %>%
+    #     filter(str_detect(toOut[[theName]], paste0(theVar, collapse = "|")))
+    #
+    # } else {
 
-      toOut <- toOut %>%
-        filter(str_detect(toOut[[theName]], paste0(as_name(attrib[[i]]), collapse = "|")))
+      if(theName == ""){
 
-    } else {
+        # if(!str_detect(string = theVar, pattern = "==|&|\\|")) next
 
-      if(all(theName == "")){
-
-        if(!str_detect(string = theVar, pattern = "==|&|\\|")) next
+        # toOut <- toOut %>%
+        #   filter(!!parse_expr(attrib[[k]]))
 
         toOut <- toOut %>%
-          filter(!!parse_expr(theVar))
-        match.input <- FALSE
-        query <- TRUE
+          filter(eval_tidy(attrib[[k]], data = toOut))
+        # match.input <- FALSE
+        # query <- TRUE
 
       } else {
 
         toOut <- toOut %>%
-          filter(toOut[[theName]] %in% theVar)
+          filter(toOut[[theName]] %in% eval_tidy(attrib[[k]]))
 
       }
 
-    }
+    # }
 
-    if(!query){
-      tempInput <- tibble(!!theName := theVar) %>%
-        bind_cols(tempInput, .)
-    }
+    # if(!query){
+    #   tempInput <- tibble(!!theName := theVar) %>%
+    #     bind_cols(tempInput, .)
+    # }
 
-
-  }
-
-  if(match.input){
-
-    toOut <- tempInput %>%
-      left_join(toOut, by = theNames)
 
   }
+
+  # if(match.input){
+  #
+  #   toOut <- tempInput %>%
+  #     left_join(toOut, by = theNames)
+  #
+  # }
 
   out <- toOut %>%
     select(all_of(outCols), everything())
