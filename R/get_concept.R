@@ -3,15 +3,8 @@
 #' @param ... combination of column name and value to filter that column by. The
 #'   value to filter by can be provided as regular expression, if \code{regex =
 #'   TRUE}.
-#' @param regex [`logical(1)`][logical]\cr if \code{regex = TRUE}, the columns
-#'   defined in \code{table} are filtered by \code{\link[stringr]{str_detect}}
-#'   on the column values (if you define several, they are combined with an AND
-#'   operator), otherwise a \code{\link[dplyr]{filter}} is carried out.
 #' @param external [`logical(1)`][logical]\cr whether or not to return merely
 #'   the table of external concepts.
-#' @param match.input [`logical(1)`][logical]\cr whether or not to return a
-#'   table that reflects the first input parameter exactly (default), or provides
-#'   the unique items.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
 #'   stored, or an already loaded ontology.
 #' @examples
