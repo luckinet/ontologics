@@ -33,11 +33,10 @@
 #' @importFrom utils head
 #' @export
 
-get_concept <- function(..., regex = FALSE, external = FALSE, #match.input = TRUE,
+get_concept <- function(..., external = FALSE, #match.input = TRUE,
                         ontology = NULL){
   # table = NULL, per_class = FALSE
 
-  assertLogical(x = regex, len = 1, any.missing = FALSE)
   assertLogical(x = external, len = 1, any.missing = FALSE)
 
   if(!inherits(x = ontology, what = "onto")){
