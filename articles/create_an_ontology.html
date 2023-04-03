@@ -202,7 +202,7 @@ this transformation without asking or informing the author.</p>
 <td align="left">1</td>
 <td align="left">harmonised</td>
 <td align="left">0.0.1</td>
-<td align="left">2023-04-02</td>
+<td align="left">2023-04-03</td>
 <td align="left">showcase of the ontologics R-package</td>
 <td align="left"><a href="https://github.com/luckinet/ontologics" class="external-link uri">https://github.com/luckinet/ontologics</a></td>
 <td align="left">CC-BY-4.0</td>
@@ -445,12 +445,17 @@ also a second level of concepts that depend on the first level.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span></span>
-<span>  new <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">concept</span>,</span>
-<span>  broader <span class="op">=</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">broader</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span>,</span>
-<span>  class <span class="op">=</span> <span class="st">"land-use"</span>,</span>
-<span>  ontology <span class="op">=</span> <span class="va">lulc</span></span>
-<span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">broader</span>, ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">lu</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">broader</span><span class="op">)</span>, <span class="va">.</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span></span>
+<span>    new <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">concept</span>,</span>
+<span>    broader <span class="op">=</span> <span class="va">.</span>,</span>
+<span>    class <span class="op">=</span> <span class="st">"land-use"</span>,</span>
+<span>    ontology <span class="op">=</span> <span class="va">lulc</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; Joining with `by = join_by(label)`</span></span>
 <span></span>
 <span><span class="fu">kable</span><span class="op">(</span><span class="va">lulc</span><span class="op">@</span><span class="va">concepts</span><span class="op">$</span><span class="va">harmonised</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table class="table">

@@ -65,13 +65,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_concept</span><span class="op">(</span></span>
-<span>  <span class="va">...</span>,</span>
-<span>  regex <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  external <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  match.input <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  ontology <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_concept</span><span class="op">(</span><span class="va">...</span>, external <span class="op">=</span> <span class="cn">FALSE</span>, ontology <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -82,22 +76,9 @@ value to filter by can be provided as regular expression, if <code>regex =
   TRUE</code>.</p></dd>
 
 
-<dt>regex</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> if <code>regex = TRUE</code>, the columns
-defined in <code>table</code> are filtered by <code><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></code>
-on the column values (if you define several, they are combined with an AND
-operator), otherwise a <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></code> is carried out.</p></dd>
-
-
 <dt>external</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not to return merely
 the table of external concepts.</p></dd>
-
-
-<dt>match.input</dt>
-<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not to return a
-table that reflects the first input parameter exactly (default), or provides
-the unique items.</p></dd>
 
 
 <dt>ontology</dt>
@@ -123,36 +104,39 @@ stored, or an already loaded ontology.</p></dd>
 <span class="r-in"><span><span class="co"># exact matches from a loaded ontology ...</span></span></span>
 <span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FODDER CROPS"</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   id    label    description class has_broader has_broader_match has_close_match</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .05   FODDER … <span style="color: #BB0000;">NA</span>          group <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>                <span style="color: #BB0000;">NA</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: has_exact_match &lt;chr&gt;, has_narrower_match &lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   id    label   description class has_broader has_close_match has_narrower_match</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .05   FODDER… <span style="color: #BB0000;">NA</span>          group <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>              <span style="color: #BB0000;">NA</span>                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: has_broader_match &lt;chr&gt;, has_exact_match &lt;chr&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ... or a path</span></span></span>
 <span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FODDER CROPS"</span>, <span class="st">"CEREALS"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   id    label    description class has_broader has_broader_match has_close_match</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .05   FODDER … <span style="color: #BB0000;">NA</span>          group <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>                <span style="color: #BB0000;">NA</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> .02   CEREALS  <span style="color: #BB0000;">NA</span>          group <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>                <span style="color: #BB0000;">NA</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: has_exact_match &lt;chr&gt;, has_narrower_match &lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   id    label   description class has_broader has_close_match has_narrower_match</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .02   CEREALS <span style="color: #BB0000;">NA</span>          group <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>              <span style="color: #BB0000;">NA</span>                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> .05   FODDER… <span style="color: #BB0000;">NA</span>          group <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>              <span style="color: #BB0000;">NA</span>                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: has_broader_match &lt;chr&gt;, has_exact_match &lt;chr&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ignore querries that would not be valid in filter()</span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span><span class="st">"label != 'Bioenergy woody' &amp; has_broader == '.01'"</span>, <span class="st">"other"</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span><span class="va">label</span> <span class="op">!=</span> <span class="st">'Bioenergy woody'</span> <span class="op">&amp;</span> <span class="va">has_broader</span> <span class="op">==</span> <span class="st">'.01'</span>, ontology <span class="op">=</span> <span class="va">onto</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   id     label   description class has_broader has_broader_match has_close_match</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .01.01 Bioene… <span style="color: #BB0000;">NA</span>          class .01         <span style="color: #BB0000;">NA</span>                <span style="color: #BB0000;">NA</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> .01.03 Other … <span style="color: #BB0000;">NA</span>          class .01         <span style="color: #BB0000;">NA</span>                <span style="color: #BB0000;">NA</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: has_exact_match &lt;chr&gt;, has_narrower_match &lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   id     label  description class has_broader has_close_match has_narrower_match</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .01.01 Bioen… <span style="color: #BB0000;">NA</span>          class .01         <span style="color: #BB0000;">NA</span>              <span style="color: #BB0000;">NA</span>                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> .01.03 Other… <span style="color: #BB0000;">NA</span>          class .01         <span style="color: #BB0000;">NA</span>              <span style="color: #BB0000;">NA</span>                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: has_broader_match &lt;chr&gt;, has_exact_match &lt;chr&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># extract concepts based on regular expressions</span></span></span>
-<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span>label <span class="op">=</span> <span class="st">"crop"</span>, id <span class="op">=</span> <span class="st">".03$"</span>, regex <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   id    label description class has_broader has_broader_match has_close_match</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .03$  crop  <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>                <span style="color: #BB0000;">NA</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: has_exact_match &lt;chr&gt;, has_narrower_match &lt;chr&gt;</span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_concept</span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">label</span>, <span class="st">"crop"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">id</span>, <span class="st">".03$"</span><span class="op">)</span>, ontology <span class="op">=</span> <span class="va">ontoDir</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   id     label  description class has_broader has_close_match has_narrower_match</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> .01.03 Other… <span style="color: #BB0000;">NA</span>          class .01         <span style="color: #BB0000;">NA</span>              <span style="color: #BB0000;">NA</span>                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> .05.03 Other… <span style="color: #BB0000;">NA</span>          class .05         <span style="color: #BB0000;">NA</span>              <span style="color: #BB0000;">NA</span>                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> .15.03 Other… <span style="color: #BB0000;">NA</span>          class .15         <span style="color: #BB0000;">NA</span>              <span style="color: #BB0000;">NA</span>                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: has_broader_match &lt;chr&gt;, has_exact_match &lt;chr&gt;</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
