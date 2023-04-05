@@ -97,7 +97,8 @@ edit_matches <- function(new, target = NULL, source = NULL,
     withBroader <- "has_broader"
   }
 
-  temp <- get_concept(label = new, class = target$class, has_broader = target$has_broader, ontology = ontology)
+  temp <- get_concept(label = new, class = target$class, has_broader = target$has_broader, ontology = ontology) %>%
+    left_join(tibble(label = new, has_broader = target$has_broader), ., by = c("label", "has_broader"))
 
   # determine previous matches
   if(testFileExists(paste0(matchDir, sourceFile))){
