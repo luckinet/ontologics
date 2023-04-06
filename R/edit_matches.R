@@ -233,36 +233,36 @@ edit_matches <- function(new, target = NULL, source = NULL,
       }
 
       joined <- joined %>%
-        group_by(label_new, has_broader) %>%
+        group_by(label_new, id, class, has_broader) %>%
         summarise(across(starts_with("dist_"), ~ paste0(na.omit(unique(.x)), collapse = " | "))) %>%
         mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
         ungroup() %>%
-        select(label = label_new, has_broader, has_0_differences = dist_0, has_1_difference = dist_1, has_2_differences = dist_2)
+        select(label = label_new, id, class, has_broader, has_0_differences = dist_0, has_1_difference = dist_1, has_2_differences = dist_2)
 
       hits <- joined %>%
         filter(!is.na(has_0_differences)) %>%
         mutate(class = tail(filterClasses, 1),
                has_new_close_match = label,
                label = has_0_differences) %>%
-        select(label, all_of(withBroader), class, has_new_close_match)
+        select(label, id, all_of(withBroader), class, has_new_close_match)
 
-      numbers <- relate %>%
-        group_by(label) %>%
-        summarise(n = n())
+      # numbers <- relate %>%
+      #   group_by(label) %>%
+      #   summarise(n = n())
 
       relate <- relate %>%
-        left_join(hits, by = c("label", "class", withBroader)) %>%
-        left_join(numbers, by = "label") %>%
-        mutate(has_new_close_match = if_else(n > 1, NA_character_, has_new_close_match)) %>%
+        left_join(hits, by = c("id", "label", "class", withBroader)) %>%
+        # left_join(numbers, by = "label") %>%
+        # mutate(has_new_close_match = if_else(n > 1, NA_character_, has_new_close_match)) %>%
         unite(col = "has_close_match", has_close_match, has_new_close_match, sep = " | ", na.rm = TRUE) %>%
-        mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
-        select(-n)
+        mutate(across(where(is.character), function(x) na_if(x, ""))) #%>%
+        # select(-n)
 
       missingJoined <- joined %>%
         filter(is.na(has_0_differences))
       missingConcepts <- missingConcepts %>%
         filter(label %in% missingJoined$label) %>%
-        left_join(joined %>% select(-has_broader, -has_0_differences), by = "label")
+        left_join(joined %>% select(-has_broader, -has_0_differences, -id, -class), by = "label")
 
     }
 
@@ -328,7 +328,7 @@ edit_matches <- function(new, target = NULL, source = NULL,
       }
 
     } else {
-      related <- prevMatches
+      related <- relate
     }
 
   } else {
