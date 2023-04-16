@@ -106,7 +106,7 @@ edit_matches <- function(new, target = NULL, source = NULL,
     prevMatches <- read_csv(paste0(matchDir, sourceFile), col_types = cols(.default = "c"))
 
     prevMatchLabels <- prevMatches %>%
-      filter(class %in% tail(filterClasses, 1)) %>%
+      filter(class %in% filterClasses) %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
       filter(!is.na(labels)) %>%
       distinct(labels) %>%
@@ -198,14 +198,15 @@ edit_matches <- function(new, target = NULL, source = NULL,
     }
     relate <- toRelate %>%
       select(id, label, class, has_broader) %>%
+      filter(class %in% filterClasses) %>%
       left_join(inclConcepts, by = c("id", "label", "class", "has_broader")) %>%
-      filter(!is.na(class)) %>%
-      filter(class %in% filterClasses)
+      filter(!is.na(class))
 
     toJoin <- relate %>%
       rename(label_harm = label) %>%
       mutate(label = tolower(label_harm)) %>%
-      filter(!is.na(label_harm) & class == tail(filterClasses, 1)) %>%
+      # filter(!is.na(label_harm) & class == tail(filterClasses, 1)) %>%
+      filter(!is.na(label_harm)) %>%
       select(-has_broader, -has_broader_match, -has_close_match, -has_exact_match, -has_narrower_match)
 
     joined <- missingConcepts %>%
@@ -241,28 +242,36 @@ edit_matches <- function(new, target = NULL, source = NULL,
 
       hits <- joined %>%
         filter(!is.na(has_0_differences)) %>%
-        mutate(class = tail(filterClasses, 1),
+        mutate(#class = tail(filterClasses, 1),
                has_new_close_match = label,
                label = has_0_differences) %>%
         select(label, id, all_of(withBroader), class, has_new_close_match)
 
-      # numbers <- relate %>%
-      #   group_by(label) %>%
-      #   summarise(n = n())
+      numbers <- relate %>%
+        group_by(label) %>%
+        summarise(n = n())
 
       relate <- relate %>%
         left_join(hits, by = c("id", "label", "class", withBroader)) %>%
-        # left_join(numbers, by = "label") %>%
-        # mutate(has_new_close_match = if_else(n > 1, NA_character_, has_new_close_match)) %>%
+        left_join(numbers, by = "label") %>%
+        mutate(has_new_close_match = if_else(n > 1, NA_character_, has_new_close_match)) %>%
+        mutate(has_new_close_match = if_else(str_detect(has_close_match, has_new_close_match), NA_character_, has_new_close_match)) %>%
         unite(col = "has_close_match", has_close_match, has_new_close_match, sep = " | ", na.rm = TRUE) %>%
-        mutate(across(where(is.character), function(x) na_if(x, ""))) #%>%
-        # select(-n)
+        mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
+        select(-n)
 
       missingJoined <- joined %>%
         filter(is.na(has_0_differences))
+      stillMissing <- joined %>%
+        select(-has_broader, -has_0_differences, -id, -class) %>%
+        group_by(label) %>%
+        summarise(across(starts_with("has_"), ~ paste0(na.omit(unique(.x)), collapse = " | "))) %>%
+        mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
+        ungroup()
+
       missingConcepts <- missingConcepts %>%
         filter(label %in% missingJoined$label) %>%
-        left_join(joined %>% select(-has_broader, -has_0_differences, -id, -class), by = "label")
+        left_join(stillMissing, by = "label")
 
     }
 
