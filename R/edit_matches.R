@@ -323,14 +323,15 @@ edit_matches <- function(new, target = NULL, source = NULL,
       assertNames(x = names(related), must.include = c("sort_in", "has_broader", "id", "label", "class", "description", "has_broader_match", "has_close_match", "has_exact_match", "has_narrower_match"))
       related <- related %>%
         select(-sort_in) %>%
-        filter(!is.na(id))
+        filter(!is.na(id)) %>%
+        select(-any_of("has_0_differences", "has_1_difference", "has_2_differences"))
 
-      if("dist" %in% names(joined)){
-        if(!all(is.na(joined$dist))){
-          related <- related %>%
-            select(-any_of("has_0_differences", "has_1_difference", "has_2_differences"))
-        }
-      }
+      # if("dist" %in% names(joined)){
+      #   if(!all(is.na(joined$dist))){
+      #     related <- related %>%
+      #       select(-any_of("has_0_differences", "has_1_difference", "has_2_differences"))
+      #   }
+      # }
 
       if(dim(related)[1] == 0){
         related <- NULL
