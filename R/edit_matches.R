@@ -324,7 +324,7 @@ edit_matches <- function(new, target = NULL, source = NULL,
       related <- related %>%
         select(-sort_in) %>%
         filter(!is.na(id)) %>%
-        select(-any_of("has_0_differences", "has_1_difference", "has_2_differences"))
+        select(-any_of(c("has_0_differences", "has_1_difference", "has_2_differences")))
 
       # if("dist" %in% names(joined)){
       #   if(!all(is.na(joined$dist))){
