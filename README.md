@@ -8,7 +8,7 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/ontologics)](https://cran.r-project.org/package=ontologics)
 [![R-CMD-check](https://github.com/luckinet/ontologics/workflows/R-CMD-check/badge.svg)](https://github.com/luckinet/ontologics/actions)
 [![Coverage
-Status](https://codecov.io/gh/luckinet/ontologics/branch/master/graph/badge.svg)](https://codecov.io/github/luckinet/ontologics?branch=master)
+Status](https://codecov.io/gh/luckinet/ontologics/branch/master/graph/badge.svg)](https://app.codecov.io/github/luckinet/ontologics?branch=master)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/ontologics)](https://cran.r-project.org/package=geometr)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -24,8 +24,8 @@ in comma-separated values tables, or actually an R-optimized \*.rds file
 of such a table.
 
 The type of ontology is inspired by the [FAO
-caliper](https://datalab.review.fao.org/datalab/caliper/web/) platform
-and makes use of the Simple Knowledge Organisation System
+caliper](https://www.fao.org/statistics/caliper/web/) platform and makes
+use of the Simple Knowledge Organisation System
 ([SKOS](https://www.w3.org/TR/skos-reference/)).
 
 An ontology is any data structure that stores concept of any knowledge
@@ -59,7 +59,14 @@ devtools::install_github("luckinet/ontologics")
 Read the vignettes [Create an
 ontology](https://luckinet.github.io/ontologics/articles/create_an_ontology.html),
 [Map new
-concepts](https://luckinet.github.io/ontologics/articles/map_new_concepts.html),
-[Convert Ontology to
-RDF](https://luckinet.github.io/ontologics/articles/conversion_to_rdf.html)
-and [Onto Class Reference](https://luckinet.github.io/ontologics/articles/ontology_database_description.html).
+concepts](https://luckinet.github.io/ontologics/articles/map_new_concepts.html)
+and [Convert Ontology to
+RDF](https://luckinet.github.io/ontologics/articles/conversion_to_rdf.html).
+
+## Acknowledgement
+
+This work was supported by funding to Carsten Meyer through the Flexpool
+mechanism of the German Centre for Integrative Biodiversity Research
+(iDiv) (FZT-118, DFG) and members working on it were additionally
+supported by Freigeist funding of the Volkswagenstiftung and the BMBF
+GeoKur project.
