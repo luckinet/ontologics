@@ -255,7 +255,8 @@ edit_matches <- function(new, target = NULL, source = NULL,
         left_join(hits, by = c("id", "label", "class", withBroader)) %>%
         left_join(numbers, by = "label") %>%
         mutate(has_new_close_match = if_else(n > 1, NA_character_, has_new_close_match)) %>%
-        mutate(has_new_close_match = if_else(str_detect(has_close_match, has_new_close_match), NA_character_, has_new_close_match)) %>%
+        rowwise() %>%
+        mutate(has_new_close_match = if_else(grepl(x = has_close_match, pattern = has_new_close_match), NA_character_, has_new_close_match)) %>%
         unite(col = "has_close_match", has_close_match, has_new_close_match, sep = " | ", na.rm = TRUE) %>%
         mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
         select(-n)
