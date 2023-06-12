@@ -277,7 +277,7 @@ edit_matches <- function(new, target = NULL, source = NULL,
     }
 
     sortIn <- stillMissing %>%
-      left_join(tibble(label = new), by = "label") %>%
+      left_join(tibble(label = unique(new)), by = "label") %>%
       mutate(sort_in = label,
              label = NA_character_,
              class = NA_character_) %>%
