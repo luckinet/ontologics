@@ -261,8 +261,6 @@ edit_matches <- function(new, target = NULL, source = NULL,
         mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
         select(-n)
 
-      missingJoined <- joined %>%
-        filter(is.na(has_0_differences))
       stillMissing <- joined %>%
         select(-has_broader, -has_0_differences, -id, -class) %>%
         group_by(label) %>%
@@ -270,14 +268,16 @@ edit_matches <- function(new, target = NULL, source = NULL,
         mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
         ungroup()
 
-      missingConcepts <- missingConcepts %>%
-        filter(label %in% missingJoined$label) %>%
+      stillMissing <- missingConcepts %>%
+        filter(!label %in% hits$label) %>%
         left_join(stillMissing, by = "label")
 
+    } else {
+      stillMissing <- missingConcepts
     }
 
-    sortIn <- missingConcepts %>%
-      left_join(tibble(label = new), by = "label") %>%
+    sortIn <- stillMissing %>%
+      left_join(tibble(label = unique(new)), by = "label") %>%
       mutate(sort_in = label,
              label = NA_character_,
              class = NA_character_) %>%
