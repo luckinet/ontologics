@@ -42,12 +42,8 @@ jobs:
       - name: dependencies on Linux
         if: runner.os == 'Linux'
         run: sudo apt-get install -y make libicu-dev libxml2-dev libssl-dev pandoc librdf0-dev libnode-dev
-        run: |
-          brew install rcmdcheck
 
-      - name: dendencies on other OSs
-        if: runner.os != 'Linux'
-        uses: r-lib/actions/setup-r-dependencies@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
           needs: check
