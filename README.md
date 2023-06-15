@@ -19,28 +19,28 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 The `ontologics` package provides tools to build and work with an
 ontology of [linked (open)
 data](https://en.wikipedia.org/wiki/Linked_data) in a tidy workflow. In
-the current workflow the data are only available at the three star level
-in comma-separated values tables, or actually an R-optimized \*.rds file
-of such a table.
+the current workflow, the data are only available at the three-star
+level in comma-separated values tables or an R-optimized \*.rds file of
+such a table.
 
 The type of ontology is inspired by the [FAO
-caliper](https://www.fao.org/statistics/caliper/web/) platform and makes
-use of the Simple Knowledge Organisation System
+caliper](https://www.fao.org/statistics/caliper/web/) platform and uses
+the Simple Knowledge Organisation System
 ([SKOS](https://www.w3.org/TR/skos-reference/)).
 
-An ontology is any data structure that stores concept of any knowledge
-field in a linked way. It is typically built on a set of
+An ontology is any data structure that stores the concept of any
+knowledge field in a linked way. It is typically built on a set of
 standardized/harmonized terms that have a clear definition and
 potentially some attributes. According to the SKOS, concepts can have
 semantic relations or can be mapped to one another. Semantic relations
-describe how *harmonized concepts* **relate** to one another and
+describe how *harmonized concepts* **relate** to one another, and
 mappings describe which concepts *from different vocabularies* should be
-**linked** to one another.
+**linked**.
 
-The key tasks, beyond creating a formally valid ontology, is
-*extracting* concepts and their relation to other concepts and *mapping*
-new concepts to an existing ontology to capture and set potentially
-deviating definitions into relation.
+The key tasks beyond creating a formally valid ontology are *extracting*
+concepts and their relation to other concepts and *mapping* new concepts
+to an existing ontology to capture and set potentially deviating
+definitions into relation.
 
 ## Installation
 
