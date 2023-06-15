@@ -27,6 +27,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      PKG_SYSREQS: false
 
     steps:
       - uses: actions/checkout@v3
@@ -43,9 +44,7 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get install -y make libicu-dev libxml2-dev libssl-dev pandoc librdf0-dev libnode-dev libcurl4-gnutls-dev
 
-      - name: dependencies on !Linux
-        if: runner.os != 'Linux'
-        uses: r-lib/actions/setup-r-dependencies@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
           needs: check
