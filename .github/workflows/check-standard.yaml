@@ -45,7 +45,7 @@ jobs:
 
       - name: ... install also rcmdcheck
         if: runner.os == 'Linux'
-        run: install.packages("rcmdcheck")
+        run: utils::install.packages(c("rcmdcheck", "knitr"))
         shell: Rscript {0}
 
       - name: dependencies on !Linux
