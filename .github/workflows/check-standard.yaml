@@ -39,11 +39,13 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Install libcurl on Linux
+      - name: dependencies on Linux
         if: runner.os == 'Linux'
-        run: sudo apt-get update -y && sudo apt-get install -y libcurl4-gnutls-dev
+        run: sudo apt-get install -y make libicu-dev libxml2-dev libssl-dev pandoc librdf0-dev libnode-dev
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - name: dendencies on other OSs
+        if: runner.os != 'Linux'
+        uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
           needs: check
