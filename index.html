@@ -94,11 +94,13 @@
 </h1></div>
 <!-- badges: start -->
 
+<p><a href="https://github.com/luckinet/ontologics/actions" class="external-link"><img src="https://github.com/luckinet/ontologics/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a> <a href="https://codecov.io/gh/luckinet/ontologics" class="external-link"><img src="https://codecov.io/gh/luckinet/ontologics/branch/master/graph/badge.svg?token=hjppymcGr3" alt="codecov"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></p>
+<p><a href="https://cran.r-project.org/package=ontologics" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/grand-total/ontologics"></a></p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>The <code>ontologics</code> package provides tools to build and work with an ontology of <a href="https://en.wikipedia.org/wiki/Linked_data" class="external-link">linked (open) data</a> in a tidy workflow. In the current workflow the data are only available at the three star level in comma-separated values tables, or actually an R-optimized *.rds file of such a table.</p>
-<p>The type of ontology is inspired by the <a href="https://datalab.review.fao.org/datalab/caliper/web/" class="external-link">FAO caliper</a> platform and makes use of the Simple Knowledge Organisation System (<a href="https://www.w3.org/TR/skos-reference/" class="external-link">SKOS</a>).</p>
+<p>The type of ontology is inspired by the <a href="https://www.fao.org/statistics/caliper/web/" class="external-link">FAO caliper</a> platform and makes use of the Simple Knowledge Organisation System (<a href="https://www.w3.org/TR/skos-reference/" class="external-link">SKOS</a>).</p>
 <p>An ontology is any data structure that stores concept of any knowledge field in a linked way. It is typically built on a set of standardized/harmonized terms that have a clear definition and potentially some attributes. According to the SKOS, concepts can have semantic relations or can be mapped to one another. Semantic relations describe how <em>harmonized concepts</em> <strong>relate</strong> to one another and mappings describe which concepts <em>from different vocabularies</em> should be <strong>linked</strong> to one another.</p>
 <p>The key tasks, beyond creating a formally valid ontology, is <em>extracting</em> concepts and their relation to other concepts and <em>mapping</em> new concepts to an existing ontology to capture and set potentially deviating definitions into relation.</p>
 </div>
@@ -111,7 +113,12 @@
 <p>Install the latest development version from github:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"luckinet/ontologics"</span><span class="op">)</span></span></code></pre></div>
-<p>Read the vignettes <a href="https://luckinet.github.io/ontologics/articles/create_an_ontology.html" class="external-link">Create an ontology</a>, <a href="https://luckinet.github.io/ontologics/articles/map_new_concepts.html" class="external-link">Map new concepts</a>, <a href="https://luckinet.github.io/ontologics/articles/conversion_to_rdf.html" class="external-link">Convert Ontology to RDF</a> and <a href="https://luckinet.github.io/ontologics/articles/ontology_database_description.html" class="external-link">Onto Class Reference</a>.</p>
+<p>Read the vignettes <a href="https://luckinet.github.io/ontologics/articles/create_an_ontology.html" class="external-link">Create an ontology</a>, <a href="https://luckinet.github.io/ontologics/articles/map_new_concepts.html" class="external-link">Map new concepts</a> and <a href="https://luckinet.github.io/ontologics/articles/conversion_to_rdf.html" class="external-link">Convert Ontology to RDF</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="acknowledgement">Acknowledgement<a class="anchor" aria-label="anchor" href="#acknowledgement"></a>
+</h2>
+<p>This work was supported by funding to Carsten Meyer through the Flexpool mechanism of the German Centre for Integrative Biodiversity Research (iDiv) (FZT-118, DFG) and members working on it were additionally supported by Freigeist funding of the Volkswagenstiftung and the BMBF GeoKur project.</p>
 </div>
 </div>
   </div>
