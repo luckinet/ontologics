@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
       </span>
     </div>
 
@@ -132,15 +132,13 @@ the concepts in the ontology by concatenating a <em>prefix</em>
 (specified as <code>uri_prefix</code> in some of the functions) with
 internal package IDs. The homepage of the example ontology we created in
 <a href="create_an_ontology.html">create an ontology</a> is
-<code>http:[slash][slash]www[dot]luckinet[dot]org</code>. The internal
-ID of the concept with the label
-<code>Naturally Regenerating Forest</code> in this ontology is
-<code>.08.02</code>. The resulting IRI-ID for this concept therefore
-resolves to
-<code>https:[slash][slash]www[dot]luckinet[dot]org#.08.02</code>. As you
-see, <code>#</code> is used as concatenation symbol. Another widely used
-option is <code>/</code>, in case the <code>homepage</code> string ends
-with <code>/</code> or <code>#</code>, which is then used by
+<code>https://www.luckinet.org</code>. The internal ID of the concept
+with the label <code>Naturally Regenerating Forest</code> in this
+ontology is <code>.08.02</code>. The resulting IRI-ID for this concept
+therefore resolves to <code>https://www.luckinet.org#.08.02</code>. As
+you see, <code>#</code> is used as concatenation symbol. Another widely
+used option is <code>/</code>, in case the <code>homepage</code> string
+ends with <code>/</code> or <code>#</code>, which is then used by
 default.</p>
 <p>The so-built IRI-IDs do not have to resolve to an actual resource on
 the Web, but it is highly recommended. If not possible, at least the

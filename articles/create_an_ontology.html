@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ontologics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
       </span>
     </div>
 
@@ -157,12 +157,12 @@ linking also this ontology to other <em>linked open data</em>.</p>
 <code class="sourceCode R"><span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/start_ontology.html">start_ontology</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"land_surface_properties"</span>,</span>
 <span>                       version <span class="op">=</span> <span class="st">"0.0.1"</span>,</span>
 <span>                       path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, </span>
-<span>                       code <span class="op">=</span> <span class="st">".xx"</span>,</span>
+<span>                       code <span class="op">=</span> <span class="st">".xx"</span>, </span>
 <span>                       description <span class="op">=</span> <span class="st">"showcase of the ontologics R-package"</span>, </span>
 <span>                       homepage <span class="op">=</span> <span class="st">"https://github.com/luckinet/ontologics"</span>, </span>
 <span>                       license <span class="op">=</span> <span class="st">"CC-BY-4.0"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">lulc</span></span>
+<span><span class="va">lulc</span> <span class="co"># nothing included so far</span></span>
 <span><span class="co">#&gt;   sources : 1</span></span>
 <span><span class="co">#&gt;     -&gt; 'harmonised' (0)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -202,7 +202,7 @@ this transformation without asking or informing the author.</p>
 <td align="left">1</td>
 <td align="left">harmonised</td>
 <td align="left">0.0.1</td>
-<td align="left">2023-06-15</td>
+<td align="left">2023-08-22</td>
 <td align="left">showcase of the ontologics R-package</td>
 <td align="left"><a href="https://github.com/luckinet/ontologics" class="external-link uri">https://github.com/luckinet/ontologics</a></td>
 <td align="left">CC-BY-4.0</td>
@@ -225,7 +225,7 @@ the same label.</p>
 <span>  ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lulc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span></span>
-<span>    new <span class="op">=</span> <span class="st">"land-use"</span>, </span>
+<span>    new <span class="op">=</span> <span class="st">"land use"</span>, </span>
 <span>    target <span class="op">=</span> <span class="st">"landcover"</span>, </span>
 <span>    description <span class="op">=</span> <span class="st">"A good definition of land use"</span>,</span>
 <span>    ontology <span class="op">=</span> <span class="va">lulc</span><span class="op">)</span></span>
@@ -260,7 +260,7 @@ the same label.</p>
 </tr>
 <tr class="even">
 <td align="left">.xx.xx</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">A good definition of land use</td>
 <td align="left">landcover</td>
 <td align="left">NA</td>
@@ -452,7 +452,7 @@ also a second level of concepts that depend on the first level.</p>
 <span>  <span class="fu"><a href="../reference/new_concept.html">new_concept</a></span><span class="op">(</span></span>
 <span>    new <span class="op">=</span> <span class="va">lu</span><span class="op">$</span><span class="va">concept</span>,</span>
 <span>    broader <span class="op">=</span> <span class="va">.</span>,</span>
-<span>    class <span class="op">=</span> <span class="st">"land-use"</span>,</span>
+<span>    class <span class="op">=</span> <span class="st">"land use"</span>,</span>
 <span>    ontology <span class="op">=</span> <span class="va">lulc</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(label)`</span></span>
@@ -513,21 +513,21 @@ also a second level of concepts that depend on the first level.</p>
 <td align="left">.05.01</td>
 <td align="left">Fallow</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.05</td>
 </tr>
 <tr class="odd">
 <td align="left">.05.02</td>
 <td align="left">Herbaceous crops</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.05</td>
 </tr>
 <tr class="even">
 <td align="left">.05.03</td>
 <td align="left">Temporary grazing</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.05</td>
 </tr>
 <tr class="odd">
@@ -541,42 +541,42 @@ also a second level of concepts that depend on the first level.</p>
 <td align="left">.06.01</td>
 <td align="left">Permanent grazing</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.06</td>
 </tr>
 <tr class="odd">
 <td align="left">.06.02</td>
 <td align="left">Shrub orchards</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.06</td>
 </tr>
 <tr class="even">
 <td align="left">.06.03</td>
 <td align="left">Palm plantations</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.06</td>
 </tr>
 <tr class="odd">
 <td align="left">.06.04</td>
 <td align="left">Tree orchards</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.06</td>
 </tr>
 <tr class="even">
 <td align="left">.06.05</td>
 <td align="left">Woody plantation</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.06</td>
 </tr>
 <tr class="odd">
 <td align="left">.06.06</td>
 <td align="left">Protective cover</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.06</td>
 </tr>
 <tr class="even">
@@ -590,21 +590,21 @@ also a second level of concepts that depend on the first level.</p>
 <td align="left">.07.01</td>
 <td align="left">Agroforestry</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.07</td>
 </tr>
 <tr class="even">
 <td align="left">.07.02</td>
 <td align="left">Mosaic of agricultural-uses</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.07</td>
 </tr>
 <tr class="odd">
 <td align="left">.07.03</td>
 <td align="left">Mosaic of agriculture and natural vegetation</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.07</td>
 </tr>
 <tr class="even">
@@ -618,28 +618,28 @@ also a second level of concepts that depend on the first level.</p>
 <td align="left">.08.01</td>
 <td align="left">Undisturbed Forest</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.08</td>
 </tr>
 <tr class="even">
 <td align="left">.08.02</td>
 <td align="left">Naturally Regenerating Forest</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.08</td>
 </tr>
 <tr class="odd">
 <td align="left">.08.03</td>
 <td align="left">Planted Forest</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.08</td>
 </tr>
 <tr class="even">
 <td align="left">.08.04</td>
 <td align="left">Temporally Unstocked Forest</td>
 <td align="left">NA</td>
-<td align="left">land-use</td>
+<td align="left">land use</td>
 <td align="left">.08</td>
 </tr>
 <tr class="odd">
