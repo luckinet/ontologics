@@ -1,8 +1,8 @@
 #' Add a new valid class to an ontology
 #'
 #' @param new [`character(1)`][character]\cr the new class label.
-#' @param target [`character(1)`][character]\cr the class to which the new class
-#'   shall be related.
+#' @param target [`character(1)`][character]\cr the class into which the new
+#'   class shall be nested.
 #' @param description [`character(1)`][character]\cr a verbatim description of
 #'   the new class.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is

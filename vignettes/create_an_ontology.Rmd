@@ -47,12 +47,12 @@ A new ontology is built by calling the function `start_ontology()`. This require
 lulc <- start_ontology(name = "land_surface_properties",
                        version = "0.0.1",
                        path = tempdir(), 
-                       code = ".xx",
+                       code = ".xx", 
                        description = "showcase of the ontologics R-package", 
                        homepage = "https://github.com/luckinet/ontologics", 
                        license = "CC-BY-4.0")
 
-lulc
+lulc # nothing included so far
 ```
 
 These information are stored in the `@sources` slot, just like any other external data source. It is recommended to always set the `code` for building IDs with a leading symbol that can't be transformed into a numeric/integer, to avoid problems in case the ontology is opened in a spreadsheet program that may automatically do this transformation without asking or informing the author.
@@ -72,7 +72,7 @@ lulc <- new_class(
   ontology = lulc)
 
 lulc <- new_class(
-    new = "land-use", 
+    new = "land use", 
     target = "landcover", 
     description = "A good definition of land use",
     ontology = lulc)
@@ -129,7 +129,7 @@ lulc <- get_concept(label = lu$broader, ontology = lulc) %>%
   new_concept(
     new = lu$concept,
     broader = .,
-    class = "land-use",
+    class = "land use",
     ontology = lulc
   )
 

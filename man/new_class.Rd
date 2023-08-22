@@ -9,8 +9,8 @@ new_class(new, target, description = NULL, ontology = NULL)
 \arguments{
 \item{new}{\code{\link[=character]{character(1)}}\cr the new class label.}
 
-\item{target}{\code{\link[=character]{character(1)}}\cr the class to which the new class
-shall be related.}
+\item{target}{\code{\link[=character]{character(1)}}\cr the class into which the new
+class shall be nested.}
 
 \item{description}{\code{\link[=character]{character(1)}}\cr a verbatim description of
 the new class.}
