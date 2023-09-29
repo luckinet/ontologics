@@ -322,17 +322,21 @@ edit_matches <- function(new, target = NULL, source = NULL,
 
       related <- read_csv(paste0(matchDir, "/matching.csv"), col_types = cols(.default = "c"))
       assertNames(x = names(related), must.include = c("sort_in", "has_broader", "id", "label", "class", "description", "has_broader_match", "has_close_match", "has_exact_match", "has_narrower_match"))
-      related <- related %>%
-        select(-sort_in) %>%
-        filter(!is.na(id)) %>%
-        select(-any_of(c("has_0_differences", "has_1_difference", "has_2_differences")))
+      toIgnore <- related %>%
+        filter(id == "ignore") %>%
+        mutate(label = "ignore",
+               class = tail(filterClasses, 1),
+               has_close_match = sort_in,
+               id = str_replace_all(ontology@classes$harmonised$id[ontology@classes$harmonised$label == tail(filterClasses, 1)], pattern = "x", replacement = "0")) %>%
+        group_by(id, has_broader, label, class, description, has_broader_match, has_exact_match, has_narrower_match) %>%
+        summarise(has_close_match = paste0(na.omit(has_close_match), collapse = " | "), .groups = "keep") %>%
+        ungroup()
 
-      # if("dist" %in% names(joined)){
-      #   if(!all(is.na(joined$dist))){
-      #     related <- related %>%
-      #       select(-any_of("has_0_differences", "has_1_difference", "has_2_differences"))
-      #   }
-      # }
+      related <- related %>%
+        filter(!is.na(id) & id != "ignore") %>%
+        select(-sort_in) %>%
+        select(-any_of(c("has_0_differences", "has_1_difference", "has_2_differences"))) %>%
+        bind_rows(toIgnore)
 
       if(dim(related)[1] == 0){
         related <- NULL
