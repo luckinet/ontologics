@@ -328,7 +328,7 @@ edit_matches <- function(new, target = NULL, source = NULL,
                class = tail(filterClasses, 1),
                has_close_match = sort_in,
                id = str_replace_all(ontology@classes$harmonised$id[ontology@classes$harmonised$label == tail(filterClasses, 1)], pattern = "x", replacement = "0")) %>%
-        group_by(id, has_broader, label, class, description, has_broader_match, has_exact_match, has_narrower_match) %>%
+        group_by(id, label, class, has_broader_match, has_exact_match, has_narrower_match) %>%
         summarise(has_close_match = paste0(na.omit(has_close_match), collapse = " | "), .groups = "keep") %>%
         ungroup()
 
