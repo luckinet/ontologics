@@ -90,10 +90,10 @@ edit_matches <- function(new, target = NULL, source = NULL,
     mutate(lvl = length(str_split(has_broader, "[.]")[[1]]))
 
   if(all(target$lvl < filterClassLevel-1)){
-    parentFilter <- unique(target$has_broader)
+    # parentFilter <- as.character(na.omit(unique(target$has_broader)))
     withBroader <- NULL
   } else {
-    parentFilter <- NULL
+    # parentFilter <- NULL
     withBroader <- "has_broader"
   }
 
@@ -187,15 +187,15 @@ edit_matches <- function(new, target = NULL, source = NULL,
 
   if(dim(missingConcepts)[1] != 0){
 
-    if(!is.null(parentFilter)){
-      if(!all(is.na(parentFilter))){
-        toRelate <- make_tree(id = parentFilter, ontology = ontology)
-      } else {
-        toRelate <- ontology@concepts$harmonised
-      }
-    } else {
+    # if(!is.null(parentFilter)){
+    #   if(!all(is.na(parentFilter))){
+    #     toRelate <- make_tree(id = parentFilter, ontology = ontology)
+    #   } else {
+    #     toRelate <- ontology@concepts$harmonised
+    #   }
+    # } else {
       toRelate <- ontology@concepts$harmonised
-    }
+    # }
     relate <- toRelate %>%
       select(id, label, class, has_broader) %>%
       filter(class %in% filterClasses) %>%
