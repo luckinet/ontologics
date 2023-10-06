@@ -89,6 +89,7 @@ edit_matches <- function(new, target = NULL, source = NULL,
   target <- target %>%
     mutate(lvl = length(str_split(has_broader, "[.]")[[1]]))
 
+  # set a filter in case target concepts have broader concepts
   if(all(target$lvl < filterClassLevel-1)){
     parentFilter <- unique(target$has_broader)
     withBroader <- NULL
@@ -192,7 +193,7 @@ edit_matches <- function(new, target = NULL, source = NULL,
       toRelate <- make_tree(id = parentFilter, ontology = ontology)
     }
 
-    relate <- ontology@concepts$harmonised %>% #toRelate %>%
+    relate <- toRelate %>%
       select(id, label, class, has_broader) %>%
       filter(class %in% filterClasses) %>%
       left_join(inclConcepts, by = c("id", "label", "class", "has_broader")) %>%
