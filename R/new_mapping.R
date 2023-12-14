@@ -73,8 +73,7 @@
 
 new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
                         match = NULL, certainty = NULL, type = "concept",
-                        ontology = NULL, verbose = FALSE,
-                        beep = NULL){
+                        ontology = NULL, verbose = FALSE, beep = NULL){
 
   assertCharacter(x = new, all.missing = FALSE)
   assertDataFrame(x = target, nrows = length(new))
@@ -197,22 +196,23 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
 
   # }
 
-  # identify concepts that are not yet in the external concepts
   extMps <- temp %>%
     distinct(new, has_broader, has_source) %>%
     filter(new != "") %>%
     rename(label = new)
 
+  # identify external mappings that are not yet in the external table
   if("has_broader" %in% names(theTable$external)){
-    extMps <- extMps %>%
+    newExtMps <- extMps %>%
       anti_join(theTable$external, by = c("label", "has_source", "has_broader"))
   } else {
-    extMps <- extMps %>%
+    newExtMps <- extMps %>%
       anti_join(theTable$external, by = c("label", "has_source"))
   }
 
-  if(!is.null(lut) & !dim(extMps)[1] == 0){
-    extMps <- extMps %>%
+  # make a new ID for the new external concepts
+  if(!is.null(lut) & !dim(newExtMps)[1] == 0){
+    newExtMps <- newExtMps %>%
       distinct(label, has_source) %>%
       right_join(lut, by = "label") %>%
       mutate(newid = paste0(source, "_", row_number() + prevID),
@@ -220,13 +220,13 @@ new_mapping <- function(new = NULL, target, source = NULL, lut = NULL,
              has_source = srcID) %>%
       select(id = newid, label, has_broader, has_source, description)
   } else {
-    extMps <- extMps %>%
+    newExtMps <- newExtMps %>%
       mutate(newid = paste0(source, "_", row_number() + prevID)) %>%
       select(id = newid, label, has_broader, has_source) %>%
       mutate(description = NA_character_)
   }
 
-  theTable$external <- extMps %>%
+  theTable$external <- newExtMps %>%
     bind_rows(theTable$external, .)
 
   # map external concept to harmonised table
