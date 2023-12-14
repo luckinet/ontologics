@@ -152,7 +152,7 @@ edit_matches <- function(new, target = NULL, source = NULL,
     full_join(temp, by = c("label", "class", "id", "has_broader", "description")) %>%
     mutate(harmLab = if_else(is.na(harmLab), label, harmLab),
            label = if_else(is.na(match), if_else(!is.na(id), label, NA_character_), label),
-           match = if_else(is.na(match), if_else(!is.na(id), "has_close_match", "sort_in"), match)) %>%
+           match = if_else(is.na(match), if_else(!is.na(id), "has_exact_match", "sort_in"), match)) %>%
     pivot_wider(id_cols = c(harmLab, class, id, has_broader, description), names_from = match,
                 values_from = label, values_fn = ~paste0(na.omit(.x), collapse = " | ")) %>%
     mutate(across(where(is.character), ~na_if(x = ., y = ""))) %>%
