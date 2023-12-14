@@ -1,3 +1,8 @@
+# ontologics 0.7.2
+
+- change automatically set matches to "exact" in `edit_matches()`.
+- fix a bug when mapping external concepts that had already previously been mapped.
+
 # ontologics 0.7.1
 
 # ontologics 0.7.0 - simpler interface
