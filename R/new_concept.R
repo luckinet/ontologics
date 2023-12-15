@@ -99,8 +99,8 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
 
   theConcepts <- ontology@concepts
 
-  if (!is.null(class)) {
-    if (any(is.na(class))) {
+  if(!is.null(class)){
+    if(any(is.na(class))){
       missing <- new[is.na(class)]
       class[is.na(class)] <- "undefined"
 
@@ -112,13 +112,13 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
 
       warning("some new concepts (", missString, ") don't have a class; please define this with 'new_class()' and re-run 'new_concept()' with these concepts and the new class.", call. = FALSE)
     } else {
-      if (!any(ontology@classes$harmonised$label %in% class)) {
+      if(!any(ontology@classes$harmonised$label %in% class)){
         missingClasses <- unique(class[!class %in% ontology@classes$harmonised$label])
         stop("the class(es) '", paste0(missingClasses, collapse = ", "), "' don't exist yet, please first define them with 'new_class()'.")
       }
     }
 
-    if (length(class) != length(new)) {
+    if(length(class) != length(new)){
       if (length(class) == 1) {
         class <- rep(x = class, length.out = length(new))
       } else {
@@ -130,7 +130,7 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
     class <- rep("undefined", length(new))
   }
 
-  if (!is.null(broader)) {
+  if(!is.null(broader)){
     assertNames(x = names(broader), must.include = c("id", "label", "class"))
 
     testConcept <- broader %>%
@@ -138,7 +138,7 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
       mutate(avail = TRUE) %>%
       left_join(theConcepts$harmonised, by = c("id", "label", "class"))
 
-    if (any(!testConcept$avail)) {
+    if(any(!testConcept$avail)){
       missingConcepts <- testConcept %>%
         filter(!avail) %>%
         pull(label)
@@ -148,9 +148,9 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
     broader <- tibble(id = rep(NA_character_, length(new)), label = rep(NA_character_, length(new)), class = rep(NA_character_, length(new)))
   }
 
-  if (!is.null(description)) {
-    if (length(description) != length(new)) {
-      if (length(description) == 1) {
+  if(!is.null(description)){
+    if(length(description) != length(new)){
+      if(length(description) == 1){
         description <- rep(x = description, length.out = length(new))
       } else {
         stop("the number of elements in 'description' is neither the same as in 'new' nor 1.")
@@ -161,8 +161,7 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
   }
 
   # determine how many digits each new code should have
-  digits <- tail(str_split(ontology@classes$harmonised$id, "[.]")[[1]], 1)
-  digits <- nchar(digits)
+  digits <- nchar(tail(str_split(ontology@classes$harmonised$id, "[.]")[[1]], 1))
 
   # and by which symbol the levels are separated
   seperator <- str_replace_all(string = ontology@classes$harmonised$id[1], pattern = "x", replacement = "")
@@ -188,6 +187,15 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
     left_join(broaderIDs, by = c("id", "class")) %>%
     unite(col = topID, topID, top2D, sep = "", na.rm = TRUE)
 
+  # check what part of temp is already in the harmonised concepts
+  temp <- temp %>%
+    anti_join(theConcepts$harmonised %>% select(id = has_broader, new = label, newClass = class), by = c("id", "new", "newClass"))
+
+  if(dim(temp)[1] == 0){
+    message("all new concepts have already been defined in this ontology.")
+    return(NULL)
+  }
+
   # get the maximum child ID that may have been defined already
   oldChildConcepts <- theConcepts$harmonised %>%
     group_by(has_broader) %>%
@@ -212,8 +220,8 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
     select(
       id = nextID,
       label = new,
-      description,
       class = newClass,
+      description,
       has_broader = id,
       has_close_match, has_narrower_match, has_broader_match, has_exact_match
     ) %>%
