@@ -188,8 +188,8 @@ new_concept <- function(new, broader = NULL, description = NULL, class = NULL,
     unite(col = topID, topID, top2D, sep = "", na.rm = TRUE)
 
   # check what part of temp is already in the harmonised concepts
-  temp <- temp %>%
-    anti_join(theConcepts$harmonised %>% select(id = has_broader, new = label, newClass = class), by = c("id", "new", "newClass"))
+  # temp <- temp %>%
+  #   anti_join(theConcepts$harmonised %>% select(id = has_broader, new = label, newClass = class), by = c("id", "new", "newClass"))
 
   if(dim(temp)[1] == 0){
     message("all new concepts have already been defined in this ontology.")
