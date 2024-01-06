@@ -43,7 +43,7 @@
 #' @importFrom dplyr filter rename full_join mutate if_else select left_join
 #'   bind_rows distinct arrange any_of
 #' @importFrom tidyselect everything starts_with
-#' @importFrom tidyr pivot_longer pivot_wider
+#' @importFrom tidyr pivot_longer pivot_wider separate_wider_delim
 #' @importFrom tibble add_column
 #' @importFrom fuzzyjoin stringdist_left_join
 #' @export
@@ -193,10 +193,34 @@ edit_matches <- function(new, target = NULL, source = NULL,
       toRelate <- make_tree(id = parentFilter, ontology = ontology)
     }
 
+    extConcepts <- ontology@concepts$external %>%
+      separate_wider_delim(cols = id, names = c("dataseries", "nr"), delim = "_", cols_remove = FALSE) %>%
+      rowwise() %>%
+      mutate(label = paste0(label, " [", dataseries, "]")) %>%
+      select(external = label, temp = id)
+
     relate <- toRelate %>%
-      select(id, label, class, has_broader) %>%
       filter(class %in% filterClasses) %>%
-      left_join(inclConcepts, by = c("id", "label", "class", "has_broader")) %>%
+      filter(!label == "ignore") %>%
+      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
+                                  names_to = "match", values_to = "external") %>%
+                     separate_rows(external, sep = " \\| ") %>%
+                     separate_wider_delim(cols = external, names = c("temp"), delim = ".", too_many = "drop") %>%
+                     left_join(extConcepts, by = "temp") %>%
+                     group_by(across(all_of(c("id", "label", "class", "has_broader", "description", "match")))) %>%
+                     summarise(external = paste0(na.omit(external), collapse = " | ")) %>%
+                     ungroup() %>%
+                     mutate(external = na_if(external, "")) %>%
+                     pivot_wider(id_cols = c("id", "label", "class", "has_broader", "description"), names_from = match, values_from = external) %>%
+      rowwise() %>%
+      mutate(description = paste0(na.omit(c(description,
+                                    if_else(!is.na(has_close_match), paste0("close: ", has_close_match), NA),
+                                    if_else(!is.na(has_broader_match), paste0("broader: ", has_broader_match), NA),
+                                    if_else(!is.na(has_narrower_match), paste0("narrower: ", has_narrower_match), NA))),
+                                    collapse = "\n")) %>%
+      mutate(description = na_if(description, "")) %>%
+      select(id, label, class, has_broader, description) %>%
+      left_join(inclConcepts %>% select(-description), by = c("id", "label", "class", "has_broader")) %>%
       filter(!is.na(class))
 
     toJoin <- relate %>%
@@ -257,15 +281,6 @@ edit_matches <- function(new, target = NULL, source = NULL,
         unite(col = "has_close_match", has_close_match, has_new_close_match, sep = " | ", na.rm = TRUE) %>%
         mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
         select(-n)
-
-      relate <- relate %>%
-        rowwise() %>%
-        mutate(description = if_else(!is.na(description), description,
-                                            paste0(if_else(!is.na(has_close_match), paste0(has_close_match, " [close]"), ""),
-                                                   if_else(!is.na(has_broader_match), paste0(has_broader_match, " [broader]"), ""),
-                                                   if_else(!is.na(has_narrower_match), paste0(has_narrower_match, " [narrower]"), ""),
-                                                   collapse = ", "))) %>%
-        mutate(description = na_if(description, ""))
 
       stillMissing <- joined %>%
         select(-has_broader, -has_0_differences, -id, -class) %>%
