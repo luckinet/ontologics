@@ -1,3 +1,7 @@
+# ontologics 0.7.3
+
+- include information about previous matches in the "description" column in matching tables, to assist in finding the correct matches, based on previous information.
+
 # ontologics 0.7.2
 
 - change automatically set matches to "exact" in `edit_matches()`.
