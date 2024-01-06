@@ -1,8 +1,6 @@
 #' Get a concept in an ontology
 #'
-#' @param ... combination of column name and value to filter that column by. The
-#'   value to filter by can be provided as regular expression, if \code{regex =
-#'   TRUE}.
+#' @param ... combination of column name and value to filter that column by.
 #' @param external [`logical(1)`][logical]\cr whether or not to return merely
 #'   the table of external concepts.
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is

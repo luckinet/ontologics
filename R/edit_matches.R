@@ -258,6 +258,15 @@ edit_matches <- function(new, target = NULL, source = NULL,
         mutate(across(where(is.character), function(x) na_if(x, ""))) %>%
         select(-n)
 
+      relate <- relate %>%
+        rowwise() %>%
+        mutate(description = if_else(!is.na(description), description,
+                                            paste0(if_else(!is.na(has_close_match), paste0(has_close_match, " [close]"), ""),
+                                                   if_else(!is.na(has_broader_match), paste0(has_broader_match, " [broader]"), ""),
+                                                   if_else(!is.na(has_narrower_match), paste0(has_narrower_match, " [narrower]"), ""),
+                                                   collapse = ", "))) %>%
+        mutate(description = na_if(description, ""))
+
       stillMissing <- joined %>%
         select(-has_broader, -has_0_differences, -id, -class) %>%
         group_by(label) %>%

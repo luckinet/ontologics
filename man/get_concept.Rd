@@ -7,9 +7,7 @@
 get_concept(..., external = FALSE, ontology = NULL)
 }
 \arguments{
-\item{...}{combination of column name and value to filter that column by. The
-value to filter by can be provided as regular expression, if \code{regex =
-  TRUE}.}
+\item{...}{combination of column name and value to filter that column by.}
 
 \item{external}{\code{\link[=logical]{logical(1)}}\cr whether or not to return merely
 the table of external concepts.}
