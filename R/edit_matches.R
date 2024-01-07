@@ -365,7 +365,8 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
       }
 
     } else {
-      related <- relate
+      related <- relate %>%
+        mutate(description = NA_character_)
     }
 
   } else {
