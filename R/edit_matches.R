@@ -203,21 +203,21 @@ edit_matches <- function(new, target = NULL, source = NULL,
       filter(class %in% filterClasses) %>%
       filter(!label == "ignore") %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
-                                  names_to = "match", values_to = "external") %>%
-                     separate_rows(external, sep = " \\| ") %>%
-                     separate_wider_delim(cols = external, names = c("temp"), delim = ".", too_many = "drop") %>%
-                     left_join(extConcepts, by = "temp") %>%
-                     group_by(across(all_of(c("id", "label", "class", "has_broader", "description", "match")))) %>%
-                     summarise(external = paste0(na.omit(external), collapse = " | ")) %>%
-                     ungroup() %>%
-                     mutate(external = na_if(external, "")) %>%
-                     pivot_wider(id_cols = c("id", "label", "class", "has_broader", "description"), names_from = match, values_from = external) %>%
+                   names_to = "match", values_to = "external") %>%
+      separate_rows(external, sep = " \\| ") %>%
+      separate_wider_delim(cols = external, names = c("temp"), delim = ".", too_many = "drop") %>%
+      left_join(extConcepts, by = "temp") %>%
+      group_by(across(all_of(c("id", "label", "class", "has_broader", "description", "match")))) %>%
+      summarise(external = paste0(na.omit(external), collapse = " | ")) %>%
+      ungroup() %>%
+      mutate(external = na_if(external, "")) %>%
+      pivot_wider(id_cols = c("id", "label", "class", "has_broader", "description"), names_from = match, values_from = external) %>%
       rowwise() %>%
       mutate(description = paste0(na.omit(c(description,
-                                    if_else(!is.na(has_close_match), paste0("close: ", has_close_match), NA),
-                                    if_else(!is.na(has_broader_match), paste0("broader: ", has_broader_match), NA),
-                                    if_else(!is.na(has_narrower_match), paste0("narrower: ", has_narrower_match), NA))),
-                                    collapse = "\n")) %>%
+                                            if_else(!is.na(has_close_match), paste0("close: ", has_close_match), NA),
+                                            if_else(!is.na(has_broader_match), paste0("broader: ", has_broader_match), NA),
+                                            if_else(!is.na(has_narrower_match), paste0("narrower: ", has_narrower_match), NA))),
+                                  collapse = " -- ")) %>%
       mutate(description = na_if(description, "")) %>%
       select(id, label, class, has_broader, description) %>%
       left_join(inclConcepts %>% select(-description), by = c("id", "label", "class", "has_broader")) %>%
@@ -356,6 +356,7 @@ edit_matches <- function(new, target = NULL, source = NULL,
       related <- related %>%
         filter(!is.na(id) & id != "ignore") %>%
         select(-sort_in) %>%
+        mutate(description = NA_character_) %>%
         select(-any_of(c("has_0_differences", "has_1_difference", "has_2_differences"))) %>%
         bind_rows(toIgnore)
 
