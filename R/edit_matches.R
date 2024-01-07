@@ -36,7 +36,7 @@
 #' @return A table that contains all new matches, or if none of the new concepts
 #'   weren't already in the ontology, a table of the already sucessful matches.
 #' @importFrom checkmate assertDataFrame assertNames assertCharacter
-#'   assertFileExists testFileExists
+#'   assertFileExists testFileExists assertDirectoryExists
 #' @importFrom utils tail head
 #' @importFrom stringr str_split
 #' @importFrom readr read_csv write_csv cols
@@ -48,16 +48,16 @@
 #' @importFrom fuzzyjoin stringdist_left_join
 #' @export
 
-edit_matches <- function(new, target = NULL, source = NULL,
-                         ontology = NULL, matchDir = NULL, verbose = TRUE,
-                         beep = NULL){
+edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
+                         matchDir = NULL, verbose = TRUE, beep = NULL){
 
   assertCharacter(x = new)
   assertNames(x = names(target), must.include = c("class", "has_broader"))
   assertCharacter(x = source, len = 1, any.missing = FALSE)
+  assertDirectoryExists(x = matchDir, access = "rw")
 
   intPaths <- getOption(x = "adb_path")
-  sourceFile <- paste0("match_", source, ".csv")
+  sourceFile <- paste0("match_", source, ".rds")
 
   if(inherits(x = ontology, what = "onto")){
     ontoPath <- NULL
@@ -393,7 +393,7 @@ edit_matches <- function(new, target = NULL, source = NULL,
 
   }
 
-  write_csv(x = out, file = paste0(matchDir, sourceFile), append = FALSE, na = "")
+  saveRDS(object = out, file = paste0(matchDir, sourceFile))
 
   return(related)
 }
