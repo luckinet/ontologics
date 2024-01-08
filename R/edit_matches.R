@@ -238,6 +238,7 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
     if(!all(is.na(joined$dist))){
       joined <- joined %>%
         select(-label.x, -label.y) %>%
+        distinct() %>%
         arrange(dist) %>%
         mutate(dist = paste0("dist_", dist)) %>%
         pivot_wider(names_from = dist, values_from = label_harm)
