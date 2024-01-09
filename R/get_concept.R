@@ -3,6 +3,10 @@
 #' @param ... combination of column name and value to filter that column by.
 #' @param external [`logical(1)`][logical]\cr whether or not to return merely
 #'   the table of external concepts.
+#' @param matches [`logical(1)`][logical]\cr whether or not to include external
+#'   concepts as label instead of id in the match columns of the harmonised
+#'   concepts; this allows querying the external concepts in the harmonised
+#'   concepts (only if \code{external = FALSE}).
 #' @param ontology [`ontology(1)`][list]\cr either a path where the ontology is
 #'   stored, or an already loaded ontology.
 #' @examples
@@ -32,9 +36,10 @@
 #' @importFrom utils head
 #' @export
 
-get_concept <- function(..., external = FALSE, ontology = NULL){
+get_concept <- function(..., external = FALSE, matches = FALSE, ontology = NULL){
 
   assertLogical(x = external, len = 1, any.missing = FALSE)
+  assertLogical(x = matches, len = 1, any.missing = FALSE)
 
   if(!inherits(x = ontology, what = "onto")){
     assertFileExists(x = ontology, access = "r", extension = "rds")
@@ -49,8 +54,28 @@ get_concept <- function(..., external = FALSE, ontology = NULL){
     toOut <- ontology@concepts$external
     outCols <- c("id", "label", "description")
   } else {
-    toOut <- ontology@concepts$harmonised
     outCols <- c("id", "label", "description", "class", "has_broader")
+
+    if(matches){
+      externalConcepts <- ontology@concepts$external %>%
+        separate_wider_delim(cols = id, names = c("dataseries", "nr"), delim = "_", cols_remove = FALSE) %>%
+        rowwise() %>%
+        mutate(label = paste0(label, " [", dataseries, "]")) %>%
+        select(extID = id, extLabel = label)
+
+      toOut <- ontology@concepts$harmonised %>%
+        pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
+                     names_to = "match", values_to = "external") %>%
+        separate_rows(external, sep = " \\| ") %>%
+        separate_wider_delim(cols = external, names = "extID", delim = ".", too_many = "drop") %>%
+        left_join(externalConcepts, by = "extID") %>%
+        group_by(across(all_of(c("id", "label", "class", "has_broader", "description", "match")))) %>%
+        summarise(extLabel = paste0(na.omit(extLabel), collapse = " | ")) %>%
+        ungroup() %>%
+        pivot_wider(id_cols = c("id", "label", "class", "has_broader", "description"), names_from = match, values_from = extLabel, values_fill = NA_character_)
+    } else {
+      toOut <- ontology@concepts$harmonised
+    }
   }
 
   attrib <- quos(...)

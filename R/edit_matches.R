@@ -101,7 +101,15 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
   temp <- get_concept(label = new, class = target$class, has_broader = target$has_broader, ontology = ontology) %>%
     left_join(tibble(label = new, has_broader = target$has_broader), ., by = c("label", "has_broader"))
 
-  # determine previous matches
+  # determine previous matches from ontology
+  prevOnto <- get_concept(str_detect(has_close_match, paste0(new, collapse = "|")) |
+                            str_detect(has_broader_match, paste0(new, collapse = "|")) |
+                            str_detect(has_narrower_match, paste0(new, collapse = "|")) |
+                            str_detect(has_exact_match, paste0(new, collapse = "|")),
+                          class = target$class, has_broader = target$has_broader,
+                          matches = TRUE, ontology = ontology)
+
+  # determine previous matches from matching table
   if(testFileExists(paste0(matchDir, sourceFile))){
     prevAvail <- TRUE
     prevMatches <- readRDS(file = paste0(matchDir, sourceFile))

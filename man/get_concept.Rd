@@ -4,13 +4,18 @@
 \alias{get_concept}
 \title{Get a concept in an ontology}
 \usage{
-get_concept(..., external = FALSE, ontology = NULL)
+get_concept(..., external = FALSE, matches = FALSE, ontology = NULL)
 }
 \arguments{
 \item{...}{combination of column name and value to filter that column by.}
 
 \item{external}{\code{\link[=logical]{logical(1)}}\cr whether or not to return merely
 the table of external concepts.}
+
+\item{matches}{\code{\link[=logical]{logical(1)}}\cr whether or not to include external
+concepts as label instead of id in the match columns of the harmonised
+concepts; this allows querying the external concepts in the harmonised
+concepts (only if \code{external = FALSE}).}
 
 \item{ontology}{\code{\link[=list]{ontology(1)}}\cr either a path where the ontology is
 stored, or an already loaded ontology.}
