@@ -102,7 +102,7 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
     left_join(tibble(label = new, has_broader = target$has_broader), ., by = c("label", "has_broader"))
 
   # determine previous matches from ontology
-  prevOnto <- get_concept(str_detect(has_close_match, paste0(new, collapse = "|")) |
+  prevMatches <- get_concept(str_detect(has_close_match, paste0(new, collapse = "|")) |
                             str_detect(has_broader_match, paste0(new, collapse = "|")) |
                             str_detect(has_narrower_match, paste0(new, collapse = "|")) |
                             str_detect(has_exact_match, paste0(new, collapse = "|")),
@@ -111,43 +111,45 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
 
   # determine previous matches from matching table
   if(testFileExists(paste0(matchDir, sourceFile))){
-    prevAvail <- TRUE
-    prevMatches <- readRDS(file = paste0(matchDir, sourceFile))
-
-    prevMatchLabels <- prevMatches %>%
-      filter(class %in% filterClasses) %>%
-      pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
-      filter(!is.na(labels)) %>%
-      distinct(labels) %>%
-      separate_rows(labels, sep = " \\| ") %>%
-      pull(labels)
-  } else {
-    prevAvail <- FALSE
-    # if no previous matches are present, match the new concepts with the already
-    # harmonised concepts in assumption that a match on the term is also a match on
-    # the underlying concept
-    tempMatch <- temp %>%
-      mutate(has_close_match = label) %>%
-      select(label, has_close_match, has_broader)
-    prevMatches <- ontology@concepts$harmonised %>%
-      filter(class %in% filterClasses) %>%
-      select(-has_close_match) %>%
-      left_join(tempMatch, ., by = c("label", "has_broader")) %>%
-      filter(!is.na(id)) %>%
-      mutate(has_broader_match = NA_character_,
-             has_exact_match = NA_character_,
-             has_narrower_match = NA_character_)
-
-    prevMatchLabels <- prevMatches %>%
-      distinct(label) %>%
-      separate_rows(label, sep = " \\| ") %>%
-      pull(label)
-
-    if(dim(prevMatches)[1] == 0){
-      prevMatches[1,] <- "ignore"
-      prevMatches$class <- filterClasses[1]
-    }
+    # prevAvail <- TRUE
+    prevMatches <- readRDS(file = paste0(matchDir, sourceFile)) %>%
+      bind_rows(prevMatches)
   }
+
+  prevMatchLabels <- prevMatches %>%
+    filter(class %in% filterClasses) %>%
+    pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
+    filter(!is.na(labels)) %>%
+    distinct(labels) %>%
+    separate_rows(labels, sep = " \\| ") %>%
+    pull(labels)
+  # } else {
+  #   # prevAvail <- FALSE
+  #   # if no previous matches are present, match the new concepts with the already
+  #   # harmonised concepts in assumption that a match on the term is also a match on
+  #   # the underlying concept
+  #   tempMatch <- temp %>%
+  #     mutate(has_close_match = label) %>%
+  #     select(label, has_close_match, has_broader)
+  #   prevMatches <- ontology@concepts$harmonised %>%
+  #     filter(class %in% filterClasses) %>%
+  #     select(-has_close_match) %>%
+  #     left_join(tempMatch, ., by = c("label", "has_broader")) %>%
+  #     filter(!is.na(id)) %>%
+  #     mutate(has_broader_match = NA_character_,
+  #            has_exact_match = NA_character_,
+  #            has_narrower_match = NA_character_)
+  #
+  #   prevMatchLabels <- prevMatches %>%
+  #     distinct(label) %>%
+  #     separate_rows(label, sep = " \\| ") %>%
+  #     pull(label)
+  #
+  #   if(dim(prevMatches)[1] == 0){
+  #     prevMatches[1,] <- "ignore"
+  #     prevMatches$class <- filterClasses[1]
+  #   }
+  # }
 
   # gather all concepts for the focal data-series (previous matches from
   # matching table and matches that may already be in the ontology) ...
@@ -325,11 +327,11 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
       }
 
       # ... and make them aware of their duty
-      if(prevAvail){
-        message("\nprevious matches found for this dataseries, only previously not matched terms are presented")
-      } else {
-        message("\nno previous matches found for this dataseries, close match with other potentially available terms is presented")
-      }
+      # if(prevAvail){
+      #   message("\nprevious matches found for this dataseries, only previously not matched terms are presented")
+      # } else {
+      #   message("\nno previous matches found for this dataseries, close match with other potentially available terms is presented")
+      # }
 
       message("-> please edit the file '", paste0(matchDir, "/matching.csv"), "' \n")
       if(verbose){
