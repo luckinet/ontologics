@@ -59,8 +59,8 @@ get_concept <- function(..., external = FALSE, matches = FALSE, ontology = NULL)
     if(matches){
       externalConcepts <- ontology@concepts$external %>%
         separate_wider_delim(cols = id, names = c("dataseries", "nr"), delim = "_", cols_remove = FALSE) %>%
-        rowwise() %>%
-        mutate(label = paste0(label, " [", dataseries, "]")) %>%
+        # rowwise() %>%
+        # mutate(label = paste0(label, " [", dataseries, "]")) %>%
         select(extID = id, extLabel = label)
 
       toOut <- ontology@concepts$harmonised %>%
@@ -69,10 +69,12 @@ get_concept <- function(..., external = FALSE, matches = FALSE, ontology = NULL)
         separate_rows(external, sep = " \\| ") %>%
         separate_wider_delim(cols = external, names = "extID", delim = ".", too_many = "drop") %>%
         left_join(externalConcepts, by = "extID") %>%
-        group_by(across(all_of(c("id", "label", "class", "has_broader", "description", "match")))) %>%
-        summarise(extLabel = paste0(na.omit(extLabel), collapse = " | ")) %>%
-        ungroup() %>%
-        pivot_wider(id_cols = c("id", "label", "class", "has_broader", "description"), names_from = match, values_from = extLabel, values_fill = NA_character_)
+        # group_by(across(all_of(c("id", "label", "class", "has_broader", "description", "match")))) %>%
+        # summarise(extLabel = paste0(na.omit(extLabel), collapse = " | ")) %>%
+        # ungroup() %>%
+        pivot_wider(id_cols = c("id", "label", "class", "has_broader", "description"), names_from = match,
+                    values_from = extLabel, values_fn = ~paste0(na.omit(.x), collapse = " | ")) %>%
+        mutate(across(where(is.character), ~na_if(x = ., y = "")))
     } else {
       toOut <- ontology@concepts$harmonised
     }
