@@ -41,7 +41,7 @@
 #' @importFrom stringr str_split
 #' @importFrom readr read_csv write_csv cols
 #' @importFrom dplyr filter rename full_join mutate if_else select left_join
-#'   bind_rows distinct arrange any_of
+#'   bind_rows distinct arrange any_of if_any
 #' @importFrom tidyselect everything starts_with
 #' @importFrom tidyr pivot_longer pivot_wider separate_wider_delim
 #' @importFrom tibble add_column
@@ -103,15 +103,31 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
 
   # determine previous matches from ontology
   prevMatches <- get_concept(str_detect(has_close_match, paste0(new, collapse = "|")) |
-                            str_detect(has_broader_match, paste0(new, collapse = "|")) |
-                            str_detect(has_narrower_match, paste0(new, collapse = "|")) |
-                            str_detect(has_exact_match, paste0(new, collapse = "|")),
-                          class = target$class, has_broader = target$has_broader,
-                          matches = TRUE, ontology = ontology)
+                               str_detect(has_broader_match, paste0(new, collapse = "|")) |
+                               str_detect(has_narrower_match, paste0(new, collapse = "|")) |
+                               str_detect(has_exact_match, paste0(new, collapse = "|")),
+                             class = target$class, has_broader = target$has_broader,
+                             matches = TRUE, ontology = ontology) %>%
+    separate_rows(has_close_match, sep = " \\| ") %>%
+    separate_wider_delim(cols = has_close_match, names = "has_close_match", delim = "~<", too_many = "drop") %>%
+    mutate(has_close_match = if_else(!has_close_match %in% new, NA_character_, has_close_match)) %>%
+    separate_rows(has_broader_match, sep = " \\| ") %>%
+    separate_wider_delim(cols = has_broader_match, names = "has_broader_match", delim = "~<", too_many = "drop") %>%
+    mutate(has_broader_match = if_else(!has_broader_match %in% new, NA_character_, has_broader_match)) %>%
+    separate_rows(has_narrower_match, sep = " \\| ") %>%
+    separate_wider_delim(cols = has_narrower_match, names = "has_narrower_match", delim = "~<", too_many = "drop") %>%
+    mutate(has_narrower_match = if_else(!has_narrower_match %in% new, NA_character_, has_narrower_match)) %>%
+    separate_rows(has_exact_match, sep = " \\| ") %>%
+    separate_wider_delim(cols = has_exact_match, names = "has_exact_match", delim = "~<", too_many = "drop") %>%
+    mutate(has_exact_match = if_else(!has_exact_match %in% new, NA_character_, has_exact_match)) %>%
+    filter(if_any(c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), ~ !is.na(.))) %>%
+    group_by(id, label, description, class, has_broader) %>%
+    summarise(across(.cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), .fns = ~paste0(unique(na.omit(.x)), collapse = " | "))) %>%
+    ungroup() %>%
+    mutate(across(where(is.character), ~na_if(x = ., y = "")))
 
   # determine previous matches from matching table
   if(testFileExists(paste0(matchDir, sourceFile))){
-    # prevAvail <- TRUE
     prevMatches <- readRDS(file = paste0(matchDir, sourceFile)) %>%
       bind_rows(prevMatches)
   }
@@ -123,33 +139,6 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
     distinct(labels) %>%
     separate_rows(labels, sep = " \\| ") %>%
     pull(labels)
-  # } else {
-  #   # prevAvail <- FALSE
-  #   # if no previous matches are present, match the new concepts with the already
-  #   # harmonised concepts in assumption that a match on the term is also a match on
-  #   # the underlying concept
-  #   tempMatch <- temp %>%
-  #     mutate(has_close_match = label) %>%
-  #     select(label, has_close_match, has_broader)
-  #   prevMatches <- ontology@concepts$harmonised %>%
-  #     filter(class %in% filterClasses) %>%
-  #     select(-has_close_match) %>%
-  #     left_join(tempMatch, ., by = c("label", "has_broader")) %>%
-  #     filter(!is.na(id)) %>%
-  #     mutate(has_broader_match = NA_character_,
-  #            has_exact_match = NA_character_,
-  #            has_narrower_match = NA_character_)
-  #
-  #   prevMatchLabels <- prevMatches %>%
-  #     distinct(label) %>%
-  #     separate_rows(label, sep = " \\| ") %>%
-  #     pull(label)
-  #
-  #   if(dim(prevMatches)[1] == 0){
-  #     prevMatches[1,] <- "ignore"
-  #     prevMatches$class <- filterClasses[1]
-  #   }
-  # }
 
   # gather all concepts for the focal data-series (previous matches from
   # matching table and matches that may already be in the ontology) ...
