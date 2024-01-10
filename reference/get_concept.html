@@ -65,7 +65,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_concept</span><span class="op">(</span><span class="va">...</span>, external <span class="op">=</span> <span class="cn">FALSE</span>, ontology <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_concept</span><span class="op">(</span><span class="va">...</span>, external <span class="op">=</span> <span class="cn">FALSE</span>, matches <span class="op">=</span> <span class="cn">FALSE</span>, ontology <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -77,6 +77,13 @@
 <dt>external</dt>
 <dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not to return merely
 the table of external concepts.</p></dd>
+
+
+<dt>matches</dt>
+<dd><p><code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical(1)</a></code><br> whether or not to include external
+concepts as label instead of id in the match columns of the harmonised
+concepts; this allows querying the external concepts in the harmonised
+concepts (only if <code>external = FALSE</code>).</p></dd>
 
 
 <dt>ontology</dt>
