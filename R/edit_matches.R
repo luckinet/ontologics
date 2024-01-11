@@ -102,23 +102,24 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
     left_join(tibble(label = new, has_broader = target$has_broader), ., by = c("label", "has_broader"))
 
   # determine previous matches from ontology
-  prevMatches <- get_concept(str_detect(has_close_match, paste0(new, collapse = "|")) |
-                               str_detect(has_broader_match, paste0(new, collapse = "|")) |
-                               str_detect(has_narrower_match, paste0(new, collapse = "|")) |
-                               str_detect(has_exact_match, paste0(new, collapse = "|")),
+  newGrep <- str_replace_all(new, c("\\(" = "\\\\(", "\\)" = "\\\\)", "\\*" = "\\\\*"))
+  prevMatches <- get_concept(str_detect(has_close_match, paste0(newGrep, collapse = "|")) |
+                               str_detect(has_broader_match, paste0(newGrep, collapse = "|")) |
+                               str_detect(has_narrower_match, paste0(newGrep, collapse = "|")) |
+                               str_detect(has_exact_match, paste0(newGrep, collapse = "|")),
                              class = target$class, has_broader = target$has_broader,
                              matches = TRUE, ontology = ontology) %>%
     separate_rows(has_close_match, sep = " \\| ") %>%
-    separate_wider_delim(cols = has_close_match, names = "has_close_match", delim = "~<", too_many = "drop") %>%
+    separate_wider_delim(cols = has_close_match, names = "has_close_match", delim = "><", too_many = "drop") %>%
     mutate(has_close_match = if_else(!has_close_match %in% new, NA_character_, has_close_match)) %>%
     separate_rows(has_broader_match, sep = " \\| ") %>%
-    separate_wider_delim(cols = has_broader_match, names = "has_broader_match", delim = "~<", too_many = "drop") %>%
+    separate_wider_delim(cols = has_broader_match, names = "has_broader_match", delim = "><", too_many = "drop") %>%
     mutate(has_broader_match = if_else(!has_broader_match %in% new, NA_character_, has_broader_match)) %>%
     separate_rows(has_narrower_match, sep = " \\| ") %>%
-    separate_wider_delim(cols = has_narrower_match, names = "has_narrower_match", delim = "~<", too_many = "drop") %>%
+    separate_wider_delim(cols = has_narrower_match, names = "has_narrower_match", delim = "><", too_many = "drop") %>%
     mutate(has_narrower_match = if_else(!has_narrower_match %in% new, NA_character_, has_narrower_match)) %>%
     separate_rows(has_exact_match, sep = " \\| ") %>%
-    separate_wider_delim(cols = has_exact_match, names = "has_exact_match", delim = "~<", too_many = "drop") %>%
+    separate_wider_delim(cols = has_exact_match, names = "has_exact_match", delim = "><", too_many = "drop") %>%
     mutate(has_exact_match = if_else(!has_exact_match %in% new, NA_character_, has_exact_match)) %>%
     filter(if_any(c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), ~ !is.na(.))) %>%
     group_by(id, label, description, class, has_broader) %>%
@@ -275,7 +276,7 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
       relate <- relate %>%
         left_join(hits, by = c("id", "label", "class", withBroader)) %>%
         left_join(numbers, by = "label") %>%
-        mutate(has_new_close_match = if_else(n > 1, NA_character_, has_new_close_match)) %>%
+        # mutate(has_new_close_match = if_else(n > 1, NA_character_, has_new_close_match)) %>%
         rowwise() %>%
         mutate(has_new_close_match = if_else(grepl(x = has_close_match, pattern = has_new_close_match), NA_character_, has_new_close_match)) %>%
         unite(col = "has_close_match", has_close_match, has_new_close_match, sep = " | ", na.rm = TRUE) %>%
