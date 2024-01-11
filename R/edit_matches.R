@@ -283,6 +283,7 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
         select(-n)
 
       stillMissing <- joined %>%
+        filter(is.na(has_0_differences)) %>%
         select(-has_broader, -has_0_differences, -id, -class) %>%
         group_by(label) %>%
         summarise(across(starts_with("has_"), ~ paste0(na.omit(unique(.x)), collapse = " | "))) %>%
@@ -290,7 +291,7 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
         ungroup()
 
       stillMissing <- missingConcepts %>%
-        filter(!label %in% hits$label) %>%
+        filter(!label %in% hits$has_new_close_match) %>%
         left_join(stillMissing, by = "label")
 
     } else {
