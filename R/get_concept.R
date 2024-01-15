@@ -50,6 +50,9 @@ get_concept <- function(..., external = FALSE, matches = FALSE, ontology = NULL)
     ontology <- load_ontology(path = ontoPath)
   }
 
+  attrib <- quos(...)
+  # return(attrib)
+
   if(external){
     toOut <- ontology@concepts$external
     outCols <- c("id", "label", "description")
@@ -59,8 +62,7 @@ get_concept <- function(..., external = FALSE, matches = FALSE, ontology = NULL)
     if(matches){
       externalConcepts <- ontology@concepts$external %>%
         separate_wider_delim(cols = id, names = c("dataseries", "nr"), delim = "_", cols_remove = FALSE) %>%
-        rowwise() %>%
-        mutate(label = paste0(label, "><", dataseries)) %>%
+        unite(col = label, label, dataseries, sep = "><") %>%
         select(extID = id, extLabel = label)
 
       toOut <- ontology@concepts$harmonised %>%
@@ -76,9 +78,6 @@ get_concept <- function(..., external = FALSE, matches = FALSE, ontology = NULL)
       toOut <- ontology@concepts$harmonised
     }
   }
-
-  attrib <- quos(...)
-  # return(attrib)
 
   # identify attributes that are not in the ontology
   if(!all(names(attrib) %in% colnames(toOut)) & all(names(attrib) != "")){
