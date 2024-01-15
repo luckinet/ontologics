@@ -102,13 +102,13 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
     left_join(tibble(label = new, has_broader = target$has_broader), ., by = c("label", "has_broader"))
 
   # determine previous matches from ontology
-  newGrep <- str_replace_all(new, c("\\(" = "\\\\(", "\\)" = "\\\\)", "\\*" = "\\\\*"))
-  prevMatches <- get_concept(str_detect(has_close_match, paste0(newGrep, collapse = "|")) |
-                               str_detect(has_broader_match, paste0(newGrep, collapse = "|")) |
-                               str_detect(has_narrower_match, paste0(newGrep, collapse = "|")) |
-                               str_detect(has_exact_match, paste0(newGrep, collapse = "|")),
-                             class = target$class, has_broader = target$has_broader,
-                             matches = TRUE, ontology = ontology) %>%
+  newExt <- get_concept(str_detect(id, dataseries), label = new, has_broader = target$has_broader,
+                        external = TRUE, ontology = ontology)
+  prevMatches <- get_concept(str_detect(has_close_match, paste0(newExt$id, collapse = "|")) |
+                               str_detect(has_broader_match, paste0(newExt$id, collapse = "|")) |
+                               str_detect(has_narrower_match, paste0(newExt$id, collapse = "|")) |
+                               str_detect(has_exact_match, paste0(newExt$id, collapse = "|")),
+                             class = target$class, has_broader = target$has_broader, ontology = ontology) %>%
     separate_rows(has_close_match, sep = " \\| ") %>%
     separate_wider_delim(cols = has_close_match, names = "has_close_match", delim = "><", too_many = "drop") %>%
     mutate(has_close_match = if_else(!has_close_match %in% new, NA_character_, has_close_match)) %>%
