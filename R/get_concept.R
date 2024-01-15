@@ -31,6 +31,7 @@
 #' @importFrom checkmate assertLogical
 #' @importFrom tidyselect everything contains
 #' @importFrom tidyr separate_rows separate pivot_longer pivot_wider
+#'   separate_longer_delim separate_wider_delim
 #' @importFrom rlang quos eval_tidy := sym as_name parse_expr
 #' @importFrom dplyr filter pull select rename inner_join
 #' @importFrom utils head
@@ -57,26 +58,8 @@ get_concept <- function(..., external = FALSE, matches = FALSE, ontology = NULL)
     toOut <- ontology@concepts$external
     outCols <- c("id", "label", "description")
   } else {
+    toOut <- ontology@concepts$harmonised
     outCols <- c("id", "label", "description", "class", "has_broader")
-
-    if(matches){
-      externalConcepts <- ontology@concepts$external %>%
-        separate_wider_delim(cols = id, names = c("dataseries", "nr"), delim = "_", cols_remove = FALSE) %>%
-        unite(col = label, label, dataseries, sep = "><") %>%
-        select(extID = id, extLabel = label)
-
-      toOut <- ontology@concepts$harmonised %>%
-        pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
-                     names_to = "match", values_to = "external") %>%
-        separate_rows(external, sep = " \\| ") %>%
-        separate_wider_delim(cols = external, names = "extID", delim = ".", too_many = "drop") %>%
-        left_join(externalConcepts, by = "extID") %>%
-        pivot_wider(id_cols = c("id", "label", "class", "has_broader", "description"), names_from = match,
-                    values_from = extLabel, values_fn = ~paste0(na.omit(.x), collapse = " | ")) %>%
-        mutate(across(where(is.character), ~na_if(x = ., y = "")))
-    } else {
-      toOut <- ontology@concepts$harmonised
-    }
   }
 
   # identify attributes that are not in the ontology
@@ -87,11 +70,38 @@ get_concept <- function(..., external = FALSE, matches = FALSE, ontology = NULL)
     attrib <- attrib[sbst]
   }
 
+  # identify attributes that have no name. they will be evaluated last because they may have complex expressions to evaluate
+  if(any(names(attrib) == "")){
+    namewith <- which(names(attrib) != "")
+    nameless <- which(names(attrib) == "")
+
+    attrib <- c(attrib[namewith], attrib[nameless])
+  }
+
+  matched <- FALSE
   for(k in seq_along(attrib)){
 
     theName <- names(attrib)[k]
 
     if(theName == ""){
+
+      if(matches & !matched){
+        externalConcepts <- ontology@concepts$external %>%
+          separate_wider_delim(cols = id, names = c("dataseries", "nr"), delim = "_", cols_remove = FALSE) %>%
+          unite(col = label, label, dataseries, sep = "><") %>%
+          select(extID = id, extLabel = label)
+
+        toOut <- toOut %>%
+          pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
+                       names_to = "match", values_to = "external") %>%
+          separate_longer_delim(cols = external, delim = " \\| ") %>%
+          separate_wider_delim(cols = external, names = "extID", delim = ".", too_many = "drop") %>%
+          left_join(externalConcepts, by = "extID") %>%
+          pivot_wider(id_cols = c("id", "label", "class", "has_broader", "description"), names_from = match,
+                      values_from = extLabel, values_fn = ~paste0(na.omit(.x), collapse = " | ")) %>%
+          mutate(across(where(is.character), ~na_if(x = ., y = "")))
+        matched <- TRUE
+      }
 
       toOut <- toOut %>%
         filter(eval_tidy(attrib[[k]], data = toOut))
