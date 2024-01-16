@@ -101,36 +101,12 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
   temp <- get_concept(label = new, class = target$class, has_broader = target$has_broader, ontology = ontology) %>%
     left_join(tibble(label = new, has_broader = target$has_broader), ., by = c("label", "has_broader"))
 
-  # determine previous matches from ontology
-  newGrep <- str_replace_all(new, c("\\(" = "\\\\(", "\\)" = "\\\\)", "\\*" = "\\\\*"))
-  prevMatches <- get_concept(str_detect(has_close_match, paste0(newGrep, collapse = "|")) |
-                               str_detect(has_broader_match, paste0(newGrep, collapse = "|")) |
-                               str_detect(has_narrower_match, paste0(newGrep, collapse = "|")) |
-                               str_detect(has_exact_match, paste0(newGrep, collapse = "|")),
-                             class = target$class, has_broader = target$has_broader,
-                             matches = TRUE, ontology = ontology) %>%
-    separate_rows(has_close_match, sep = " \\| ") %>%
-    separate_wider_delim(cols = has_close_match, names = "has_close_match", delim = "><", too_many = "drop") %>%
-    mutate(has_close_match = if_else(!has_close_match %in% new, NA_character_, has_close_match)) %>%
-    separate_rows(has_broader_match, sep = " \\| ") %>%
-    separate_wider_delim(cols = has_broader_match, names = "has_broader_match", delim = "><", too_many = "drop") %>%
-    mutate(has_broader_match = if_else(!has_broader_match %in% new, NA_character_, has_broader_match)) %>%
-    separate_rows(has_narrower_match, sep = " \\| ") %>%
-    separate_wider_delim(cols = has_narrower_match, names = "has_narrower_match", delim = "><", too_many = "drop") %>%
-    mutate(has_narrower_match = if_else(!has_narrower_match %in% new, NA_character_, has_narrower_match)) %>%
-    separate_rows(has_exact_match, sep = " \\| ") %>%
-    separate_wider_delim(cols = has_exact_match, names = "has_exact_match", delim = "><", too_many = "drop") %>%
-    mutate(has_exact_match = if_else(!has_exact_match %in% new, NA_character_, has_exact_match)) %>%
-    filter(if_any(c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), ~ !is.na(.))) %>%
-    group_by(id, label, description, class, has_broader) %>%
-    summarise(across(.cols = c(has_close_match, has_broader_match, has_narrower_match, has_exact_match), .fns = ~paste0(unique(na.omit(.x)), collapse = " | "))) %>%
-    ungroup() %>%
-    mutate(across(where(is.character), ~na_if(x = ., y = "")))
-
   # determine previous matches from matching table
   if(testFileExists(paste0(matchDir, sourceFile))){
-    prevMatches <- readRDS(file = paste0(matchDir, sourceFile)) %>%
-      bind_rows(prevMatches)
+    prevMatches <- readRDS(file = paste0(matchDir, sourceFile))
+  } else {
+    prevMatches <- tibble(id = character(), label = character(), description = character(), class = character(), has_broader = character(),
+                          has_close_match = character(), has_broader_match = character(), has_narrower_match = character(), has_exact_match = character())
   }
 
   prevMatchLabels <- prevMatches %>%
@@ -138,7 +114,7 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
     pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match), values_to = "labels") %>%
     filter(!is.na(labels)) %>%
     distinct(labels) %>%
-    separate_rows(labels, sep = " \\| ") %>%
+    separate_longer_delim(cols = labels, delim = " | ") %>%
     pull(labels)
 
   # gather all concepts for the focal data-series (previous matches from
@@ -148,7 +124,7 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
     rename(harmLab = label) %>%
     pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
                  names_to = "match", values_to = "label") %>%
-    separate_rows(label, sep = " \\| ") %>%
+    separate_longer_delim(cols = label, delim = " | ") %>%
     full_join(temp, by = c("label", "class", "id", "has_broader", "description")) %>%
     mutate(harmLab = if_else(is.na(harmLab), label, harmLab),
            label = if_else(is.na(match), if_else(!is.na(id), label, NA_character_), label),
@@ -226,7 +202,6 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
     toJoin <- relate %>%
       rename(label_harm = label) %>%
       mutate(label = tolower(label_harm)) %>%
-      # filter(!is.na(label_harm) & class == tail(filterClasses, 1)) %>%
       filter(!is.na(label_harm)) %>%
       select(-has_broader, -has_broader_match, -has_close_match, -has_exact_match, -has_narrower_match)
 
@@ -264,8 +239,7 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
 
       hits <- joined %>%
         filter(!is.na(has_0_differences)) %>%
-        mutate(#class = tail(filterClasses, 1),
-               has_new_close_match = label,
+        mutate(has_new_close_match = label,
                label = has_0_differences) %>%
         select(label, id, all_of(withBroader), class, has_new_close_match)
 
@@ -276,7 +250,6 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
       relate <- relate %>%
         left_join(hits, by = c("id", "label", "class", withBroader)) %>%
         left_join(numbers, by = "label") %>%
-        # mutate(has_new_close_match = if_else(n > 1, NA_character_, has_new_close_match)) %>%
         rowwise() %>%
         mutate(has_new_close_match = if_else(grepl(x = has_close_match, pattern = has_new_close_match), NA_character_, has_new_close_match)) %>%
         unite(col = "has_close_match", has_close_match, has_new_close_match, sep = " | ", na.rm = TRUE) %>%
@@ -316,13 +289,6 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
       if(!is.null(beep)){
         beep(sound = beep)
       }
-
-      # ... and make them aware of their duty
-      # if(prevAvail){
-      #   message("\nprevious matches found for this dataseries, only previously not matched terms are presented")
-      # } else {
-      #   message("\nno previous matches found for this dataseries, close match with other potentially available terms is presented")
-      # }
 
       message("-> please edit the file '", paste0(matchDir, "/matching.csv"), "' \n")
       if(verbose){
@@ -377,26 +343,32 @@ edit_matches <- function(new, target = NULL, source = NULL, ontology = NULL,
 
   if(!is.null(related)){
 
-    out <- prevMatches %>%
+    matchingTable <- prevMatches %>%
       filter(!id == "ignore") %>%
       bind_rows(related) %>%
       pivot_longer(cols = c(has_broader_match, has_close_match, has_exact_match, has_narrower_match),
                    names_to = "match", values_to = "new_label") %>%
-      separate_rows(new_label, sep = " \\| ") %>%
+      separate_longer_delim(cols = new_label, delim = " | ") %>%
       distinct() %>%
-      group_by(id, has_broader, label, class, description, match) %>%
-      summarise(new_label = paste0(na.omit(new_label), collapse = " | "), .groups = "keep") %>%
-      ungroup() %>%
-      mutate(new_label = na_if(x = new_label, y = "")) %>%
-      pivot_wider(id_cols = c(label, class, id, has_broader, description), names_from = match, values_from = new_label) %>%
-      distinct() %>%
+      pivot_wider(id_cols = c("id", "label", "class", "has_broader", "description"), names_from = match,
+                  values_from = new_label, values_fn = ~paste0(na.omit(.x), collapse = " | ")) %>%
+      mutate(across(where(is.character), ~na_if(x = ., y = ""))) %>%
       filter(!is.na(has_broader_match) | !is.na(has_close_match) | !is.na(has_narrower_match) | !is.na(has_exact_match)) %>%
       filter(!is.na(id)) %>%
       arrange(id)
 
+    newGrep <- str_replace_all(new, c("\\(" = "\\\\(", "\\)" = "\\\\)", "\\*" = "\\\\*"))
+    newGrep <- paste0("^", newGrep, "$")
+    out <- related %>%
+      filter(str_detect(has_close_match, paste0(newGrep, collapse = "|")) |
+               str_detect(has_broader_match, paste0(newGrep, collapse = "|")) |
+               str_detect(has_narrower_match, paste0(newGrep, collapse = "|")) |
+               str_detect(has_exact_match, paste0(newGrep, collapse = "|"))) %>%
+      arrange(id)
+
   }
 
-  saveRDS(object = out, file = paste0(matchDir, sourceFile))
+  saveRDS(object = matchingTable, file = paste0(matchDir, sourceFile))
 
-  return(related)
+  return(out)
 }
