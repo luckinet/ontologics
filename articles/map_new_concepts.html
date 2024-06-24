@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -222,8 +222,9 @@ hierarchical level. These concepts are, when specified with
 <span>                     ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: some new concepts (wheat1, wheat2) don't have a class; please define</span></span>
 <span><span class="co">#&gt; this with 'new_class()' and re-run 'new_concept()' with these concepts and the</span></span>
-<span><span class="co">#&gt; new class.</span></span>
-<span></span>
+<span><span class="co">#&gt; new class.</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -266,7 +267,7 @@ hierarchical level. These concepts are, when specified with
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># ... ok, then let's specify that class and re-run new_concept</span></span>
 <span><span class="va">crops</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_class.html">new_class</a></span><span class="op">(</span>new <span class="op">=</span> <span class="st">"cultivar"</span>, target <span class="op">=</span> <span class="st">"crop"</span>, </span>
@@ -281,7 +282,7 @@ hierarchical level. These concepts are, when specified with
 example by looking at the tree of the respective items again. We should
 expect that the new harmonized concepts now appear in the ontology and
 that they have some link to an external concept defined.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Wheat"</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -324,7 +325,7 @@ that they have some link to an external concept defined.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"NUTS"</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -360,7 +361,7 @@ that they have some link to an external concept defined.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/make_tree.html">make_tree</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"FRUIT"</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -445,7 +446,7 @@ that they have some link to an external concept defined.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># and finally a list of all external concepts</span></span>
 <span><span class="fu"><a href="../reference/get_concept.html">get_concept</a></span><span class="op">(</span>external <span class="op">=</span> <span class="cn">TRUE</span>, ontology <span class="op">=</span> <span class="va">crops</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -501,7 +502,7 @@ that they have some link to an external concept defined.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer>
