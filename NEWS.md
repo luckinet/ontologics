@@ -1,3 +1,7 @@
+# ontologics 0.7.4
+
+- fix NA in plot method of `onto`.
+
 # ontologics 0.7.3
 
 - include information about previous matches in the "description" column in matching tables, to assist in finding the correct matches, based on previous information.
