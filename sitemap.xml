@@ -1,78 +1,28 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>http://luckinet.github.io/ontologics/404.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/articles/conversion_to_rdf.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/articles/create_an_ontology.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/articles/map_new_concepts.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/articles/ontology_database_description.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/authors.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/index.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/news/index.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/export_as_rdf.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/get_class.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/get_concept.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/get_source.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/load_ontology.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/make_tree.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/new_class.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/new_concept.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/new_mapping.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/new_source.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/onto-class.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/show-onto-method.html</loc>
-  </url>
-  <url>
-    <loc>http://luckinet.github.io/ontologics/reference/start_ontology.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>http://luckinet.github.io/ontologics/404.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/LICENSE.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/articles/conversion_to_rdf.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/articles/create_an_ontology.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/articles/index.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/articles/map_new_concepts.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/articles/ontology_database_description.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/authors.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/index.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/news/index.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/export_as_rdf.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/get_class.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/get_concept.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/get_source.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/index.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/load_ontology.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/make_tree.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/new_class.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/new_concept.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/new_mapping.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/new_source.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/onto-class.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/pipe.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/show-onto-method.html</loc></url>
+<url><loc>http://luckinet.github.io/ontologics/reference/start_ontology.html</loc></url>
 </urlset>
+
