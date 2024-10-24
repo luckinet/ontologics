@@ -128,11 +128,7 @@ setMethod(f = "show",
             lvlChars <- nchar(theClasses$harmonised$id[1])
 
             itemsPerClass <- theClasses$harmonised %>%
-              mutate(level = if_else(nchar(id) == lvlChars, 1, if_else(
-                nchar(id) == 2 * lvlChars, 2, if_else(
-                  nchar(id) == 3 * lvlChars, 3, if_else(
-                    nchar(id) == 4 * lvlChars, 4, if_else(
-                      nchar(id) == 5 * lvlChars, 5, NA_real_)))))) %>%
+              mutate(level = nchar(id)/lvlChars) %>%
               separate(col = "id", sep = "[.]", into = paste0("id_", 0:classLevels), fill = "right") %>%
               select(-id_0)
 
@@ -152,6 +148,7 @@ setMethod(f = "show",
             }
 
             theConceptsHarm <- theConcepts$harmonised %>%
+              select(-has_close_match, -has_narrower_match, -has_broader_match, -has_exact_match) |>
               mutate(level = if_else(nchar(id) == lvlChars, 1, if_else(
                 nchar(id) == 2 * lvlChars, 2, if_else(
                   nchar(id) == 3 * lvlChars, 3, if_else(
