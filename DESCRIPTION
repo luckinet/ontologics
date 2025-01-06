@@ -43,6 +43,8 @@ Imports:
     httr,
     methods,
     rdflib,
+    fuzzyjoin,
+    utils,
     beepr
 Suggests: 
     knitr,
