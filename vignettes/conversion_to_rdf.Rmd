@@ -132,7 +132,7 @@ Of course, in reality things are a little more complicated. Looking at the pseud
 <!-- TODO: (or rather possibly interesting) XKOS -->
 ## SKOS
 
-SKOS is shorthand for [Simple Knowledge Organization System](https://www.w3.org/TR/skos-primer/). It is a lightweight RDF vocabulary that can be used to express knowledge organisation systems (KOS) as RDF and thus make them interoperable with the Semantic Web. Popular KOS, such as [FAO Agrovoc](https://agrovoc.uniroma2.it/agrovoc/agrovoc/en/) or the [UNESCO Thesaurus](https://vocabularies.unesco.org/browser/thesaurus/en/) are expressed with SKOS.
+SKOS is shorthand for [Simple Knowledge Organization System](https://www.w3.org/TR/skos-primer/). It is a lightweight RDF vocabulary that can be used to express knowledge organisation systems (KOS) as RDF and thus make them interoperable with the Semantic Web. Popular KOS, such as [FAO Agrovoc](https://agrovoc.fao.org/agrovoc/agrovoc/en/) or the [UNESCO Thesaurus](https://vocabularies.unesco.org/browser/thesaurus/en/) are expressed with SKOS.
 
 We'll now try to give a short introduction to the parts of SKOS that we use in this package; please also visit the [SKOS reference page](https://www.w3.org/TR/skos-reference/). It is assumed that the [ontology database description](ontology_database_description.html) document was read. From the SKOS vocabulary, we mainly use the [**semantic relations**](https://www.w3.org/TR/skos-reference/#semantic-relations) and the [**mapping properties**](https://www.w3.org/TR/skos-reference/#mapping).
 
