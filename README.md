@@ -5,7 +5,8 @@
 
 <!-- badges: start -->
 
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/ontologics)](https://cran.r-project.org/package=ontologics)
+[![CRAN
+status](http://www.r-pkg.org/badges/version/ontologics)](https://cran.r-project.org/package=ontologics)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8043597.svg)](https://doi.org/10.5281/zenodo.8043597)
 
 [![R-CMD-check](https://github.com/luckinet/ontologics/workflows/R-CMD-check/badge.svg)](https://github.com/luckinet/ontologics/actions)
